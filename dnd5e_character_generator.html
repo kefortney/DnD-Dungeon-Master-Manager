@@ -1059,6 +1059,7 @@ const NAMES = {
 
 // ===== STATE =====
 const PC_STORAGE_KEY = 'dndToolsPlayerCharacters';
+const SELECTED_PC_KEY = 'dndToolsSelectedCharacter';
 let stats = { STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10 };
 let proficientSkills = [];
 let rollHistory = [];
@@ -1407,13 +1408,83 @@ function getCurrentCharacterSnapshot() {
   };
 }
 
+function normalizeNameClass(name, className) {
+  return `${String(name || '').trim().toLowerCase()}::${String(className || '').trim().toLowerCase()}`;
+}
+
 function saveCharacterToVault() {
   const character = getCurrentCharacterSnapshot();
   const characters = readCharacters();
+  const duplicateIdx = characters.findIndex((entry) =>
+    normalizeNameClass(entry.name, entry.className) === normalizeNameClass(character.name, character.className)
+  );
+
+  if (duplicateIdx !== -1) {
+    characters[duplicateIdx] = {
+      ...characters[duplicateIdx],
+      ...character,
+      id: characters[duplicateIdx].id || character.id,
+      createdAt: characters[duplicateIdx].createdAt || character.createdAt,
+      updatedAt: new Date().toISOString()
+    };
+    writeCharacters(characters);
+    document.getElementById('saveStatus').textContent = `Updated existing ${character.name} in Hub`;
+    addHistory(`💾 Updated ${character.name} in Campaign Hub`);
+    return;
+  }
+
   characters.unshift(character);
   writeCharacters(characters);
   document.getElementById('saveStatus').textContent = `Saved ${character.name} to Hub`;
   addHistory(`💾 Saved ${character.name} to Campaign Hub`);
+}
+
+function applySelectedCharacterFromHub() {
+  let selected;
+  try {
+    selected = JSON.parse(localStorage.getItem(SELECTED_PC_KEY) || 'null');
+  } catch (err) {
+    selected = null;
+  }
+  if (!selected || typeof selected !== 'object') return;
+
+  const setValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (value === undefined || value === null || value === '') return;
+    el.value = String(value);
+  };
+
+  setValue('charName', selected.name);
+  setValue('charRace', selected.race);
+  setValue('charClass', selected.className);
+  setValue('charBackground', selected.background);
+  setValue('charAlignment', selected.alignment);
+  setValue('charLevel', selected.level);
+
+  STATS.forEach((statKey) => {
+    const value = Number(selected[statKey]);
+    if (Number.isFinite(value)) stats[statKey] = value;
+  });
+
+  updateDerived();
+
+  if (Number.isFinite(Number(selected.hp))) {
+    document.getElementById('hpDisplay').textContent = String(selected.hp);
+  }
+  if (Number.isFinite(Number(selected.ac))) {
+    document.getElementById('acDisplay').textContent = String(selected.ac);
+  }
+  if (selected.initiative !== undefined && selected.initiative !== null) {
+    const initVal = Number(selected.initiative);
+    document.getElementById('initDisplay').textContent = initVal >= 0 ? `+${initVal}` : String(initVal);
+  }
+  if (Number.isFinite(Number(selected.speed))) {
+    document.getElementById('speedDisplay').textContent = String(selected.speed);
+  }
+
+  document.getElementById('saveStatus').textContent = `Loaded ${selected.name || 'character'} from Hub`;
+  localStorage.removeItem(SELECTED_PC_KEY);
 }
 
 // ===== FULL GENERATE =====
@@ -1449,6 +1520,7 @@ window.onload = () => {
   updateDerived();
   updateTraits();
   loadWeapon();
+  applySelectedCharacterFromHub();
 };
 </script>
 </body>

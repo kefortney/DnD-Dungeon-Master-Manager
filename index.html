@@ -318,9 +318,10 @@ textarea { min-height: 74px; resize: vertical; }
 
     <section class="section">
       <h2>Campaign Data</h2>
-      <p class="small">Export or import all saved PCs, NPC notes, and NPC profiles as CSV.</p>
+      <p class="small">Export or import saved campaign records as CSV.</p>
       <div class="actions">
-        <button id="exportCsvBtn" class="btn-secondary">Export CSV</button>
+        <button id="exportPcsCsvBtn" class="btn-secondary">Export PCs CSV</button>
+        <button id="exportNpcsCsvBtn" class="btn-secondary">Export NPCs CSV</button>
         <label class="btn-like" for="csvInput">Import CSV</label>
         <input class="hidden-file" id="csvInput" type="file" accept=".csv,text/csv">
       </div>
@@ -361,7 +362,8 @@ textarea { min-height: 74px; resize: vertical; }
 const STORAGE_KEYS = {
   pcs: 'dndToolsPlayerCharacters',
   npcNotes: 'dndToolsNpcNotes',
-  npcProfiles: 'dndToolsNpcProfiles'
+  npcProfiles: 'dndToolsNpcProfiles',
+  selectedPc: 'dndToolsSelectedCharacter'
 };
 
 function safeRead(key) {
@@ -388,6 +390,10 @@ function numberOr(value, fallback = 0) {
 
 function nowIso() {
   return new Date().toISOString();
+}
+
+function normalizeNameClass(name, className) {
+  return `${String(name || '').trim().toLowerCase()}::${String(className || '').trim().toLowerCase()}`;
 }
 
 function showFlash(message, type) {
@@ -438,7 +444,10 @@ function renderPcs(state) {
       <article class="pc-card" data-idx="${idx}">
         <div class="card-head">
           <div class="card-title">${escapeHtml(pc.name || `Character ${idx + 1}`)}</div>
-          <button data-action="delete-pc" data-idx="${idx}">Remove</button>
+          <div style="display:flex;gap:6px;">
+            <button data-action="load-pc" data-idx="${idx}">Load In Generator</button>
+            <button data-action="delete-pc" data-idx="${idx}">Remove</button>
+          </div>
         </div>
         <div class="input-row">
           <input data-field="name" data-idx="${idx}" value="${escapeHtml(pc.name || '')}" placeholder="Name">
@@ -544,6 +553,27 @@ function addNpcNote() {
   }
 
   const state = loadState();
+  const duplicateIdx = state.npcNotes.findIndex((entry) =>
+    normalizeNameClass(entry.name, entry.className) === normalizeNameClass(name, className)
+  );
+
+  if (duplicateIdx !== -1) {
+    state.npcNotes[duplicateIdx] = {
+      ...state.npcNotes[duplicateIdx],
+      name,
+      className,
+      notes,
+      updatedAt: nowIso()
+    };
+    saveState(state);
+    document.getElementById('npcName').value = '';
+    document.getElementById('npcClass').value = '';
+    document.getElementById('npcNotes').value = '';
+    showFlash('Duplicate NPC note found. Updated existing entry.', 'ok');
+    renderAll();
+    return;
+  }
+
   state.npcNotes.unshift({
     id: uid('npc-note'),
     name,
@@ -612,6 +642,14 @@ function deleteNpcProfile(idx) {
   renderAll();
 }
 
+function queuePcForGenerator(idx) {
+  const state = loadState();
+  const pc = state.pcs[idx];
+  if (!pc) return;
+  localStorage.setItem(STORAGE_KEYS.selectedPc, JSON.stringify(pc));
+  window.location.href = 'dnd5e_character_generator.html';
+}
+
 function csvEscape(value) {
   const stringValue = value == null ? '' : String(value);
   if (/[",\n]/.test(stringValue)) {
@@ -620,7 +658,20 @@ function csvEscape(value) {
   return stringValue;
 }
 
-function exportCsv() {
+function exportRowsAsCsv(rows, filePrefix) {
+  const csv = rows.map(row => row.map(csvEscape).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filePrefix}-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportPcsCsv() {
   const state = loadState();
   const headers = [
     'recordType','id','name','className','race','background','alignment','level',
@@ -637,6 +688,20 @@ function exportCsv() {
       pc.notes || '', '', '', '', '', '', pc.createdAt || '', pc.updatedAt || ''
     ]);
   });
+
+  exportRowsAsCsv(rows, 'campaign-pcs');
+  showFlash('PC CSV exported.', 'ok');
+}
+
+function exportNpcsCsv() {
+  const state = loadState();
+  const headers = [
+    'recordType','id','name','className','race','background','alignment','level',
+    'STR','DEX','CON','INT','WIS','CHA','hp','ac','initiative','speed',
+    'notes','ancestry','role','personality','motivation','secret','createdAt','updatedAt'
+  ];
+
+  const rows = [headers];
 
   state.npcNotes.forEach(npc => {
     rows.push([
@@ -655,17 +720,8 @@ function exportCsv() {
     ]);
   });
 
-  const csv = rows.map(row => row.map(csvEscape).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `campaign-data-${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showFlash('CSV exported.', 'ok');
+  exportRowsAsCsv(rows, 'campaign-npcs');
+  showFlash('NPC CSV exported.', 'ok');
 }
 
 function parseCsv(text) {
@@ -804,7 +860,8 @@ function importCsv(file) {
 function setupEvents() {
   document.getElementById('addBlankPcBtn').addEventListener('click', addBlankPc);
   document.getElementById('addNpcNoteBtn').addEventListener('click', addNpcNote);
-  document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+  document.getElementById('exportPcsCsvBtn').addEventListener('click', exportPcsCsv);
+  document.getElementById('exportNpcsCsvBtn').addEventListener('click', exportNpcsCsv);
 
   document.getElementById('csvInput').addEventListener('change', (event) => {
     const file = event.target.files && event.target.files[0];
@@ -821,6 +878,10 @@ function setupEvents() {
 
   document.getElementById('pcList').addEventListener('click', (event) => {
     const target = event.target;
+    if (target.dataset.action === 'load-pc') {
+      queuePcForGenerator(Number(target.dataset.idx));
+      return;
+    }
     if (target.dataset.action === 'delete-pc') {
       deletePc(Number(target.dataset.idx));
     }

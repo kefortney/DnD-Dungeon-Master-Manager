@@ -363,6 +363,10 @@ function showFlash(message, isError) {
   flash.style.color = isError ? '#ff8a7b' : '#8fc6a8';
 }
 
+function normalizeNameClass(name, className) {
+  return `${String(name || '').trim().toLowerCase()}::${String(className || '').trim().toLowerCase()}`;
+}
+
 function saveNpc() {
   const npc = npcFromInputs();
   if (!npc.name) {
@@ -371,22 +375,50 @@ function saveNpc() {
   }
 
   const profiles = safeRead(STORAGE_KEYS.npcProfiles);
-  profiles.unshift(npc);
+  const duplicateProfileIdx = profiles.findIndex((entry) =>
+    normalizeNameClass(entry.name, entry.className) === normalizeNameClass(npc.name, npc.className)
+  );
+
+  if (duplicateProfileIdx !== -1) {
+    profiles[duplicateProfileIdx] = {
+      ...profiles[duplicateProfileIdx],
+      ...npc,
+      id: profiles[duplicateProfileIdx].id || npc.id,
+      createdAt: profiles[duplicateProfileIdx].createdAt || npc.createdAt,
+      updatedAt: npc.updatedAt
+    };
+  } else {
+    profiles.unshift(npc);
+  }
   safeWrite(STORAGE_KEYS.npcProfiles, profiles);
 
   // Keep a slim NPC note entry in the quick log collection.
   const noteList = safeRead(STORAGE_KEYS.npcNotes);
-  noteList.unshift({
-    id: `npc-note-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-    name: npc.name,
-    className: npc.className,
-    notes: npc.notes,
-    createdAt: npc.createdAt,
-    updatedAt: npc.updatedAt
-  });
-  safeWrite(STORAGE_KEYS.npcNotes, noteList);
+  const duplicateNoteIdx = noteList.findIndex((entry) =>
+    normalizeNameClass(entry.name, entry.className) === normalizeNameClass(npc.name, npc.className)
+  );
 
-  showFlash('NPC saved to registry and NPC notes.', false);
+  if (duplicateNoteIdx !== -1) {
+    noteList[duplicateNoteIdx] = {
+      ...noteList[duplicateNoteIdx],
+      name: npc.name,
+      className: npc.className,
+      notes: npc.notes,
+      updatedAt: npc.updatedAt
+    };
+  } else {
+    noteList.unshift({
+      id: `npc-note-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+      name: npc.name,
+      className: npc.className,
+      notes: npc.notes,
+      createdAt: npc.createdAt,
+      updatedAt: npc.updatedAt
+    });
+  }
+
+  safeWrite(STORAGE_KEYS.npcNotes, noteList);
+  showFlash(duplicateProfileIdx !== -1 ? 'Duplicate NPC found. Existing profile updated.' : 'NPC saved to registry and NPC notes.', false);
 }
 
 function wireEvents() {
