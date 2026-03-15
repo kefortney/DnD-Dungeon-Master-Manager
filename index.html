@@ -30,44 +30,46 @@ body {
   color: var(--paper);
   font-family: 'Source Sans 3', sans-serif;
   line-height: 1.4;
-  padding: 24px;
+  padding: 0;
 }
 
-.shell { max-width: 1100px; margin: 0 auto; }
+.shell { max-width: 1100px; margin: 0 auto; padding: 24px; }
 
-.topbar {
-  background: rgba(16,19,23,0.85);
-  border: 1px solid rgba(196,152,58,0.35);
-  border-radius: 12px;
-  padding: 16px 20px;
-  box-shadow: 0 16px 36px var(--shadow);
+.site-nav {
+  background: rgba(10,13,18,0.97);
+  border-bottom: 1px solid rgba(196,152,58,0.3);
+  padding: 0 24px;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 20px var(--shadow);
+  flex-wrap: wrap;
 }
-
-.brand h1 {
+.nav-brand {
   font-family: 'Cinzel', serif;
-  font-size: 1.2rem;
   color: var(--gold);
+  font-size: 0.95rem;
   letter-spacing: 1.5px;
+  padding: 14px 20px 14px 0;
+  margin-right: 8px;
+  border-right: 1px solid rgba(196,152,58,0.3);
+  white-space: nowrap;
 }
-.brand p { color: var(--mist); font-size: 0.9rem; margin-top: 2px; }
-
-.nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
-.nav-links a {
-  color: var(--paper);
+.nav-brand span { color: var(--paper-deep); font-size: 0.8rem; display: block; letter-spacing: 0.5px; }
+.site-nav a {
+  color: var(--mist);
   text-decoration: none;
-  padding: 7px 12px;
-  border: 1px solid rgba(220,199,154,0.25);
-  border-radius: 8px;
+  padding: 14px 14px;
   font-size: 0.88rem;
-  background: rgba(255,255,255,0.03);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
-.nav-links a:hover { border-color: var(--gold); color: var(--gold); }
+.site-nav a:hover { color: var(--gold); border-bottom-color: rgba(196,152,58,0.4); }
+.site-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
 
 .section {
   background: linear-gradient(160deg, rgba(12,16,22,0.85), rgba(22,30,40,0.85));
@@ -223,21 +225,17 @@ button:hover { border-color: var(--gold); color: var(--gold); }
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
+  <a href="index.html" class="active">Hub</a>
+  <a href="campaign.html" id="campaignNavLink" style="display:none;">Campaign</a>
+  <a href="dnd5e_character_generator.html">Characters</a>
+  <a href="npc_creator.html">NPC Creator</a>
+  <a href="monster_manual.html">Monster Manual</a>
+  <a href="spellbook.html">Spellbook</a>
+</nav>
+<script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
 <div class="shell">
-  <header class="topbar">
-    <div class="brand">
-      <h1>D&amp;D Campaign Hub</h1>
-      <p>Select a campaign to manage, or create a new one</p>
-    </div>
-    <nav class="nav-links">
-      <a href="index.html">Hub</a>
-      <a id="campaignNavLink" href="campaign.html" style="display:none;">Current Campaign</a>
-      <a href="dnd5e_character_generator.html">Character Generator</a>
-      <a href="npc_creator.html">NPC Creator</a>
-      <a href="monster_manual.html">Monster Manual</a>
-      <a href="spellbook.html">Spellbook</a>
-    </nav>
-  </header>
 
   <!-- Create Campaign -->
   <section class="section">
