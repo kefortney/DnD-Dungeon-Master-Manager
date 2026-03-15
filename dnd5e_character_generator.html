@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D 5e Character Generator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Uncial+Antiqua&display=swap');
+
+  :root {
+    --parchment: #f4e4c1;
+    --parchment-dark: #e8d4a0;
+    --parchment-shadow: #c9aa71;
+    --ink: #2c1a0e;
+    --ink-light: #4a2c1a;
+    --red: #8b1a1a;
+    --gold: #b8860b;
+    --gold-light: #daa520;
+    --shadow: rgba(44,26,14,0.25);
+    --border: #7a5c2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a0e05;
+    background-image:
+      radial-gradient(ellipse at 30% 20%, #2c1a0e 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, #2c1a0e 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    min-height: 100vh;
+    font-family: 'IM Fell English', serif;
+    color: var(--ink);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .tome {
+    background: var(--parchment);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E"),
+      linear-gradient(135deg, var(--parchment) 0%, var(--parchment-dark) 50%, var(--parchment) 100%);
+    max-width: 960px;
+    width: 100%;
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 2px var(--parchment-shadow),
+      0 0 0 4px var(--border),
+      0 0 0 6px var(--parchment-shadow),
+      8px 8px 40px rgba(0,0,0,0.8),
+      -2px -2px 20px rgba(0,0,0,0.4);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tome::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.08) 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .tome > * { position: relative; z-index: 1; }
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px double var(--border);
+    position: relative;
+  }
+
+  .header::before, .header::after {
+    content: '✦';
+    position: absolute;
+    bottom: -14px;
+    font-size: 16px;
+    color: var(--gold);
+    background: var(--parchment);
+    padding: 0 8px;
+  }
+  .header::before { left: 50%; transform: translateX(-50%); }
+  .header::after { display: none; }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.4em;
+    font-weight: 700;
+    color: var(--red);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    letter-spacing: 3px;
+    line-height: 1.2;
+  }
+
+  h1 span {
+    display: block;
+    font-size: 0.45em;
+    color: var(--gold);
+    letter-spacing: 6px;
+    margin-bottom: 4px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+    color: var(--red);
+    letter-spacing: 2px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  .section {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 2px;
+    padding: 18px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px; right: 3px; bottom: 3px;
+    border: 1px solid rgba(122,92,46,0.3);
+    pointer-events: none;
+    border-radius: 1px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72em;
+    font-weight: 600;
+    color: var(--ink-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  input[type="text"], select {
+    width: 100%;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--parchment-shadow);
+    border-bottom: 2px solid var(--border);
+    border-radius: 2px;
+    padding: 8px 10px;
+    font-family: 'IM Fell English', serif;
+    font-size: 1em;
+    color: var(--ink);
+    outline: none;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%237a5c2e'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+    cursor: pointer;
+  }
+
+  input[type="text"]:focus, select:focus {
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.7);
+    box-shadow: 0 0 0 2px rgba(184,134,11,0.2);
+  }
+
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border: 2px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--red) 0%, #6b1313 100%);
+    color: var(--parchment);
+    border-color: #6b1313;
+    box-shadow: 0 3px 8px rgba(139,26,26,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #a52020 0%, #8b1a1a 100%);
+    box-shadow: 0 4px 12px rgba(139,26,26,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, var(--gold) 0%, #8b6914 100%);
+    color: var(--parchment);
+    border-color: #8b6914;
+    box-shadow: 0 3px 8px rgba(184,134,11,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .btn-secondary:hover {
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-light);
+    border-color: var(--parchment-shadow);
+    font-size: 0.75em;
+    padding: 6px 14px;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(0,0,0,0.05);
+    border-color: var(--border);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+
+  .stat-box {
+    background: linear-gradient(160deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 3px;
+    padding: 12px 8px;
+    text-align: center;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+  }
+
+  .stat-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6em;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-family: 'Cinzel', serif;
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-modifier {
+    font-size: 0.85em;
+    color: var(--red);
+    font-weight: bold;
+  }
+
+  .stat-rolls {
+    font-size: 0.68em;
+    color: var(--ink-light);
+    margin-top: 4px;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .roll-btn-sm {
+    font-size: 0.65em;
+    padding: 3px 8px;
+    margin-top: 6px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+    background: rgba(122,92,46,0.15);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .roll-btn-sm:hover {
+    background: rgba(122,92,46,0.3);
+    color: var(--ink);
+  }
+
+  .hp-display {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5em;
+    font-weight: 700;
+    color: var(--red);
+    text-align: center;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  }
+
+  .hp-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7em;
+    letter-spacing: 2px;
+    color: var(--ink-light);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .proficiency-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--parchment);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px 16px;
+  }
+
+  .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    border-bottom: 1px dotted rgba(122,92,46,0.3);
+    font-size: 0.88em;
+  }
+
+  .skill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    background: transparent;
+    transition: all 0.2s;
+  }
+
+  .skill-dot.proficient {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .skill-name { flex: 1; color: var(--ink); }
+  .skill-bonus { font-family: 'Cinzel', serif; font-size: 0.85em; color: var(--red); font-weight: 600; }
+
+  /* Weapon section */
+  .weapon-card {
+    background: rgba(255,255,255,0.25);
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 3px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .weapon-name-display {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .weapon-meta {
+    font-size: 0.82em;
+    color: var(--ink-light);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .damage-result {
+    background: var(--ink);
+    color: var(--parchment);
+    border-radius: 3px;
+    padding: 14px;
+    margin-top: 10px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+  }
+
+  .damage-total {
+    font-size: 3em;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(218,165,32,0.6);
+  }
+
+  .damage-breakdown {
+    font-size: 0.75em;
+    opacity: 0.7;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .crit-banner {
+    background: var(--red);
+    color: var(--parchment);
+    font-family: 'Cinzel', serif;
+    font-size: 0.85em;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-align: center;
+    padding: 4px;
+    margin-bottom: 8px;
+    animation: flash 0.5s ease;
+  }
+
+  @keyframes flash {
+    0% { opacity: 0; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .attack-roll-result {
+    font-size: 0.9em;
+    color: var(--parchment-shadow);
+    margin-bottom: 4px;
+  }
+
+  .roll-history {
+    max-height: 120px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.08);
+    border-radius: 2px;
+    padding: 8px 10px;
+    font-size: 0.82em;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--ink-light);
+    border: 1px solid var(--parchment-shadow);
+  }
+
+  .roll-history::-webkit-scrollbar { width: 6px; }
+  .roll-history::-webkit-scrollbar-track { background: transparent; }
+  .roll-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .history-entry { padding: 2px 0; border-bottom: 1px dotted rgba(122,92,46,0.2); }
+  .history-entry:last-child { border-bottom: none; }
+
+  .traits-box {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 2px;
+    padding: 12px 14px;
+    font-size: 0.88em;
+    line-height: 1.7;
+    font-style: italic;
+    color: var(--ink-light);
+    min-height: 60px;
+  }
+
+  .traits-box p { margin-bottom: 6px; }
+  .traits-box p:last-child { margin-bottom: 0; }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .ornament {
+    text-align: center;
+    color: var(--gold);
+    font-size: 1.1em;
+    letter-spacing: 8px;
+    margin: 8px 0;
+    opacity: 0.7;
+  }
+
+  .ac-box, .init-box, .speed-box {
+    text-align: center;
+    background: rgba(255,255,255,0.25);
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 3px;
+    padding: 10px 6px;
+  }
+
+  .combat-val {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .combat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6em;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-top: 2px;
+  }
+
+  .currency-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .coin {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7em;
+    font-weight: 700;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+
+  .coin-cp { background: radial-gradient(circle at 35% 35%, #c87137, #8b4513); color: #fff; }
+  .coin-sp { background: radial-gradient(circle at 35% 35%, #d0d0d0, #888); color: #fff; }
+  .coin-ep { background: radial-gradient(circle at 35% 35%, #e8c88a, #b8860b); color: #fff; }
+  .coin-gp { background: radial-gradient(circle at 35% 35%, #ffd700, #b8860b); color: var(--ink); }
+  .coin-pp { background: radial-gradient(circle at 35% 35%, #e0d0f0, #7b68ee); color: #fff; }
+
+  .dice-icon { font-size: 1.1em; }
+
+  .weapon-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  @media (max-width: 700px) {
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+<div class="tome">
+
+  <div class="header">
+    <h1><span>⚔ Dungeons & Dragons ⚔</span>Fifth Edition Character Folio</h1>
+  </div>
+
+  <!-- Identity Section -->
+  <div class="section">
+    <h2>Identity</h2>
+    <div class="grid-3">
+      <div>
+        <label>Character Name</label>
+        <input type="text" id="charName" placeholder="Aelindra Moonwhisper">
+      </div>
+      <div>
+        <label>Race</label>
+        <select id="charRace" onchange="updateDerived()">
+          <option value="Human">Human</option>
+          <option value="Elf">Elf (High)</option>
+          <option value="Wood Elf">Elf (Wood)</option>
+          <option value="Drow">Elf (Drow)</option>
+          <option value="Dwarf">Dwarf (Hill)</option>
+          <option value="Mountain Dwarf">Dwarf (Mountain)</option>
+          <option value="Halfling">Halfling (Lightfoot)</option>
+          <option value="Stout Halfling">Halfling (Stout)</option>
+          <option value="Gnome">Gnome (Forest)</option>
+          <option value="Rock Gnome">Gnome (Rock)</option>
+          <option value="Half-Elf">Half-Elf</option>
+          <option value="Half-Orc">Half-Orc</option>
+          <option value="Tiefling">Tiefling</option>
+          <option value="Dragonborn">Dragonborn</option>
+          <option value="Aasimar">Aasimar</option>
+          <option value="Tabaxi">Tabaxi</option>
+          <option value="Warforged">Warforged</option>
+          <option value="Firbolg">Firbolg</option>
+          <option value="Kenku">Kenku</option>
+          <option value="Lizardfolk">Lizardfolk</option>
+        </select>
+      </div>
+      <div>
+        <label>Class</label>
+        <select id="charClass" onchange="updateDerived()">
+          <option value="Barbarian">Barbarian</option>
+          <option value="Bard">Bard</option>
+          <option value="Cleric">Cleric</option>
+          <option value="Druid">Druid</option>
+          <option value="Fighter">Fighter</option>
+          <option value="Monk">Monk</option>
+          <option value="Paladin">Paladin</option>
+          <option value="Ranger">Ranger</option>
+          <option value="Rogue">Rogue</option>
+          <option value="Sorcerer">Sorcerer</option>
+          <option value="Warlock">Warlock</option>
+          <option value="Wizard">Wizard</option>
+          <option value="Artificer">Artificer</option>
+          <option value="Blood Hunter">Blood Hunter</option>
+        </select>
+      </div>
+      <div>
+        <label>Background</label>
+        <select id="charBackground" onchange="updateTraits()">
+          <option value="Acolyte">Acolyte</option>
+          <option value="Charlatan">Charlatan</option>
+          <option value="Criminal">Criminal</option>
+          <option value="Entertainer">Entertainer</option>
+          <option value="Folk Hero">Folk Hero</option>
+          <option value="Guild Artisan">Guild Artisan</option>
+          <option value="Hermit">Hermit</option>
+          <option value="Noble">Noble</option>
+          <option value="Outlander">Outlander</option>
+          <option value="Sage">Sage</option>
+          <option value="Sailor">Sailor</option>
+          <option value="Soldier">Soldier</option>
+          <option value="Urchin">Urchin</option>
+        </select>
+      </div>
+      <div>
+        <label>Alignment</label>
+        <select id="charAlignment">
+          <option value="Lawful Good">Lawful Good</option>
+          <option value="Neutral Good">Neutral Good</option>
+          <option value="Chaotic Good">Chaotic Good</option>
+          <option value="Lawful Neutral">Lawful Neutral</option>
+          <option value="True Neutral">True Neutral</option>
+          <option value="Chaotic Neutral">Chaotic Neutral</option>
+          <option value="Lawful Evil">Lawful Evil</option>
+          <option value="Neutral Evil">Neutral Evil</option>
+          <option value="Chaotic Evil">Chaotic Evil</option>
+        </select>
+      </div>
+      <div>
+        <label>Level</label>
+        <select id="charLevel" onchange="updateDerived()">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+          <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+          <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+          <option value="19">19</option><option value="20">20</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ability Scores -->
+  <div class="section">
+    <h2>Ability Scores</h2>
+    <div class="stats-grid" id="statsGrid">
+      <!-- Populated by JS -->
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="rollAllStats()">⚄ Roll All Stats (4d6 drop lowest)</button>
+      <button class="btn btn-ghost" onclick="standardArray()">Standard Array</button>
+      <button class="btn btn-ghost" onclick="pointBuy()">Point Buy (27pts)</button>
+    </div>
+  </div>
+
+  <!-- Combat Stats -->
+  <div class="section">
+    <h2>Combat Statistics</h2>
+    <div class="grid-3">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div class="ac-box">
+            <div class="combat-val" id="acDisplay">10</div>
+            <div class="combat-label">Armor Class</div>
+          </div>
+          <div class="init-box">
+            <div class="combat-val" id="initDisplay">+0</div>
+            <div class="combat-label">Initiative</div>
+          </div>
+          <div class="speed-box">
+            <div class="combat-val" id="speedDisplay">30</div>
+            <div class="combat-label">Speed (ft)</div>
+          </div>
+        </div>
+        <div>
+          <div class="hp-label">Hit Points</div>
+          <div class="hp-display" id="hpDisplay">8</div>
+          <div style="text-align:center;margin-top:6px;">
+            <span style="font-family:'Cinzel',serif;font-size:0.75em;color:var(--ink-light);">Hit Die: </span>
+            <span style="font-family:'Cinzel',serif;font-size:0.85em;color:var(--red);font-weight:700;" id="hitDieDisplay">d8</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label style="margin-bottom:8px;">Proficiency Bonus: <span class="proficiency-badge" id="profBonus">+2</span></label>
+        <br>
+        <label style="margin-top:12px;margin-bottom:8px;">Saving Throws</label>
+        <div id="savingThrows" style="font-size:0.88em;"></div>
+      </div>
+      <div>
+        <label>Death Saves</label>
+        <div style="margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-family:'Cinzel',serif;font-size:0.7em;color:var(--gold);letter-spacing:1px;">Successes</span>
+            <span onclick="toggleSave(this,'s')" style="font-size:1.4em;cursor:pointer;" title="Toggle">○</span>
+            <span onclick="toggleSave(this,'s')" style="font-size:1.4em;cursor:pointer;">○</span>
+            <span onclick="toggleSave(this,'s')" style="font-size:1.4em;cursor:pointer;">○</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:'Cinzel',serif;font-size:0.7em;color:var(--red);letter-spacing:1px;">Failures</span>
+            <span onclick="toggleSave(this,'f')" style="font-size:1.4em;cursor:pointer;">○</span>
+            <span onclick="toggleSave(this,'f')" style="font-size:1.4em;cursor:pointer;">○</span>
+            <span onclick="toggleSave(this,'f')" style="font-size:1.4em;cursor:pointer;">○</span>
+          </div>
+        </div>
+        <br>
+        <div style="margin-top:6px;">
+          <button class="btn btn-ghost" style="width:100%;" onclick="rollDeathSave()">Roll Death Save (d20)</button>
+          <div id="deathSaveResult" style="text-align:center;margin-top:6px;font-family:'Cinzel',serif;font-size:0.9em;color:var(--red);min-height:20px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="section">
+    <h2>Skills & Proficiencies</h2>
+    <div class="skills-grid" id="skillsGrid"></div>
+  </div>
+
+  <!-- Weapons -->
+  <div class="section">
+    <h2>⚔ Weapons & Combat</h2>
+    <div class="grid-2">
+      <div>
+        <label>Select Weapon</label>
+        <select id="weaponSelect" onchange="loadWeapon()">
+          <optgroup label="Simple Melee">
+            <option value="Club">Club (1d4 bludgeoning)</option>
+            <option value="Dagger">Dagger (1d4 piercing)</option>
+            <option value="Greatclub">Greatclub (1d8 bludgeoning)</option>
+            <option value="Handaxe">Handaxe (1d6 slashing)</option>
+            <option value="Javelin">Javelin (1d6 piercing)</option>
+            <option value="Light Hammer">Light Hammer (1d4 bludgeoning)</option>
+            <option value="Mace">Mace (1d6 bludgeoning)</option>
+            <option value="Quarterstaff">Quarterstaff (1d6 bludgeoning)</option>
+            <option value="Sickle">Sickle (1d4 slashing)</option>
+            <option value="Spear">Spear (1d6 piercing)</option>
+          </optgroup>
+          <optgroup label="Simple Ranged">
+            <option value="Crossbow, Light">Crossbow, Light (1d8 piercing)</option>
+            <option value="Dart">Dart (1d4 piercing)</option>
+            <option value="Shortbow">Shortbow (1d6 piercing)</option>
+            <option value="Sling">Sling (1d4 bludgeoning)</option>
+          </optgroup>
+          <optgroup label="Martial Melee">
+            <option value="Battleaxe">Battleaxe (1d8 slashing)</option>
+            <option value="Flail">Flail (1d8 bludgeoning)</option>
+            <option value="Glaive">Glaive (1d10 slashing)</option>
+            <option value="Greataxe">Greataxe (1d12 slashing)</option>
+            <option value="Greatsword">Greatsword (2d6 slashing)</option>
+            <option value="Halberd">Halberd (1d10 slashing)</option>
+            <option value="Lance">Lance (1d12 piercing)</option>
+            <option value="Longsword">Longsword (1d8 slashing)</option>
+            <option value="Maul">Maul (2d6 bludgeoning)</option>
+            <option value="Morningstar">Morningstar (1d8 piercing)</option>
+            <option value="Pike">Pike (1d10 piercing)</option>
+            <option value="Rapier">Rapier (1d8 piercing)</option>
+            <option value="Scimitar">Scimitar (1d6 slashing)</option>
+            <option value="Shortsword">Shortsword (1d6 piercing)</option>
+            <option value="Trident">Trident (1d6 piercing)</option>
+            <option value="War Pick">War Pick (1d8 piercing)</option>
+            <option value="Warhammer">Warhammer (1d8 bludgeoning)</option>
+            <option value="Whip">Whip (1d4 slashing)</option>
+          </optgroup>
+          <optgroup label="Martial Ranged">
+            <option value="Blowgun">Blowgun (1 piercing)</option>
+            <option value="Crossbow, Hand">Crossbow, Hand (1d6 piercing)</option>
+            <option value="Crossbow, Heavy">Crossbow, Heavy (1d10 piercing)</option>
+            <option value="Longbow">Longbow (1d8 piercing)</option>
+            <option value="Net">Net (—)</option>
+          </optgroup>
+        </select>
+        <div id="weaponInfo" class="weapon-meta" style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.3);border-radius:2px;border:1px solid var(--parchment-shadow);">
+          Select a weapon to see details.
+        </div>
+        <div class="btn-row" style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="rollAttackAndDamage()">⚔ Attack + Damage</button>
+          <button class="btn btn-secondary" onclick="rollDamageOnly()">💥 Damage Only</button>
+          <button class="btn btn-ghost" onclick="rollAttackAndDamage(true)">💀 Critical Hit</button>
+        </div>
+      </div>
+      <div>
+        <div id="damageDisplay">
+          <div class="weapon-card" style="opacity:0.6;text-align:center;padding:30px;">
+            <div style="font-size:2em;margin-bottom:8px;">⚔</div>
+            <div style="font-family:'Cinzel',serif;font-size:0.85em;color:var(--ink-light);">Select a weapon and roll to see results</div>
+          </div>
+        </div>
+        <div>
+          <label style="margin-bottom:6px;">Roll Log</label>
+          <div class="roll-history" id="rollHistory">
+            <div class="history-entry" style="color:var(--ink-light);font-style:italic;">No rolls yet...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Misc Rolls -->
+    <div style="margin-top:16px;border-top:1px dashed var(--border);padding-top:14px;">
+      <h2 style="font-size:0.9em;margin-bottom:10px;">Quick Dice Roller</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="quickRoll(4)">d4</button>
+        <button class="btn btn-ghost" onclick="quickRoll(6)">d6</button>
+        <button class="btn btn-ghost" onclick="quickRoll(8)">d8</button>
+        <button class="btn btn-ghost" onclick="quickRoll(10)">d10</button>
+        <button class="btn btn-ghost" onclick="quickRoll(12)">d12</button>
+        <button class="btn btn-ghost" onclick="quickRoll(20)">d20</button>
+        <button class="btn btn-ghost" onclick="quickRoll(100)">d100</button>
+        <span style="font-family:'Cinzel',serif;font-size:0.8em;color:var(--red);align-self:center;margin-left:8px;" id="quickRollResult"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Traits & Personality -->
+  <div class="section">
+    <h2>Traits & Personality</h2>
+    <div class="grid-2">
+      <div>
+        <label>Personality Traits</label>
+        <div class="traits-box" id="traitDisplay">—</div>
+      </div>
+      <div>
+        <label>Ideals</label>
+        <div class="traits-box" id="idealDisplay">—</div>
+        <label style="margin-top:10px;">Bonds & Flaws</label>
+        <div class="traits-box" id="bondDisplay">—</div>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:10px;">
+      <button class="btn btn-ghost" onclick="updateTraits()">↻ Reroll Traits</button>
+    </div>
+  </div>
+
+  <!-- Currency -->
+  <div class="section">
+    <h2>Coin Purse</h2>
+    <div class="currency-row">
+      <div class="coin coin-cp">CP</div>
+      <input type="text" id="coinCP" value="0" style="width:70px;">
+      <div class="coin coin-sp">SP</div>
+      <input type="text" id="coinSP" value="0" style="width:70px;">
+      <div class="coin coin-ep">EP</div>
+      <input type="text" id="coinEP" value="0" style="width:70px;">
+      <div class="coin coin-gp">GP</div>
+      <input type="text" id="coinGP" value="0" style="width:70px;">
+      <div class="coin coin-pp">PP</div>
+      <input type="text" id="coinPP" value="0" style="width:70px;">
+      <button class="btn btn-ghost" onclick="rollStartingGold()" style="margin-left:10px;">Roll Starting Gold</button>
+    </div>
+  </div>
+
+  <!-- Footer Generate -->
+  <div class="ornament">✦ ✦ ✦</div>
+  <div style="text-align:center;margin-top:10px;">
+    <button class="btn btn-primary" style="font-size:1em;padding:14px 40px;" onclick="generateFull()">⚄ Generate Random Character</button>
+  </div>
+
+</div>
+
+<script>
+// ===== DATA =====
+const STATS = ['STR','DEX','CON','INT','WIS','CHA'];
+
+const CLASS_DATA = {
+  Barbarian: { hitDie: 12, primaryStat: 'STR', saves: ['STR','CON'], armorBase: 'unarmored+CON' },
+  Bard:      { hitDie: 8,  primaryStat: 'CHA', saves: ['DEX','CHA'], armorBase: 'light' },
+  Cleric:    { hitDie: 8,  primaryStat: 'WIS', saves: ['WIS','CHA'], armorBase: 'medium' },
+  Druid:     { hitDie: 8,  primaryStat: 'WIS', saves: ['INT','WIS'], armorBase: 'medium' },
+  Fighter:   { hitDie: 10, primaryStat: 'STR', saves: ['STR','CON'], armorBase: 'heavy' },
+  Monk:      { hitDie: 8,  primaryStat: 'DEX', saves: ['STR','DEX'], armorBase: 'unarmored+WIS' },
+  Paladin:   { hitDie: 10, primaryStat: 'STR', saves: ['WIS','CHA'], armorBase: 'heavy' },
+  Ranger:    { hitDie: 10, primaryStat: 'DEX', saves: ['STR','DEX'], armorBase: 'medium' },
+  Rogue:     { hitDie: 8,  primaryStat: 'DEX', saves: ['DEX','INT'], armorBase: 'light' },
+  Sorcerer:  { hitDie: 6,  primaryStat: 'CHA', saves: ['CON','CHA'], armorBase: 'none' },
+  Warlock:   { hitDie: 8,  primaryStat: 'CHA', saves: ['WIS','CHA'], armorBase: 'light' },
+  Wizard:    { hitDie: 6,  primaryStat: 'INT', saves: ['INT','WIS'], armorBase: 'none' },
+  Artificer: { hitDie: 8,  primaryStat: 'INT', saves: ['CON','INT'], armorBase: 'medium' },
+  'Blood Hunter': { hitDie: 10, primaryStat: 'STR', saves: ['DEX','INT'], armorBase: 'medium' },
+};
+
+const RACE_BONUSES = {
+  Human:          { STR:1,DEX:1,CON:1,INT:1,WIS:1,CHA:1 },
+  Elf:            { DEX:2,INT:1 },
+  'Wood Elf':     { DEX:2,WIS:1 },
+  Drow:           { DEX:2,CHA:1 },
+  Dwarf:          { CON:2,WIS:1 },
+  'Mountain Dwarf': { CON:2,STR:2 },
+  Halfling:       { DEX:2 },
+  'Stout Halfling': { DEX:2,CON:1 },
+  Gnome:          { INT:2,DEX:1 },
+  'Rock Gnome':   { INT:2,CON:1 },
+  'Half-Elf':     { CHA:2,DEX:1,WIS:1 },
+  'Half-Orc':     { STR:2,CON:1 },
+  Tiefling:       { INT:1,CHA:2 },
+  Dragonborn:     { STR:2,CHA:1 },
+  Aasimar:        { WIS:1,CHA:2 },
+  Tabaxi:         { DEX:2,CHA:1 },
+  Warforged:      { CON:2,STR:1 },
+  Firbolg:        { WIS:2,STR:1 },
+  Kenku:          { DEX:2,WIS:1 },
+  Lizardfolk:     { CON:2,WIS:1 },
+};
+
+const RACE_SPEED = { Human:30,'Wood Elf':35,Elf:30,Drow:30,Dwarf:25,'Mountain Dwarf':25,Halfling:25,'Stout Halfling':25,Gnome:25,'Rock Gnome':25,'Half-Elf':30,'Half-Orc':30,Tiefling:30,Dragonborn:30,Aasimar:30,Tabaxi:30,Warforged:30,Firbolg:30,Kenku:30,Lizardfolk:30 };
+
+const SKILLS_LIST = [
+  { name:'Acrobatics',  stat:'DEX' }, { name:'Animal Handling', stat:'WIS' },
+  { name:'Arcana',      stat:'INT' }, { name:'Athletics',  stat:'STR' },
+  { name:'Deception',   stat:'CHA' }, { name:'History',    stat:'INT' },
+  { name:'Insight',     stat:'WIS' }, { name:'Intimidation',stat:'CHA' },
+  { name:'Investigation',stat:'INT'},  { name:'Medicine',   stat:'WIS' },
+  { name:'Nature',      stat:'INT' }, { name:'Perception', stat:'WIS' },
+  { name:'Performance', stat:'CHA' }, { name:'Persuasion', stat:'CHA' },
+  { name:'Religion',    stat:'INT' }, { name:'Sleight of Hand',stat:'DEX' },
+  { name:'Stealth',     stat:'DEX' }, { name:'Survival',   stat:'WIS' },
+];
+
+const CLASS_SKILLS = {
+  Barbarian: ['Animal Handling','Athletics','Intimidation','Nature','Perception','Survival'],
+  Bard:      ['Acrobatics','Animal Handling','Arcana','Athletics','Deception','Education','History','Insight','Intimidation','Investigation','Medicine','Nature','Perception','Performance','Persuasion','Religion','Sleight of Hand','Stealth','Survival'],
+  Cleric:    ['History','Insight','Medicine','Persuasion','Religion'],
+  Druid:     ['Arcana','Animal Handling','Insight','Medicine','Nature','Perception','Religion','Survival'],
+  Fighter:   ['Acrobatics','Animal Handling','Athletics','History','Insight','Intimidation','Perception','Survival'],
+  Monk:      ['Acrobatics','Athletics','History','Insight','Religion','Stealth'],
+  Paladin:   ['Athletics','Insight','Intimidation','Medicine','Persuasion','Religion'],
+  Ranger:    ['Animal Handling','Athletics','Insight','Investigation','Nature','Perception','Stealth','Survival'],
+  Rogue:     ['Acrobatics','Athletics','Deception','Insight','Intimidation','Investigation','Perception','Performance','Persuasion','Sleight of Hand','Stealth'],
+  Sorcerer:  ['Arcana','Deception','Insight','Intimidation','Persuasion','Religion'],
+  Warlock:   ['Arcana','Deception','History','Intimidation','Investigation','Nature','Religion'],
+  Wizard:    ['Arcana','History','Insight','Investigation','Medicine','Religion'],
+  Artificer: ['Arcana','History','Investigation','Medicine','Nature','Perception','Sleight of Hand'],
+  'Blood Hunter': ['Arcana','Athletics','History','Insight','Investigation','Nature','Perception','Survival'],
+};
+
+const WEAPON_DATA = {
+  Club:       { dice:1,sides:4,type:'bludgeoning',stat:'STR',props:'Light',range:'5ft' },
+  Dagger:     { dice:1,sides:4,type:'piercing',stat:'DEX',props:'Finesse, Light, Thrown (20/60ft)',range:'5ft or thrown' },
+  Greatclub:  { dice:1,sides:8,type:'bludgeoning',stat:'STR',props:'Two-handed',range:'5ft' },
+  Handaxe:    { dice:1,sides:6,type:'slashing',stat:'STR',props:'Light, Thrown (20/60ft)',range:'5ft or thrown' },
+  Javelin:    { dice:1,sides:6,type:'piercing',stat:'STR',props:'Thrown (30/120ft)',range:'5ft or thrown' },
+  'Light Hammer': { dice:1,sides:4,type:'bludgeoning',stat:'STR',props:'Light, Thrown (20/60ft)',range:'5ft or thrown' },
+  Mace:       { dice:1,sides:6,type:'bludgeoning',stat:'STR',props:'—',range:'5ft' },
+  Quarterstaff: { dice:1,sides:6,type:'bludgeoning',stat:'STR',props:'Versatile (1d8)',range:'5ft' },
+  Sickle:     { dice:1,sides:4,type:'slashing',stat:'STR',props:'Light',range:'5ft' },
+  Spear:      { dice:1,sides:6,type:'piercing',stat:'STR',props:'Thrown (20/60ft), Versatile (1d8)',range:'5ft or thrown' },
+  'Crossbow, Light': { dice:1,sides:8,type:'piercing',stat:'DEX',props:'Ammunition, Loading, Two-handed',range:'80/320ft' },
+  Dart:       { dice:1,sides:4,type:'piercing',stat:'DEX',props:'Finesse, Thrown (20/60ft)',range:'thrown' },
+  Shortbow:   { dice:1,sides:6,type:'piercing',stat:'DEX',props:'Ammunition, Two-handed',range:'80/320ft' },
+  Sling:      { dice:1,sides:4,type:'bludgeoning',stat:'DEX',props:'Ammunition',range:'30/120ft' },
+  Battleaxe:  { dice:1,sides:8,type:'slashing',stat:'STR',props:'Versatile (1d10)',range:'5ft' },
+  Flail:      { dice:1,sides:8,type:'bludgeoning',stat:'STR',props:'—',range:'5ft' },
+  Glaive:     { dice:1,sides:10,type:'slashing',stat:'STR',props:'Heavy, Reach, Two-handed',range:'10ft' },
+  Greataxe:   { dice:1,sides:12,type:'slashing',stat:'STR',props:'Heavy, Two-handed',range:'5ft' },
+  Greatsword: { dice:2,sides:6,type:'slashing',stat:'STR',props:'Heavy, Two-handed',range:'5ft' },
+  Halberd:    { dice:1,sides:10,type:'slashing',stat:'STR',props:'Heavy, Reach, Two-handed',range:'10ft' },
+  Lance:      { dice:1,sides:12,type:'piercing',stat:'STR',props:'Reach, Special',range:'10ft' },
+  Longsword:  { dice:1,sides:8,type:'slashing',stat:'STR',props:'Versatile (1d10)',range:'5ft' },
+  Maul:       { dice:2,sides:6,type:'bludgeoning',stat:'STR',props:'Heavy, Two-handed',range:'5ft' },
+  Morningstar: { dice:1,sides:8,type:'piercing',stat:'STR',props:'—',range:'5ft' },
+  Pike:       { dice:1,sides:10,type:'piercing',stat:'STR',props:'Heavy, Reach, Two-handed',range:'10ft' },
+  Rapier:     { dice:1,sides:8,type:'piercing',stat:'DEX',props:'Finesse',range:'5ft' },
+  Scimitar:   { dice:1,sides:6,type:'slashing',stat:'DEX',props:'Finesse, Light',range:'5ft' },
+  Shortsword: { dice:1,sides:6,type:'piercing',stat:'DEX',props:'Finesse, Light',range:'5ft' },
+  Trident:    { dice:1,sides:6,type:'piercing',stat:'STR',props:'Thrown (20/60ft), Versatile (1d8)',range:'5ft or thrown' },
+  'War Pick': { dice:1,sides:8,type:'piercing',stat:'STR',props:'—',range:'5ft' },
+  Warhammer:  { dice:1,sides:8,type:'bludgeoning',stat:'STR',props:'Versatile (1d10)',range:'5ft' },
+  Whip:       { dice:1,sides:4,type:'slashing',stat:'DEX',props:'Finesse, Reach',range:'10ft' },
+  Blowgun:    { dice:1,sides:1,type:'piercing',stat:'DEX',props:'Ammunition, Loading',range:'25/100ft' },
+  'Crossbow, Hand': { dice:1,sides:6,type:'piercing',stat:'DEX',props:'Ammunition, Light, Loading',range:'30/120ft' },
+  'Crossbow, Heavy': { dice:1,sides:10,type:'piercing',stat:'DEX',props:'Ammunition, Heavy, Loading, Two-handed',range:'100/400ft' },
+  Longbow:    { dice:1,sides:8,type:'piercing',stat:'DEX',props:'Ammunition, Heavy, Two-handed',range:'150/600ft' },
+  Net:        { dice:0,sides:0,type:'—',stat:'DEX',props:'Special, Thrown (5/15ft)',range:'thrown' },
+};
+
+const BACKGROUND_TRAITS = {
+  Acolyte:      { trait:"I idolize a particular hero of my faith and constantly evoke their deeds.", ideal:"Tradition — The ancient traditions of worship must be preserved.", bond:"I will do anything to protect the temple where I served.", flaw:"I judge others harshly and myself even more severely." },
+  Charlatan:    { trait:"I have a tell that reveals when I lie — but only the sharpest observers notice.", ideal:"Independence — I am a free spirit; no one tells me what to do.", bond:"I fleeced the wrong person once and vow never to do it again.", flaw:"I can't resist a con, even when the risk is absurd." },
+  Criminal:     { trait:"I always have a plan for when things go wrong.", ideal:"Freedom — Chains are for breaking.", bond:"I'm trying to pay off an old debt I owe to a generous benefactor.", flaw:"When I see something valuable, I can't think of anything but how to steal it." },
+  Entertainer:  { trait:"I know a story relevant to almost every situation.", ideal:"Creativity — The world in need of new ideas and bold action.", bond:"I want to be famous, whatever it takes.", flaw:"I'm a sucker for a pretty face." },
+  'Folk Hero':  { trait:"I judge people by their actions, not their words.", ideal:"Respect — People deserve to be treated with dignity.", bond:"I protect those who cannot protect themselves.", flaw:"I have trouble trusting in my allies." },
+  'Guild Artisan': { trait:"I believe that anything worth doing is worth doing right.", ideal:"Community — It is the duty of all to strengthen the guild.", bond:"The workshop where I learned my trade is my home.", flaw:"I'm never satisfied with what I have; I always want more." },
+  Hermit:       { trait:"I am utterly serene, even in the face of disaster.", ideal:"Self-knowledge — If you know yourself, nothing can harm you.", bond:"Something important was revealed to me in my seclusion.", flaw:"I'd rather solve problems with isolation than conversation." },
+  Noble:        { trait:"I take great pains to always look my best.", ideal:"Power — If I can attain more power, no one will tell me what to do.", bond:"I will face any challenge to win the approval of my family.", flaw:"I secretly believe that everyone is beneath me." },
+  Outlander:    { trait:"I watch over my friends as if they were a litter of newborn pups.", ideal:"Nature — The natural world is more important than civilization.", bond:"My family or clan is the most important thing in my life.", flaw:"I remember every insult and hold a grudge until I am avenged." },
+  Sage:         { trait:"I'm willing to listen to every side of an argument before I make my own judgment.", ideal:"Knowledge — The path to power and self-improvement is knowledge.", bond:"I have an ancient text that holds secrets that must not fall into the wrong hands.", flaw:"I speak without really thinking through my words, often insulting." },
+  Sailor:       { trait:"My friends know they can rely on me, no matter what.", ideal:"Respect — The thing that keeps a ship together is mutual respect.", bond:"I'll always remember my first ship, its captain, and the crew.", flaw:"Once someone questions my courage, I never back down no matter how dangerous." },
+  Soldier:      { trait:"I can stare down a hell hound without flinching.", ideal:"Responsibility — I do what I must and obey just authority.", bond:"Those who fought beside me are worth dying for.", flaw:"I made a terrible mistake in battle that cost many lives." },
+  Urchin:       { trait:"I hide scraps of food and trinkets away in my pockets.", ideal:"Community — We have to take care of each other.", bond:"My town or city is my home, and I'll fight to defend it.", flaw:"It's not stealing if I need it more than someone else." },
+};
+
+const NAMES = {
+  first: ['Aelindra','Bram','Caelindra','Dorran','Eilara','Farryn','Gideon','Hessa','Ivar','Jora','Kevan','Lyria','Morag','Nessa','Orik','Petra','Quinn','Renna','Sable','Tarn','Uladar','Vex','Wren','Xana','Yara','Zephyr','Aldric','Brenna','Corvin','Daveth'],
+  last: ['Moonwhisper','Ironforge','Ashwood','Stonehammer','Brightwell','Darkwater','Silverleaf','Coldfire','Dawnbringer','Emberveil','Frostmantle','Grimshaw','Hollowmere','Ironclad','Jadestone','Keldren','Longstride','Mirefall','Nighthollow','Oakhurst','Pinehallow','Quickblade','Riverstone','Swiftarrow','Thundermane','Underbough','Voidwalker','Windmere','Stormcrow','Blackthorn'],
+};
+
+// ===== STATE =====
+let stats = { STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10 };
+let proficientSkills = [];
+let rollHistory = [];
+
+// ===== HELPERS =====
+function d(sides) { return Math.floor(Math.random() * sides) + 1; }
+function mod(val) { return Math.floor((val - 10) / 2); }
+function fmtMod(m) { return m >= 0 ? `+${m}` : `${m}`; }
+function profBonus() {
+  const level = parseInt(document.getElementById('charLevel').value);
+  return Math.ceil(level / 4) + 1;
+}
+function getStatValue(stat) { return stats[stat]; }
+function getMod(stat) { return mod(getStatValue(stat)); }
+
+function roll4d6DropLowest() {
+  const rolls = [d(6),d(6),d(6),d(6)];
+  const dropped = Math.min(...rolls);
+  const idx = rolls.indexOf(dropped);
+  const kept = rolls.filter((_,i) => i !== idx);
+  return { total: kept.reduce((a,b) => a+b, 0), rolls, dropped };
+}
+
+function addHistory(entry) {
+  rollHistory.unshift(entry);
+  if (rollHistory.length > 30) rollHistory.pop();
+  const el = document.getElementById('rollHistory');
+  el.innerHTML = rollHistory.map(r => `<div class="history-entry">${r}</div>`).join('');
+}
+
+// ===== STAT RENDERING =====
+function renderStats() {
+  const race = document.getElementById('charRace').value;
+  const bonuses = RACE_BONUSES[race] || {};
+  const grid = document.getElementById('statsGrid');
+  grid.innerHTML = STATS.map(s => {
+    const base = stats[s];
+    const bonus = bonuses[s] || 0;
+    const total = base + bonus;
+    const m = mod(total);
+    return `<div class="stat-box">
+      <div class="stat-name">${s}</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-modifier">${fmtMod(m)}</div>
+      ${bonus ? `<div class="stat-rolls" style="color:var(--gold);">base ${base} +${bonus} racial</div>` : `<div class="stat-rolls">&nbsp;</div>`}
+      <button class="roll-btn-sm" onclick="rollSingleStat('${s}')">Reroll</button>
+    </div>`;
+  }).join('');
+}
+
+function rollSingleStat(s) {
+  const res = roll4d6DropLowest();
+  stats[s] = res.total;
+  addHistory(`${s}: rolled [${res.rolls.join(',')}] → kept ${res.total}`);
+  renderStats();
+  updateDerived();
+}
+
+function rollAllStats() {
+  STATS.forEach(s => {
+    const res = roll4d6DropLowest();
+    stats[s] = res.total;
+    addHistory(`${s}: [${res.rolls.join(',')}] drop ${res.dropped} = ${res.total}`);
+  });
+  renderStats();
+  updateDerived();
+}
+
+function standardArray() {
+  const arr = [15,14,13,12,10,8];
+  STATS.forEach((s,i) => stats[s] = arr[i]);
+  addHistory('Applied standard array: 15,14,13,12,10,8');
+  renderStats();
+  updateDerived();
+}
+
+function pointBuy() {
+  // Basic point buy: everyone starts at 8
+  const spread = [13,13,12,12,10,10];
+  STATS.forEach((s,i) => stats[s] = spread[i]);
+  addHistory('Applied point buy spread (27pts): 13,13,12,12,10,10');
+  renderStats();
+  updateDerived();
+}
+
+// ===== DERIVED STATS =====
+function updateDerived() {
+  renderStats();
+  const cls = document.getElementById('charClass').value;
+  const race = document.getElementById('charRace').value;
+  const level = parseInt(document.getElementById('charLevel').value);
+  const cd = CLASS_DATA[cls] || CLASS_DATA.Fighter;
+
+  // Proficiency
+  const pb = profBonus();
+  document.getElementById('profBonus').textContent = `+${pb}`;
+
+  // Hit die & HP
+  const hd = cd.hitDie;
+  document.getElementById('hitDieDisplay').textContent = `d${hd}`;
+  const raceBonuses = RACE_BONUSES[race] || {};
+  const conTotal = stats.CON + (raceBonuses.CON || 0);
+  const conMod = mod(conTotal);
+  const hp = hd + conMod + (level - 1) * (Math.floor(hd/2) + 1 + conMod);
+  document.getElementById('hpDisplay').textContent = Math.max(1, hp);
+
+  // Speed
+  document.getElementById('speedDisplay').textContent = RACE_SPEED[race] || 30;
+
+  // Initiative
+  const dexTotal = stats.DEX + (raceBonuses.DEX || 0);
+  document.getElementById('initDisplay').textContent = fmtMod(mod(dexTotal));
+
+  // AC (simplified)
+  const dexMod = mod(dexTotal);
+  let ac = 10 + dexMod; // unarmored default
+  if (cd.armorBase === 'light') ac = 11 + dexMod;
+  if (cd.armorBase === 'medium') ac = 14 + Math.min(dexMod, 2);
+  if (cd.armorBase === 'heavy') ac = 16;
+  if (cd.armorBase === 'unarmored+CON') ac = 10 + dexMod + mod(conTotal);
+  if (cd.armorBase === 'unarmored+WIS') ac = 10 + dexMod + mod(stats.WIS + (raceBonuses.WIS||0));
+  document.getElementById('acDisplay').textContent = ac;
+
+  // Saving throws
+  const saves = cd.saves || [];
+  document.getElementById('savingThrows').innerHTML = STATS.map(s => {
+    const sTotal = stats[s] + (raceBonuses[s]||0);
+    const proficient = saves.includes(s);
+    const bonus = mod(sTotal) + (proficient ? pb : 0);
+    return `<div class="skill-row">
+      <span class="skill-dot ${proficient?'proficient':''}"></span>
+      <span class="skill-name">${s}</span>
+      <span class="skill-bonus">${fmtMod(bonus)}</span>
+    </div>`;
+  }).join('');
+
+  updateSkills();
+}
+
+function updateSkills() {
+  const cls = document.getElementById('charClass').value;
+  const race = document.getElementById('charRace').value;
+  const raceBonuses = RACE_BONUSES[race] || {};
+  const pb = profBonus();
+  const available = CLASS_SKILLS[cls] || [];
+  // Pick 2 random proficiencies if not set
+  if (proficientSkills.length === 0 || !proficientSkills._class || proficientSkills._class !== cls) {
+    const shuffled = [...available].sort(() => Math.random() - 0.5);
+    proficientSkills = shuffled.slice(0, Math.min(4, available.length));
+    proficientSkills._class = cls;
+  }
+
+  const grid = document.getElementById('skillsGrid');
+  grid.innerHTML = SKILLS_LIST.map(sk => {
+    const base = stats[sk.stat] + (raceBonuses[sk.stat]||0);
+    const proficient = proficientSkills.includes(sk.name);
+    const bonus = mod(base) + (proficient ? pb : 0);
+    return `<div class="skill-row" onclick="toggleSkillProf('${sk.name}',this)" style="cursor:pointer;" title="Click to toggle proficiency">
+      <span class="skill-dot ${proficient?'proficient':''}"></span>
+      <span class="skill-name">${sk.name} <em style="font-size:0.8em;opacity:0.6;">(${sk.stat})</em></span>
+      <span class="skill-bonus">${fmtMod(bonus)}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleSkillProf(name, row) {
+  const idx = proficientSkills.indexOf(name);
+  if (idx > -1) proficientSkills.splice(idx, 1);
+  else proficientSkills.push(name);
+  proficientSkills._class = document.getElementById('charClass').value;
+  updateSkills();
+}
+
+// ===== WEAPONS =====
+function loadWeapon() {
+  const w = document.getElementById('weaponSelect').value;
+  const wd = WEAPON_DATA[w];
+  if (!wd) return;
+  const diceStr = wd.dice === 0 ? 'special' : `${wd.dice}d${wd.sides}`;
+  document.getElementById('weaponInfo').innerHTML =
+    `<strong>${w}</strong> — ${diceStr} ${wd.type}<br>
+     Properties: ${wd.props}<br>
+     Range: ${wd.range}<br>
+     Attack mod: ${wd.stat}`;
+}
+
+function rollAttackAndDamage(crit = false) {
+  const w = document.getElementById('weaponSelect').value;
+  const wd = WEAPON_DATA[w];
+  if (!wd) return;
+
+  const race = document.getElementById('charRace').value;
+  const raceBonuses = RACE_BONUSES[race] || {};
+  const pb = profBonus();
+  const statTotal = stats[wd.stat] + (raceBonuses[wd.stat]||0);
+  const statMod = mod(statTotal);
+  const attackMod = statMod + pb;
+
+  const attackRoll = d(20);
+  const isCrit = crit || attackRoll === 20;
+  const isFumble = attackRoll === 1 && !crit;
+
+  // Damage
+  let dmgRolls = [], dmgTotal = 0;
+  if (wd.dice > 0) {
+    const numDice = isCrit ? wd.dice * 2 : wd.dice;
+    for (let i = 0; i < numDice; i++) {
+      const r = d(wd.sides);
+      dmgRolls.push(r);
+      dmgTotal += r;
+    }
+    dmgTotal += statMod;
+  }
+
+  const attackTotal = isFumble ? 'FUMBLE' : (attackRoll === 20 || crit) ? 'CRIT!' : attackRoll + attackMod;
+  const diceStr = wd.dice === 0 ? 'special' : `${isCrit?wd.dice*2:wd.dice}d${wd.sides}`;
+  const histEntry = `⚔ ${w}: Attack ${isFumble?'FUMBLE':isCrit?'CRIT!':attackTotal} | Dmg ${dmgTotal} [${dmgRolls.join('+')}]+${statMod}`;
+  addHistory(histEntry);
+
+  document.getElementById('damageDisplay').innerHTML = `
+    <div class="damage-result">
+      ${isCrit ? '<div class="crit-banner">⚡ CRITICAL HIT ⚡</div>' : ''}
+      ${isFumble ? '<div class="crit-banner" style="background:#555;">💀 FUMBLE</div>' : ''}
+      <div class="attack-roll-result">Attack Roll: d20(${attackRoll}) ${fmtMod(attackMod)} = <strong>${isFumble?'Miss!':typeof attackTotal==='number'?attackTotal:attackTotal}</strong></div>
+      <div style="font-size:0.8em;margin-bottom:8px;opacity:0.6;">${diceStr} + ${statMod} ${wd.type}</div>
+      <div class="damage-total">${wd.dice===0 ? '—' : Math.max(0, dmgTotal)}</div>
+      <div class="damage-breakdown">[${dmgRolls.join(' + ')}] ${statMod>=0?'+':''} ${statMod}</div>
+    </div>`;
+}
+
+function rollDamageOnly() {
+  const w = document.getElementById('weaponSelect').value;
+  const wd = WEAPON_DATA[w];
+  if (!wd || wd.dice === 0) return;
+
+  const race = document.getElementById('charRace').value;
+  const raceBonuses = RACE_BONUSES[race] || {};
+  const statTotal = stats[wd.stat] + (raceBonuses[wd.stat]||0);
+  const statMod = mod(statTotal);
+
+  let dmgRolls = [], dmgTotal = 0;
+  for (let i = 0; i < wd.dice; i++) {
+    const r = d(wd.sides);
+    dmgRolls.push(r);
+    dmgTotal += r;
+  }
+  dmgTotal += statMod;
+  addHistory(`💥 ${w} damage: [${dmgRolls.join('+')}]+${statMod} = ${dmgTotal}`);
+
+  document.getElementById('damageDisplay').innerHTML = `
+    <div class="damage-result">
+      <div style="font-size:0.8em;margin-bottom:8px;opacity:0.6;">${wd.dice}d${wd.sides} + ${statMod} ${wd.type}</div>
+      <div class="damage-total">${Math.max(0, dmgTotal)}</div>
+      <div class="damage-breakdown">[${dmgRolls.join(' + ')}] ${statMod>=0?'+':''} ${statMod}</div>
+    </div>`;
+}
+
+function quickRoll(sides) {
+  const result = d(sides);
+  document.getElementById('quickRollResult').textContent = `d${sides} → ${result}`;
+  addHistory(`d${sides}: ${result}`);
+}
+
+// ===== DEATH SAVES =====
+function toggleSave(el, type) {
+  el.textContent = el.textContent === '○' ? (type==='s'?'●':'✕') : '○';
+}
+
+function rollDeathSave() {
+  const roll = d(20);
+  let msg = '';
+  if (roll === 20) msg = `20 — REVIVE with 1 HP! 🌟`;
+  else if (roll === 1) msg = `1 — Two failures! 💀`;
+  else if (roll >= 10) msg = `${roll} — Success ✓`;
+  else msg = `${roll} — Failure ✗`;
+  document.getElementById('deathSaveResult').textContent = msg;
+  addHistory(`Death Save: ${msg}`);
+}
+
+// ===== TRAITS =====
+function updateTraits() {
+  const bg = document.getElementById('charBackground').value;
+  const t = BACKGROUND_TRAITS[bg] || BACKGROUND_TRAITS.Sage;
+  document.getElementById('traitDisplay').innerHTML = `<p>${t.trait}</p>`;
+  document.getElementById('idealDisplay').innerHTML = `<p>${t.ideal}</p>`;
+  document.getElementById('bondDisplay').innerHTML = `<p>${t.bond}</p><p style="margin-top:6px;color:var(--red);"><em>Flaw: ${t.flaw}</em></p>`;
+}
+
+// ===== CURRENCY =====
+function rollStartingGold() {
+  const cls = document.getElementById('charClass').value;
+  const goldTable = {
+    Barbarian:3,Bard:5,Cleric:5,Druid:2,Fighter:5,Monk:5,Paladin:5,
+    Ranger:5,Rogue:4,Sorcerer:3,Warlock:4,Wizard:4,Artificer:5,'Blood Hunter':4
+  };
+  const dice = goldTable[cls] || 4;
+  let total = 0;
+  for (let i=0;i<dice;i++) total += d(4);
+  total *= 10;
+  document.getElementById('coinGP').value = total;
+  addHistory(`Starting gold (${dice}d4×10): ${total} GP`);
+}
+
+// ===== FULL GENERATE =====
+function generateFull() {
+  // Random name
+  const fn = NAMES.first[Math.floor(Math.random()*NAMES.first.length)];
+  const ln = NAMES.last[Math.floor(Math.random()*NAMES.last.length)];
+  document.getElementById('charName').value = `${fn} ${ln}`;
+
+  // Random selects
+  const races = Array.from(document.getElementById('charRace').options).map(o => o.value);
+  const classes = Array.from(document.getElementById('charClass').options).map(o => o.value);
+  const backgrounds = Array.from(document.getElementById('charBackground').options).map(o => o.value);
+  const alignments = Array.from(document.getElementById('charAlignment').options).map(o => o.value);
+
+  document.getElementById('charRace').value = races[Math.floor(Math.random()*races.length)];
+  document.getElementById('charClass').value = classes[Math.floor(Math.random()*classes.length)];
+  document.getElementById('charBackground').value = backgrounds[Math.floor(Math.random()*backgrounds.length)];
+  document.getElementById('charAlignment').value = alignments[Math.floor(Math.random()*alignments.length)];
+  document.getElementById('charLevel').value = 1;
+
+  proficientSkills = [];
+  rollAllStats();
+  updateTraits();
+  rollStartingGold();
+  loadWeapon();
+  addHistory(`✨ Generated new character: ${fn} ${ln}`);
+}
+
+// ===== INIT =====
+window.onload = () => {
+  renderStats();
+  updateDerived();
+  updateTraits();
+  loadWeapon();
+};
+</script>
+</body>
+</html>
