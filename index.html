@@ -106,7 +106,7 @@ input, textarea {
 }
 input:focus, textarea:focus { outline: none; border-color: rgba(196,152,58,0.5); }
 
-button {
+button, .btn {
   border: 1px solid rgba(220,199,154,0.35);
   background: rgba(255,255,255,0.04);
   color: var(--paper);
@@ -118,7 +118,7 @@ button {
   font-size: 0.9rem;
   white-space: nowrap;
 }
-button:hover { border-color: var(--gold); color: var(--gold); }
+button:hover, .btn:hover { border-color: var(--gold); color: var(--gold); }
 
 .btn-primary {
   background: linear-gradient(135deg, #8d3125, #a33a2b);
@@ -243,6 +243,10 @@ button:hover { border-color: var(--gold); color: var(--gold); }
     <div class="create-row">
       <input id="newCampaignName" placeholder="New campaign name..." style="flex:1;min-width:180px;max-width:320px;">
       <button id="createBtn" class="btn-primary">+ Create Campaign</button>
+      <label class="btn" style="cursor:pointer;" title="Load a campaign from a saved JSON file">
+        📂 Load from File
+        <input type="file" id="loadFileInput" accept=".json" style="display:none;">
+      </label>
     </div>
     <div id="flash" class="flash"></div>
     <div id="campaignGrid" class="campaign-grid"></div>
@@ -371,8 +375,36 @@ function render() {
   }).join('');
 }
 
+function loadFromFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!data || !data.id || !data.name) { showFlash('Invalid campaign file.', true); return; }
+      const list = loadCampaigns();
+      const existing = list.find(c => c.id === data.id);
+      if (existing) {
+        if (!confirm(`"${data.name}" already exists. Overwrite it with the file version?`)) return;
+        list[list.indexOf(existing)] = data;
+      } else {
+        list.push(data);
+      }
+      saveCampaigns(list);
+      showFlash(`"${data.name}" loaded.`);
+      render();
+    } catch(e) {
+      showFlash('Could not read file — is it a valid campaign JSON?', true);
+    }
+  };
+  reader.readAsText(file);
+  // Reset so the same file can be reloaded if needed
+  document.getElementById('loadFileInput').value = '';
+}
+
 document.getElementById('createBtn').addEventListener('click', createCampaign);
 document.getElementById('newCampaignName').addEventListener('keydown', e => { if (e.key==='Enter') createCampaign(); });
+document.getElementById('loadFileInput').addEventListener('change', e => loadFromFile(e.target.files[0]));
 
 render();
 </script>
