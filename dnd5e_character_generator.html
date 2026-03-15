@@ -67,6 +67,35 @@
 
   .tome > * { position: relative; z-index: 1; }
 
+  .adventure-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 10px;
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 3px;
+    background: rgba(255,255,255,0.22);
+  }
+
+  .adventure-nav a {
+    text-decoration: none;
+    color: var(--ink-light);
+    border: 1px solid var(--parchment-shadow);
+    border-radius: 2px;
+    padding: 5px 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .adventure-nav a:hover {
+    border-color: var(--gold);
+    color: var(--red);
+  }
+
   .header {
     text-align: center;
     margin-bottom: 30px;
@@ -562,6 +591,13 @@
 <body>
 <div class="tome">
 
+  <nav class="adventure-nav">
+    <a href="index.html">Hub</a>
+    <a href="npc_creator.html">NPC Creator</a>
+    <a href="monster_manual.html">Monster Manual</a>
+    <a href="spellbook.html">Spellbook</a>
+  </nav>
+
   <div class="header">
     <h1><span>⚔ Dungeons & Dragons ⚔</span>Fifth Edition Character Folio</h1>
   </div>
@@ -879,6 +915,8 @@
   <div class="ornament">✦ ✦ ✦</div>
   <div style="text-align:center;margin-top:10px;">
     <button class="btn btn-primary" style="font-size:1em;padding:14px 40px;" onclick="generateFull()">⚄ Generate Random Character</button>
+    <button class="btn btn-secondary" style="font-size:1em;padding:14px 32px;margin-left:8px;" onclick="saveCharacterToVault()">Save Character To Hub</button>
+    <div id="saveStatus" style="margin-top:8px;font-family:'Cinzel',serif;font-size:0.8em;color:var(--red);min-height:20px;"></div>
   </div>
 
 </div>
@@ -1020,6 +1058,7 @@ const NAMES = {
 };
 
 // ===== STATE =====
+const PC_STORAGE_KEY = 'dndToolsPlayerCharacters';
 let stats = { STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10 };
 let proficientSkills = [];
 let rollHistory = [];
@@ -1321,6 +1360,60 @@ function rollStartingGold() {
   total *= 10;
   document.getElementById('coinGP').value = total;
   addHistory(`Starting gold (${dice}d4×10): ${total} GP`);
+}
+
+function readCharacters() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(PC_STORAGE_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function writeCharacters(characters) {
+  localStorage.setItem(PC_STORAGE_KEY, JSON.stringify(characters));
+}
+
+function currentTotalStat(statKey) {
+  const race = document.getElementById('charRace').value;
+  const raceBonuses = RACE_BONUSES[race] || {};
+  return (stats[statKey] || 10) + (raceBonuses[statKey] || 0);
+}
+
+function getCurrentCharacterSnapshot() {
+  const timestamp = new Date().toISOString();
+  return {
+    id: `pc-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+    name: document.getElementById('charName').value.trim() || 'Unnamed Adventurer',
+    className: document.getElementById('charClass').value,
+    race: document.getElementById('charRace').value,
+    background: document.getElementById('charBackground').value,
+    alignment: document.getElementById('charAlignment').value,
+    level: parseInt(document.getElementById('charLevel').value, 10) || 1,
+    STR: currentTotalStat('STR'),
+    DEX: currentTotalStat('DEX'),
+    CON: currentTotalStat('CON'),
+    INT: currentTotalStat('INT'),
+    WIS: currentTotalStat('WIS'),
+    CHA: currentTotalStat('CHA'),
+    hp: parseInt(document.getElementById('hpDisplay').textContent, 10) || 1,
+    ac: parseInt(document.getElementById('acDisplay').textContent, 10) || 10,
+    initiative: parseInt(document.getElementById('initDisplay').textContent, 10) || 0,
+    speed: parseInt(document.getElementById('speedDisplay').textContent, 10) || 30,
+    notes: '',
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  };
+}
+
+function saveCharacterToVault() {
+  const character = getCurrentCharacterSnapshot();
+  const characters = readCharacters();
+  characters.unshift(character);
+  writeCharacters(characters);
+  document.getElementById('saveStatus').textContent = `Saved ${character.name} to Hub`;
+  addHistory(`💾 Saved ${character.name} to Campaign Hub`);
 }
 
 // ===== FULL GENERATE =====

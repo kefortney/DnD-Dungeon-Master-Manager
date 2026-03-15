@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D NPC Creator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Spectral:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+:root {
+  --night: #121017;
+  --night-2: #1e1730;
+  --paper: #ece2cf;
+  --paper-dim: #d2c3a6;
+  --accent: #b84f3e;
+  --accent-2: #d67f37;
+  --glow: #8fc6a8;
+  --ink: #231f2b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  color: var(--paper);
+  font-family: 'Source Sans 3', sans-serif;
+  background:
+    radial-gradient(900px 500px at 8% 0%, rgba(184,79,62,0.24), transparent 60%),
+    radial-gradient(800px 500px at 100% 100%, rgba(143,198,168,0.2), transparent 50%),
+    linear-gradient(155deg, #120f19, #1a1528 45%, #1e1730);
+  padding: 24px;
+}
+
+.shell {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid rgba(210,195,166,0.3);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  margin-bottom: 14px;
+}
+
+.topbar h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--accent-2);
+  letter-spacing: 1.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--paper);
+  text-decoration: none;
+  border: 1px solid rgba(210,195,166,0.3);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+.nav-links a:hover {
+  color: var(--accent-2);
+  border-color: var(--accent-2);
+}
+
+.card {
+  border: 1px solid rgba(210,195,166,0.25);
+  border-radius: 14px;
+  padding: 16px;
+  background: linear-gradient(160deg, rgba(10,10,16,0.46), rgba(35,28,52,0.52));
+  margin-bottom: 12px;
+}
+
+.card h2 {
+  font-family: 'Spectral', serif;
+  color: var(--paper-dim);
+  margin-bottom: 10px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  color: #c8bb9d;
+  margin-bottom: 2px;
+}
+
+input, textarea, select {
+  width: 100%;
+  border: 1px solid rgba(210,195,166,0.3);
+  border-radius: 8px;
+  padding: 8px;
+  color: var(--paper);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+textarea {
+  min-height: 74px;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+button {
+  border: 1px solid rgba(210,195,166,0.35);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--paper);
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:hover {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+}
+
+.btn-main {
+  background: linear-gradient(135deg, #8e3427, #b84f3e);
+  border-color: #b84f3e;
+}
+
+.btn-main:hover {
+  color: var(--paper);
+}
+
+.output {
+  border: 1px dashed rgba(210,195,166,0.4);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 8px;
+  color: #e7decc;
+  background: rgba(0,0,0,0.2);
+}
+
+.flash {
+  min-height: 18px;
+  margin-top: 6px;
+  color: var(--glow);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 700px) {
+  body { padding: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <h1>NPC Creator</h1>
+    <nav class="nav-links">
+      <a href="index.html">Hub</a>
+      <a href="dnd5e_character_generator.html">Character Generator</a>
+      <a href="monster_manual.html">Monster Manual</a>
+      <a href="spellbook.html">Spellbook</a>
+    </nav>
+  </header>
+
+  <section class="card">
+    <h2>Generate NPC</h2>
+    <div class="row">
+      <div>
+        <label for="npcName">Name</label>
+        <input id="npcName" type="text" placeholder="Generate or type a name">
+      </div>
+      <div>
+        <label for="npcClass">Class</label>
+        <select id="npcClass"></select>
+      </div>
+      <div>
+        <label for="npcAncestry">Ancestry</label>
+        <select id="npcAncestry"></select>
+      </div>
+      <div>
+        <label for="npcRole">Role</label>
+        <select id="npcRole"></select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="npcAlignment">Alignment</label>
+        <select id="npcAlignment">
+          <option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option>
+          <option>Lawful Neutral</option><option>True Neutral</option><option>Chaotic Neutral</option>
+          <option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option>
+        </select>
+      </div>
+      <div>
+        <label for="npcAC">Armor Class</label>
+        <input id="npcAC" type="number" value="12">
+      </div>
+      <div>
+        <label for="npcHP">Hit Points</label>
+        <input id="npcHP" type="number" value="18">
+      </div>
+      <div>
+        <label for="npcSpeed">Speed</label>
+        <input id="npcSpeed" type="number" value="30">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="npcPersonality">Personality</label>
+        <input id="npcPersonality" type="text" placeholder="Driven, cautious, sarcastic...">
+      </div>
+      <div>
+        <label for="npcMotivation">Motivation</label>
+        <input id="npcMotivation" type="text" placeholder="What do they want most?">
+      </div>
+      <div>
+        <label for="npcSecret">Secret</label>
+        <input id="npcSecret" type="text" placeholder="Hidden truth or hook">
+      </div>
+    </div>
+
+    <label for="npcNotes">Notes</label>
+    <textarea id="npcNotes" placeholder="Rumors, voice, faction ties, quest hooks..."></textarea>
+
+    <div class="actions">
+      <button id="generateNameBtn">Generate Name</button>
+      <button id="generateDetailsBtn">Generate Details</button>
+      <button id="generateAllBtn" class="btn-main">Generate Full NPC</button>
+      <button id="saveNpcBtn" class="btn-main">Save NPC</button>
+    </div>
+
+    <div id="npcPreview" class="output">Generate details to preview the NPC profile.</div>
+    <div id="flash" class="flash"></div>
+  </section>
+</div>
+
+<script>
+const STORAGE_KEYS = {
+  npcProfiles: 'dndToolsNpcProfiles',
+  npcNotes: 'dndToolsNpcNotes'
+};
+
+const CLASSES = ['Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard','Artificer','Blood Hunter'];
+const ANCESTRIES = ['Human','Elf','Dwarf','Halfling','Gnome','Half-Elf','Half-Orc','Tiefling','Dragonborn','Aasimar','Tabaxi','Firbolg','Goliath','Kenku'];
+const ROLES = ['Guard Captain','Scholar','Merchant','Innkeeper','Cult Agent','Scout','Fixer','Courier','Priest','Sellsword','Healer','Courtier'];
+
+const PERSONALITIES = ['calm under pressure','suspicious of strangers','charming but evasive','strict and duty-bound','recklessly brave','dryly humorous','always watching exits','warm and empathetic'];
+const MOTIVATIONS = ['protect their family','gain political influence','repay an old debt','hide a dangerous mistake','recover a stolen heirloom','break a curse','secure rare knowledge'];
+const SECRETS = ['is secretly an informant','owes money to a criminal syndicate','is the missing heir to a noble line','accidentally caused a past tragedy','is under magical surveillance','is sheltering a fugitive'];
+
+const PREFIXES = ['Aer','Bel','Cor','Dar','El','Fen','Gar','Hel','Is','Jar','Kel','Lor','Mor','Nor','Or','Per','Quin','Rin','Syl','Tor','Val','Wyn','Xan','Yor','Zel'];
+const SUFFIXES = ['adin','bryn','cor','dell','eth','fira','gorn','hild','ian','jara','kas','lor','mund','nys','or','pris','quil','ras','sor','tor','um','vash','wyn','xil','yra','zorn'];
+
+function safeRead(key) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function safeWrite(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generateName() {
+  const first = pick(PREFIXES) + pick(SUFFIXES);
+  const last = pick(PREFIXES) + pick(SUFFIXES);
+  const result = `${first.charAt(0).toUpperCase()}${first.slice(1)} ${last.charAt(0).toUpperCase()}${last.slice(1)}`;
+  document.getElementById('npcName').value = result;
+  return result;
+}
+
+function generateDetails() {
+  document.getElementById('npcClass').value = pick(CLASSES);
+  document.getElementById('npcAncestry').value = pick(ANCESTRIES);
+  document.getElementById('npcRole').value = pick(ROLES);
+
+  document.getElementById('npcAlignment').selectedIndex = Math.floor(Math.random() * document.getElementById('npcAlignment').options.length);
+  document.getElementById('npcAC').value = String(10 + Math.floor(Math.random() * 8));
+  document.getElementById('npcHP').value = String(8 + Math.floor(Math.random() * 40));
+  document.getElementById('npcSpeed').value = String([25, 30, 35][Math.floor(Math.random() * 3)]);
+
+  document.getElementById('npcPersonality').value = pick(PERSONALITIES);
+  document.getElementById('npcMotivation').value = pick(MOTIVATIONS);
+  document.getElementById('npcSecret').value = pick(SECRETS);
+}
+
+function generateFullNpc() {
+  generateName();
+  generateDetails();
+  updatePreview();
+}
+
+function populateSelect(id, values) {
+  const select = document.getElementById(id);
+  select.innerHTML = values.map(v => `<option>${v}</option>`).join('');
+}
+
+function npcFromInputs() {
+  return {
+    id: `npc-profile-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+    name: document.getElementById('npcName').value.trim(),
+    className: document.getElementById('npcClass').value,
+    ancestry: document.getElementById('npcAncestry').value,
+    role: document.getElementById('npcRole').value,
+    alignment: document.getElementById('npcAlignment').value,
+    ac: parseInt(document.getElementById('npcAC').value, 10) || 10,
+    hp: parseInt(document.getElementById('npcHP').value, 10) || 8,
+    speed: parseInt(document.getElementById('npcSpeed').value, 10) || 30,
+    personality: document.getElementById('npcPersonality').value.trim(),
+    motivation: document.getElementById('npcMotivation').value.trim(),
+    secret: document.getElementById('npcSecret').value.trim(),
+    notes: document.getElementById('npcNotes').value.trim(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function updatePreview() {
+  const npc = npcFromInputs();
+  const preview = document.getElementById('npcPreview');
+  preview.innerHTML = `
+    <strong>${npc.name || 'Unnamed NPC'}</strong><br>
+    ${npc.className} | ${npc.ancestry} | ${npc.role}<br>
+    ${npc.alignment} | AC ${npc.ac} | HP ${npc.hp} | Speed ${npc.speed}<br>
+    <em>Personality:</em> ${npc.personality || '—'}<br>
+    <em>Motivation:</em> ${npc.motivation || '—'}<br>
+    <em>Secret:</em> ${npc.secret || '—'}
+  `;
+}
+
+function showFlash(message, isError) {
+  const flash = document.getElementById('flash');
+  flash.textContent = message;
+  flash.style.color = isError ? '#ff8a7b' : '#8fc6a8';
+}
+
+function saveNpc() {
+  const npc = npcFromInputs();
+  if (!npc.name) {
+    showFlash('NPC needs a name before saving.', true);
+    return;
+  }
+
+  const profiles = safeRead(STORAGE_KEYS.npcProfiles);
+  profiles.unshift(npc);
+  safeWrite(STORAGE_KEYS.npcProfiles, profiles);
+
+  // Keep a slim NPC note entry in the quick log collection.
+  const noteList = safeRead(STORAGE_KEYS.npcNotes);
+  noteList.unshift({
+    id: `npc-note-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+    name: npc.name,
+    className: npc.className,
+    notes: npc.notes,
+    createdAt: npc.createdAt,
+    updatedAt: npc.updatedAt
+  });
+  safeWrite(STORAGE_KEYS.npcNotes, noteList);
+
+  showFlash('NPC saved to registry and NPC notes.', false);
+}
+
+function wireEvents() {
+  document.getElementById('generateNameBtn').addEventListener('click', () => {
+    generateName();
+    updatePreview();
+  });
+
+  document.getElementById('generateDetailsBtn').addEventListener('click', () => {
+    generateDetails();
+    updatePreview();
+  });
+
+  document.getElementById('generateAllBtn').addEventListener('click', generateFullNpc);
+  document.getElementById('saveNpcBtn').addEventListener('click', saveNpc);
+
+  ['npcName','npcClass','npcAncestry','npcRole','npcAlignment','npcAC','npcHP','npcSpeed','npcPersonality','npcMotivation','npcSecret','npcNotes']
+    .forEach(id => document.getElementById(id).addEventListener('input', updatePreview));
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  populateSelect('npcClass', CLASSES);
+  populateSelect('npcAncestry', ANCESTRIES);
+  populateSelect('npcRole', ROLES);
+  wireEvents();
+  generateFullNpc();
+});
+</script>
+</body>
+</html>

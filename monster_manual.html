@@ -135,6 +135,30 @@ body {
   align-items: center;
 }
 
+.world-nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.world-nav a {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  padding: 5px 10px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.03);
+}
+
+.world-nav a:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
 .filter-btn {
   background: transparent;
   border: 1px solid var(--border);
@@ -655,6 +679,12 @@ select.cr-select {
     <div class="site-title">
       Field Guide<span>to Monsters & Beasts</span>
     </div>
+    <nav class="world-nav">
+      <a href="index.html">Hub</a>
+      <a href="dnd5e_character_generator.html">Characters</a>
+      <a href="npc_creator.html">NPC Creator</a>
+      <a href="spellbook.html">Spellbook</a>
+    </nav>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Search by name, type, or environment..." oninput="filterMonsters()">
     </div>
