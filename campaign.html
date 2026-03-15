@@ -1488,17 +1488,6 @@ function navigateLocation(direction) {
   renderLocations(); // update active badge
 }
 
-function updateEntityField(kind, id, field, value) {
-  let arr = kind==='pc' ? CAMPAIGN.pcs : kind==='npc' ? CAMPAIGN.npcs : CAMPAIGN.monsters;
-  const ent = findById(arr, id);
-  if (!ent) return;
-  const nums = ['initiative','currentHp','maxHp','hpRolled','ac','hp','level','speed',
-    'STR','DEX','CON','INT','WIS','CHA'];
-  ent[field] = nums.includes(field) ? intOr(value, 0) : value;
-  ent.updatedAt = nowIso();
-  persistCampaign();
-}
-
 // ══════════════════════════════════════════════════════════════
 //  LOCATIONS RENDER
 // ══════════════════════════════════════════════════════════════
@@ -2018,9 +2007,11 @@ async function saveCampaignJson() {
       flash('exportFlash', 'Campaign saved.');
     } catch(e) {
       if (e.name === 'AbortError') return; // user cancelled picker
-      // handle became invalid (file deleted/moved) — reset and retry
-      _saveFileHandle = null;
-      saveCampaignJson();
+      // Handle became invalid (file deleted/moved) — reset and retry once only
+      if (_saveFileHandle) {
+        _saveFileHandle = null;
+        saveCampaignJson();
+      }
     }
   } else {
     // Fallback: trigger download (older browsers / Firefox)
@@ -2071,22 +2062,6 @@ function dlCsv(content, name) {
 }
 
 function locName(id) { const a=findById(CAMPAIGN.areas,id); return a?a.name:''; }
-
-function exportSummary() {
-  const d = new Date().toISOString().slice(0,10);
-  dlCsv(toCsv([
-    ['field','value'],
-    ['name', CAMPAIGN.name||''],
-    ['notes', CAMPAIGN.notes||''],
-    ['activeLocation', locName(CAMPAIGN.activeAreaId)],
-    ['locations', CAMPAIGN.areas.length],
-    ['characters', CAMPAIGN.pcs.length],
-    ['npcs', CAMPAIGN.npcs.length],
-    ['monsters', CAMPAIGN.monsters.length],
-    ['savedAt', d],
-  ]), `${CAMPAIGN.name||'campaign'}-summary-${d}.csv`);
-  flash('exportFlash','Summary CSV exported.');
-}
 
 function exportPcs() {
   const d = new Date().toISOString().slice(0,10);
@@ -2242,7 +2217,6 @@ function checkIncomingMonster() {
     localStorage.removeItem(SK.addMonster);
     const mon = JSON.parse(raw);
     if (!mon||!mon.name) return;
-    const hpNum = intOr(mon.hpNum || mon.ac, 10); // hpNum from monster_manual payload
     const hp = intOr(mon.hpNum, 10);
     CAMPAIGN.monsters.push({
       id:uid('cmon'), customName:'', sourceName:mon.name,
@@ -2398,8 +2372,13 @@ function closeEntityModal() {
 // ══════════════════════════════════════════════════════════════
 function dmSave(taId = 'dmNotes') {
   const value = document.getElementById(taId).value;
-  if (taId === 'campNotes') CAMPAIGN.notes = value;
-  else CAMPAIGN.dmNotes = value;
+  if (taId === 'campNotes') {
+    CAMPAIGN.notes = value;
+    if (campNotesPreviewOn) document.getElementById('campNotesPreview').innerHTML = dmRenderMd(value);
+  } else {
+    CAMPAIGN.dmNotes = value;
+    if (dmPreviewOn) document.getElementById('dmNotesPreview').innerHTML = dmRenderMd(value);
+  }
   persistCampaign();
 }
 
@@ -2637,7 +2616,6 @@ function renderAll() {
   // Reset dm notes preview
   dmPreviewOn = false;
   toggleDmPreview();
-  document.getElementById('campaignTitleDisplay') && (document.getElementById('campaignTitleDisplay').textContent = CAMPAIGN.name || '');
   populateMonsterSelect();
   populateVaultSelect();
   populateRegistrySelect();
