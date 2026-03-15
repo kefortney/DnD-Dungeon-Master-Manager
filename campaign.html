@@ -879,6 +879,7 @@ button:hover { border-color: var(--gold); color: var(--gold); }
   <a href="campaign.html" id="campNavLink" class="campaign-link active" style="display:none;">Campaign</a>
   <a href="dnd5e_character_generator.html">Characters</a>
   <a href="npc_creator.html">NPC Creator</a>
+  <a href="location_creator.html">Locations</a>
   <a href="monster_manual.html">Monster Manual</a>
   <a href="spellbook.html">Spellbook</a>
 </nav>
@@ -1115,7 +1116,8 @@ const SK = {
   activeCampaign:'dndToolsActiveCampaignId',
   vault:         'dndToolsPlayerCharacters',
   registry:      'dndToolsNpcProfiles',
-  addMonster:    'dndToolsAddMonsterToCampaign'
+  addMonster:    'dndToolsAddMonsterToCampaign',
+  addLocation:   'dndToolsAddLocationToCampaign'
 };
 
 const MONSTER_REF = [
@@ -2159,6 +2161,27 @@ function checkIncomingMonster() {
 }
 
 // ══════════════════════════════════════════════════════════════
+//  INCOMING LOCATION FROM LOCATION CREATOR
+// ══════════════════════════════════════════════════════════════
+function checkIncomingLocation() {
+  try {
+    const raw = localStorage.getItem(SK.addLocation);
+    if (!raw) return;
+    localStorage.removeItem(SK.addLocation);
+    const data = JSON.parse(raw);
+    if (!data || !data.name) return;
+    CAMPAIGN.areas.push({ id: uid('area'), name: data.name, notes: data.notes || '' });
+    if (!CAMPAIGN.activeAreaId && CAMPAIGN.areas.length === 1) {
+      CAMPAIGN.activeAreaId = CAMPAIGN.areas[0].id;
+    }
+    persistCampaign();
+    renderLocations();
+    renderEncounterTracker();
+    flash('infoFlash', `Location "${data.name}" added from Location Creator.`);
+  } catch { /* ignore */ }
+}
+
+// ══════════════════════════════════════════════════════════════
 //  DICE ROLLER
 // ══════════════════════════════════════════════════════════════
 const diceHistory = [];
@@ -2641,10 +2664,12 @@ window.addEventListener('DOMContentLoaded', () => {
   setupEvents();
   renderAll();
   checkIncomingMonster();
+  checkIncomingLocation();
 });
 
 window.addEventListener('storage', e => {
-  if (e.key===SK.addMonster) checkIncomingMonster();
+  if (e.key===SK.addMonster)   checkIncomingMonster();
+  if (e.key===SK.addLocation)  checkIncomingLocation();
 });
 </script>
 </body>
