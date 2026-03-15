@@ -67,34 +67,41 @@
 
   .tome > * { position: relative; z-index: 1; }
 
-  .adventure-nav {
+  .site-nav {
+    background: rgba(10,13,18,0.97);
+    border-bottom: 1px solid rgba(196,152,58,0.3);
+    padding: 0 24px;
     display: flex;
+    align-items: center;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-    padding: 10px;
-    border: 1px solid var(--parchment-shadow);
-    border-radius: 3px;
-    background: rgba(255,255,255,0.22);
   }
-
-  .adventure-nav a {
-    text-decoration: none;
-    color: var(--ink-light);
-    border: 1px solid var(--parchment-shadow);
-    border-radius: 2px;
-    padding: 5px 10px;
+  .nav-brand {
     font-family: 'Cinzel', serif;
-    font-size: 0.72em;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    background: rgba(255,255,255,0.3);
+    color: #c4983a;
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+    padding: 14px 20px 14px 0;
+    margin-right: 8px;
+    border-right: 1px solid rgba(196,152,58,0.3);
+    white-space: nowrap;
   }
-
-  .adventure-nav a:hover {
-    border-color: var(--gold);
-    color: var(--red);
+  .nav-brand span { color: #dcc79a; font-size: 0.8rem; display: block; letter-spacing: 0.5px; }
+  .site-nav a {
+    color: #a8b6c8;
+    text-decoration: none;
+    padding: 14px 14px;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
   }
+  .site-nav a:hover { color: #c4983a; border-bottom-color: rgba(196,152,58,0.4); }
+  .site-nav a.active { color: #c4983a; border-bottom-color: #c4983a; }
 
   .header {
     text-align: center;
@@ -589,16 +596,17 @@
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
+  <a href="index.html">Hub</a>
+  <a href="campaign.html" id="campaignNavLink" style="display:none;">Campaign</a>
+  <a href="dnd5e_character_generator.html" class="active">Characters</a>
+  <a href="npc_creator.html">NPC Creator</a>
+  <a href="monster_manual.html">Monster Manual</a>
+  <a href="spellbook.html">Spellbook</a>
+</nav>
+<script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
 <div class="tome">
-
-  <nav class="adventure-nav">
-    <a href="index.html">Hub</a>
-    <a id="campaignNavLink" href="campaign.html" style="display:none;">Campaign</a>
-    <a href="dnd5e_character_generator.html">Character Generator</a>
-    <a href="npc_creator.html">NPC Creator</a>
-    <a href="monster_manual.html">Monster Manual</a>
-    <a href="spellbook.html">Spellbook</a>
-  </nav>
 
   <div class="header">
     <h1><span>⚔ Dungeons & Dragons ⚔</span>Fifth Edition Character Folio</h1>
@@ -1523,10 +1531,6 @@ window.onload = () => {
   updateTraits();
   loadWeapon();
   applySelectedCharacterFromHub();
-  if (localStorage.getItem('dndToolsActiveCampaignId')) {
-    const link = document.getElementById('campaignNavLink');
-    if (link) link.style.display = '';
-  }
 };
 </script>
 </body>

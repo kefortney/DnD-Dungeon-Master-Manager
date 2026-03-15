@@ -137,26 +137,32 @@ body {
 
 .world-nav {
   display: flex;
-  gap: 6px;
+  gap: 0;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .world-nav a {
   text-decoration: none;
-  color: var(--text);
-  border: 1px solid var(--border2);
-  border-radius: 2px;
-  padding: 5px 10px;
+  color: #a8b6c8;
+  padding: 10px 12px;
   font-family: 'Cinzel', serif;
   font-size: 0.62em;
   letter-spacing: 1px;
   text-transform: uppercase;
-  background: rgba(255,255,255,0.03);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
 }
 
 .world-nav a:hover {
   color: var(--gold);
-  border-color: var(--gold);
+  border-bottom-color: rgba(200,150,12,0.4);
+}
+
+.world-nav a.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
 }
 
 .filter-btn {
@@ -684,9 +690,10 @@ select.cr-select {
       <a id="campaignNavLink" href="campaign.html" style="display:none;">Campaign</a>
       <a href="dnd5e_character_generator.html">Characters</a>
       <a href="npc_creator.html">NPC Creator</a>
-      <a href="monster_manual.html">Monsters</a>
+      <a href="monster_manual.html" class="active">Monsters</a>
       <a href="spellbook.html">Spellbook</a>
     </nav>
+    <script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="Search by name, type, or environment..." oninput="filterMonsters()">
     </div>
@@ -1647,9 +1654,6 @@ window.onload = () => {
   document.querySelector('[data-type="all"]').classList.add('active');
   document.getElementById('addToCampaignBtn').addEventListener('click', addSelectedToCampaign);
   // Show campaign link if one is active
-  if (localStorage.getItem('dndToolsActiveCampaignId')) {
-    document.getElementById('campaignNavLink').style.display = '';
-  }
 };
 </script>
 </body>
