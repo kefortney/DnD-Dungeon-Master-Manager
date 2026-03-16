@@ -329,6 +329,7 @@ button:hover { border-color: var(--accent-2); color: var(--accent-2); }
         <label for="locType">Type</label>
         <select id="locType">
           <option>Tavern / Inn</option>
+          <option>Building</option>
           <option>Village</option>
           <option>Town</option>
           <option>City</option>
@@ -399,7 +400,6 @@ button:hover { border-color: var(--accent-2); color: var(--accent-2); }
       <button id="genNameBtn">Generate Name</button>
       <button id="genDetailsBtn">Generate Details</button>
       <button id="genAllBtn" class="btn-main">Generate Full Location</button>
-      <button id="saveLocBtn" class="btn-main">Save to Registry</button>
       <button id="saveToMapBtn" class="btn-main">Save to Map</button>
       <button id="addCampaignBtn" class="btn-campaign">+ Add to Campaign</button>
       <a href="atlas.html" style="padding:8px 13px;border:1px solid rgba(196,152,58,0.4);border-radius:8px;color:#c4983a;text-decoration:none;font-weight:600;font-size:0.88rem;white-space:nowrap;">View Atlas →</a>
@@ -418,9 +418,8 @@ button:hover { border-color: var(--accent-2); color: var(--accent-2); }
 </div>
 
 <script>
-const STORAGE_KEY = 'dndToolsLocations';
-const ADD_KEY     = 'dndToolsAddLocationToCampaign';
-const MAP_KEY     = 'dndToolsMap';
+const ADD_KEY = 'dndToolsAddLocationToCampaign';
+const MAP_KEY = 'dndToolsMap';
 
 // ── Map Storage Helpers ───────────────────────────────────────
 function safeReadMap() {
@@ -483,11 +482,18 @@ function saveLocationToMap() {
   const existing = mapData.locations.findIndex(l => l.name.toLowerCase()===loc.name.toLowerCase());
   const now = new Date().toISOString();
   const entry = {
-    id: existing !== -1 ? mapData.locations[existing].id : uidMap('loc'),
-    name: loc.name, type: loc.type, atmosphere: loc.atmosphere,
-    description: loc.description, notableFeatures: loc.features,
-    createdAt: existing !== -1 ? mapData.locations[existing].createdAt : now,
-    updatedAt: now
+    id:              existing !== -1 ? mapData.locations[existing].id : uidMap('loc'),
+    name:            loc.name,
+    type:            loc.type,
+    region:          loc.region,
+    atmosphere:      loc.atmosphere,
+    description:     loc.description,
+    notableFeatures: loc.features,
+    encounters:      loc.encounters,
+    lore:            loc.lore,
+    notes:           loc.notes,
+    createdAt:       existing !== -1 ? mapData.locations[existing].createdAt : now,
+    updatedAt:       now,
   };
   if (existing !== -1) {
     mapData.locations[existing] = entry;
@@ -497,6 +503,7 @@ function saveLocationToMap() {
     showFlash(`"${loc.name}" saved to Map.`);
   }
   safeWriteMap(mapData);
+  renderRegistry();
 }
 
 // ── Seed Data ──────────────────────────────────────────────────
@@ -595,11 +602,6 @@ const LORE = [
 // ── Utilities ─────────────────────────────────────────────────
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function uid() { return `loc-${Date.now()}-${Math.floor(Math.random()*100000)}`; }
-function safeRead() {
-  try { const v = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); return Array.isArray(v)?v:[]; }
-  catch { return []; }
-}
-function safeWrite(v) { localStorage.setItem(STORAGE_KEY, JSON.stringify(v)); }
 function escHtml(v) { return String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function showFlash(msg, err) {
@@ -698,23 +700,6 @@ function locationFromInputs(existingId) {
   };
 }
 
-// ── Save to Registry ──────────────────────────────────────────
-function saveLocation() {
-  const loc = locationFromInputs();
-  if (!loc.name) { showFlash('Enter a name before saving.', true); return; }
-
-  const list = safeRead();
-  const idx  = list.findIndex(l => l.name.toLowerCase() === loc.name.toLowerCase() && l.type === loc.type);
-  if (idx !== -1) {
-    list[idx] = { ...list[idx], ...loc, id: list[idx].id, createdAt: list[idx].createdAt };
-    showFlash(`"${loc.name}" updated in registry.`);
-  } else {
-    list.unshift(loc);
-    showFlash(`"${loc.name}" saved to registry.`);
-  }
-  safeWrite(list);
-  renderRegistry();
-}
 
 // ── Add to Campaign ───────────────────────────────────────────
 function addToCampaign() {
@@ -743,14 +728,14 @@ function addToCampaign() {
 
 // ── Load into Builder from Registry ──────────────────────────
 function loadIntoBuilder(id) {
-  const loc = safeRead().find(l => l.id === id);
+  const loc = safeReadMap().locations.find(l => l.id === id);
   if (!loc) return;
   document.getElementById('locName').value        = loc.name || '';
   document.getElementById('locType').value        = loc.type || 'Other';
   document.getElementById('locRegion').value      = loc.region || '';
   document.getElementById('locAtmosphere').value  = loc.atmosphere || 'Eerie';
   document.getElementById('locDescription').value = loc.description || '';
-  document.getElementById('locFeatures').value    = loc.features || '';
+  document.getElementById('locFeatures').value    = loc.notableFeatures || loc.features || '';
   document.getElementById('locEncounters').value  = loc.encounters || '';
   document.getElementById('locLore').value        = loc.lore || '';
   document.getElementById('locNotes').value       = loc.notes || '';
@@ -759,20 +744,21 @@ function loadIntoBuilder(id) {
 }
 
 function deleteFromRegistry(id) {
-  const list = safeRead();
-  const loc  = list.find(l => l.id === id);
+  const mapData = safeReadMap();
+  const loc = mapData.locations.find(l => l.id === id);
   if (!loc) return;
-  if (!confirm(`Delete "${loc.name}" from the registry?`)) return;
-  safeWrite(list.filter(l => l.id !== id));
+  if (!confirm(`Delete "${loc.name}" from the Map?`)) return;
+  mapData.locations = mapData.locations.filter(l => l.id !== id);
+  safeWriteMap(mapData);
   renderRegistry();
 }
 
 // ── Registry Render ───────────────────────────────────────────
 function renderRegistry() {
-  const list = safeRead();
+  const list = safeReadMap().locations;
   const el   = document.getElementById('registryList');
   if (!list.length) {
-    el.innerHTML = '<div class="empty">No locations saved yet. Generate one above and click Save to Registry.</div>';
+    el.innerHTML = '<div class="empty">No locations saved yet. Generate one above and click Save to Map.</div>';
     return;
   }
   el.innerHTML = '<div class="registry-list">' + list.map(loc => `
@@ -789,7 +775,7 @@ function renderRegistry() {
 }
 
 function queueFromRegistry(id) {
-  const loc = safeRead().find(l => l.id === id);
+  const loc = safeReadMap().locations.find(l => l.id === id);
   if (!loc) return;
   if (!localStorage.getItem('dndToolsActiveCampaignId')) {
     showFlash('No active campaign — open a campaign first from the Hub.', true);
@@ -813,7 +799,6 @@ function queueFromRegistry(id) {
 document.getElementById('genNameBtn').addEventListener('click',    () => { generateName();    updatePreview(); });
 document.getElementById('genDetailsBtn').addEventListener('click', () => { generateDetails(); updatePreview(); });
 document.getElementById('genAllBtn').addEventListener('click',     generateFull);
-document.getElementById('saveLocBtn').addEventListener('click',    saveLocation);
 document.getElementById('saveToMapBtn').addEventListener('click',  saveLocationToMap);
 document.getElementById('addCampaignBtn').addEventListener('click',addToCampaign);
 document.getElementById('saveRegBtn').addEventListener('click',    saveRegion);

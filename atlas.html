@@ -583,17 +583,22 @@ function renderEditForm(kind, entry) {
       <div class="form-row"><label class="fl">Blurb <span style="font-weight:400;">(1-2 sentences)</span></label><textarea id="ef-blurb" style="min-height:50px;">${entry?esc(entry.blurb||''):''}</textarea></div>
       <div class="form-row"><label class="fl">Description</label><textarea id="ef-description" style="min-height:90px;">${entry?esc(entry.description||''):''}</textarea></div>`;
   } else {
+    const LOC_TYPES = ['Tavern / Inn','Building','Village','Town','City','Dungeon','Cave / Cavern','Forest','Ruins','Keep / Castle','Temple / Shrine','Tower','Wilderness','Underground','Coastal','Other'];
     document.getElementById('editModalForm').innerHTML = `
       <div class="form-row"><label class="fl">Name</label><input id="ef-name" value="${v('name')}" placeholder="Location name"></div>
       <div class="form-row">
         <label class="fl">Type</label>
         <select id="ef-type">
-          ${['Tavern/Inn','Blacksmith','Town Square','Shrine','Market','Manor','Dungeon Room','Cave','Forest Clearing','Other'].map(t=>`<option ${(entry&&entry.type===t)?'selected':''}>${t}</option>`).join('')}
+          ${LOC_TYPES.map(t=>`<option ${(entry&&entry.type===t)?'selected':''}>${t}</option>`).join('')}
         </select>
       </div>
+      <div class="form-row"><label class="fl">Region / Setting</label><input id="ef-region" value="${v('region')}" placeholder="Northern Mountains, The Underdark…"></div>
       <div class="form-row"><label class="fl">Atmosphere</label><input id="ef-atmosphere" value="${v('atmosphere')}" placeholder="Eerie, welcoming, dangerous…"></div>
       <div class="form-row"><label class="fl">Description</label><textarea id="ef-description" style="min-height:90px;">${entry?esc(entry.description||''):''}</textarea></div>
-      <div class="form-row"><label class="fl">Notable Features</label><textarea id="ef-notableFeatures" style="min-height:60px;">${entry?esc(entry.notableFeatures||''):''}</textarea></div>`;
+      <div class="form-row"><label class="fl">Notable Features</label><textarea id="ef-notableFeatures" style="min-height:60px;">${entry?esc(entry.notableFeatures||''):''}</textarea></div>
+      <div class="form-row"><label class="fl">Encounters / Hazards</label><textarea id="ef-encounters" style="min-height:60px;">${entry?esc(entry.encounters||''):''}</textarea></div>
+      <div class="form-row"><label class="fl">Lore &amp; History</label><textarea id="ef-lore" style="min-height:60px;">${entry?esc(entry.lore||''):''}</textarea></div>
+      <div class="form-row"><label class="fl">DM Notes</label><textarea id="ef-notes" style="min-height:60px;">${entry?esc(entry.notes||''):''}</textarea></div>`;
   }
 }
 
@@ -626,14 +631,18 @@ function saveEditModal() {
     }
   } else {
     const entry = {
-      id: _editId || uid('loc'),
+      id:              _editId || uid('loc'),
       name,
-      type: document.getElementById('ef-type').value,
-      atmosphere: document.getElementById('ef-atmosphere').value.trim(),
-      description: document.getElementById('ef-description').value.trim(),
+      type:            document.getElementById('ef-type').value,
+      region:          document.getElementById('ef-region').value.trim(),
+      atmosphere:      document.getElementById('ef-atmosphere').value.trim(),
+      description:     document.getElementById('ef-description').value.trim(),
       notableFeatures: document.getElementById('ef-notableFeatures').value.trim(),
-      createdAt: _editId ? (mapData.locations.find(l=>l.id===_editId)||{}).createdAt||now : now,
-      updatedAt: now
+      encounters:      document.getElementById('ef-encounters').value.trim(),
+      lore:            document.getElementById('ef-lore').value.trim(),
+      notes:           document.getElementById('ef-notes').value.trim(),
+      createdAt:       _editId ? (mapData.locations.find(l=>l.id===_editId)||{}).createdAt||now : now,
+      updatedAt:       now
     };
     if (_editId) {
       const idx = mapData.locations.findIndex(l=>l.id===_editId);
