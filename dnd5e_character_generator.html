@@ -31,10 +31,6 @@
     min-height: 100vh;
     font-family: 'IM Fell English', serif;
     color: var(--ink);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
   }
 
   .tome {
@@ -44,6 +40,7 @@
       linear-gradient(135deg, var(--parchment) 0%, var(--parchment-dark) 50%, var(--parchment) 100%);
     max-width: 960px;
     width: 100%;
+    margin: 20px auto 40px;
     border-radius: 4px;
     box-shadow:
       0 0 0 2px var(--parchment-shadow),
@@ -605,6 +602,7 @@
   <a href="location_creator.html">Locations</a>
   <a href="monster_manual.html">Monster Manual</a>
   <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html">Vault</a>
 </nav>
 <script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
 <div class="tome">
@@ -1413,6 +1411,7 @@ function getCurrentCharacterSnapshot() {
     ac: parseInt(document.getElementById('acDisplay').textContent, 10) || 10,
     initiative: parseInt(document.getElementById('initDisplay').textContent, 10) || 0,
     speed: parseInt(document.getElementById('speedDisplay').textContent, 10) || 30,
+    gold: parseInt(document.getElementById('coinGP')?.value, 10) || 0,
     notes: '',
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -1421,6 +1420,23 @@ function getCurrentCharacterSnapshot() {
 
 function normalizeNameClass(name, className) {
   return `${String(name || '').trim().toLowerCase()}::${String(className || '').trim().toLowerCase()}`;
+}
+
+function syncCharacterToUnifiedVault(character) {
+  try {
+    const raw = JSON.parse(localStorage.getItem('dndToolsVault'));
+    const vault = (raw && typeof raw === 'object') ? raw : { pcs: [], npcs: [], monsters: [] };
+    vault.pcs = vault.pcs || [];
+    const idx = vault.pcs.findIndex(p =>
+      normalizeNameClass(p.name, p.className) === normalizeNameClass(character.name, character.className)
+    );
+    if (idx >= 0) {
+      vault.pcs[idx] = { ...vault.pcs[idx], ...character, id: vault.pcs[idx].id || character.id, updatedAt: new Date().toISOString() };
+    } else {
+      vault.pcs.unshift(character);
+    }
+    localStorage.setItem('dndToolsVault', JSON.stringify(vault));
+  } catch { /* non-critical */ }
 }
 
 function saveCharacterToVault() {
@@ -1439,15 +1455,17 @@ function saveCharacterToVault() {
       updatedAt: new Date().toISOString()
     };
     writeCharacters(characters);
-    document.getElementById('saveStatus').textContent = `Updated existing ${character.name} in Hub`;
-    addHistory(`💾 Updated ${character.name} in Campaign Hub`);
+    syncCharacterToUnifiedVault(characters[duplicateIdx]);
+    document.getElementById('saveStatus').textContent = `Updated existing ${character.name} in Vault`;
+    addHistory(`💾 Updated ${character.name} in Vault`);
     return;
   }
 
   characters.unshift(character);
   writeCharacters(characters);
-  document.getElementById('saveStatus').textContent = `Saved ${character.name} to Hub`;
-  addHistory(`💾 Saved ${character.name} to Campaign Hub`);
+  syncCharacterToUnifiedVault(character);
+  document.getElementById('saveStatus').textContent = `Saved ${character.name} to Vault`;
+  addHistory(`💾 Saved ${character.name} to Vault`);
 }
 
 function applySelectedCharacterFromHub() {

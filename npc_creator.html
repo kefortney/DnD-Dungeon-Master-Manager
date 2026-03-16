@@ -177,6 +177,7 @@ button:hover {
   <a href="location_creator.html">Locations</a>
   <a href="monster_manual.html">Monster Manual</a>
   <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html">Vault</a>
 </nav>
 <script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
 <div class="shell">
@@ -417,7 +418,25 @@ function saveNpc() {
   }
 
   safeWrite(STORAGE_KEYS.npcNotes, noteList);
-  showFlash(duplicateProfileIdx !== -1 ? 'Duplicate NPC found. Existing profile updated.' : 'NPC saved to registry and NPC notes.', false);
+
+  // Sync to unified Vault
+  try {
+    const raw = JSON.parse(localStorage.getItem('dndToolsVault'));
+    const vault = (raw && typeof raw === 'object') ? raw : { pcs: [], npcs: [], monsters: [] };
+    vault.npcs = vault.npcs || [];
+    const savedNpc = duplicateProfileIdx !== -1 ? profiles[duplicateProfileIdx] : npc;
+    const vIdx = vault.npcs.findIndex(n =>
+      normalizeNameClass(n.name, n.className) === normalizeNameClass(savedNpc.name, savedNpc.className)
+    );
+    if (vIdx >= 0) {
+      vault.npcs[vIdx] = { ...vault.npcs[vIdx], ...savedNpc, id: vault.npcs[vIdx].id || savedNpc.id };
+    } else {
+      vault.npcs.unshift(savedNpc);
+    }
+    localStorage.setItem('dndToolsVault', JSON.stringify(vault));
+  } catch { /* non-critical */ }
+
+  showFlash(duplicateProfileIdx !== -1 ? 'Duplicate NPC found. Existing profile updated.' : 'NPC saved to Vault.', false);
 }
 
 function wireEvents() {

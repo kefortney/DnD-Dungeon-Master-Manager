@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — D&D Hub</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Serif+Text:ital@0;1&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+:root {
+  --bg-deep: #0b0f14;
+  --bg-mid: #151c24;
+  --card-bg: rgba(12,16,22,0.88);
+  --mist: #a8b6c8;
+  --paper: #efe5cf;
+  --paper-deep: #dcc79a;
+  --gold: #c4983a;
+  --gold-dim: rgba(196,152,58,0.25);
+  --ember: #a33a2b;
+  --forest: #2e5a3b;
+  --forest-dim: rgba(46,90,59,0.35);
+  --shadow: rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(164,58,43,0.18), transparent 55%),
+    radial-gradient(900px 600px at 100% 100%, rgba(46,90,59,0.18), transparent 50%),
+    linear-gradient(135deg, #0b0f14 0%, #151c24 55%, #101317 100%);
+  color: var(--paper);
+  font-family: 'Source Sans 3', sans-serif;
+  line-height: 1.4;
+  padding-bottom: 60px;
+}
+
+.site-nav {
+  background: rgba(10,13,18,0.95);
+  border-bottom: 1px solid var(--gold-dim);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 20px var(--shadow);
+  flex-wrap: wrap;
+}
+.nav-brand {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  padding: 14px 20px 14px 0;
+  margin-right: 8px;
+  border-right: 1px solid var(--gold-dim);
+  white-space: nowrap;
+}
+.nav-brand span { color: var(--paper-deep); font-size: 0.8rem; display: block; letter-spacing: 0.5px; }
+.site-nav a {
+  color: var(--mist);
+  text-decoration: none;
+  padding: 14px 14px;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-nav a:hover { color: var(--gold); border-bottom-color: var(--gold-dim); }
+.site-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.shell { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+.section {
+  background: var(--card-bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 24px var(--shadow);
+  margin-bottom: 16px;
+}
+.section > h2 {
+  font-family: 'DM Serif Text', serif;
+  color: var(--paper-deep);
+  font-size: 1.25rem;
+  margin-bottom: 14px;
+}
+
+input, textarea, select {
+  width: 100%;
+  border: 1px solid rgba(220,199,154,0.25);
+  background: rgba(0,0,0,0.22);
+  color: var(--paper);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 0.9rem;
+  font-family: 'Source Sans 3', sans-serif;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: rgba(196,152,58,0.5); }
+select option { background: #1a2027; }
+textarea { min-height: 60px; resize: vertical; }
+
+button {
+  border: 1px solid rgba(220,199,154,0.35);
+  background: rgba(255,255,255,0.04);
+  color: var(--paper);
+  border-radius: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+  font-size: 0.87rem;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+button:hover { border-color: var(--gold); color: var(--gold); }
+.btn-primary { background: linear-gradient(135deg, #8d3125, #a33a2b); border-color: #a33a2b; }
+.btn-secondary { background: linear-gradient(135deg, #20402a, #2e5a3b); border-color: #2e5a3b; }
+.btn-danger { background: rgba(100,20,20,0.3); border-color: rgba(160,40,40,0.5); }
+.btn-danger:hover { border-color: #e05050; color: #e05050; }
+.btn-gold { background: linear-gradient(135deg, rgba(130,90,20,0.4), rgba(196,152,58,0.3)); border-color: rgba(196,152,58,0.5); color: var(--gold); }
+.btn-sm { padding: 4px 10px; font-size: 0.8rem; }
+
+.btabs { display:flex; gap:4px; flex-wrap:wrap; }
+.btab {
+  padding:5px 14px; border-radius:20px; font-size:0.82rem;
+  border:1px solid rgba(196,152,58,0.3); background:transparent;
+  color:var(--mist); cursor:pointer; font-family:'Source Sans 3',sans-serif;
+  font-weight:600; white-space:nowrap;
+}
+.btab:hover { border-color:var(--gold); color:var(--gold); }
+.btab-active { border-color:var(--gold); color:var(--gold); background:rgba(196,152,58,0.1); }
+
+.flash {
+  min-height: 18px;
+  margin-top: 6px;
+  font-size: 0.88rem;
+  color: var(--gold);
+}
+
+.empty {
+  color: var(--mist);
+  font-style: italic;
+  border: 1px dashed rgba(220,199,154,0.18);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  font-size: 0.88rem;
+  margin-top: 8px;
+}
+
+/* ── Map Table ── */
+.map-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin-top: 10px;
+}
+.map-table th {
+  text-align: left;
+  padding: 7px 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  color: var(--gold);
+  border-bottom: 1px solid rgba(196,152,58,0.3);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.map-table th:hover { color: var(--paper-deep); }
+.map-table th.sorted { color: var(--paper-deep); }
+.map-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: top;
+}
+.map-table tr:hover td { background: rgba(255,255,255,0.02); }
+.map-table tr:last-child td { border-bottom: none; }
+
+.type-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: 'Cinzel', serif;
+  white-space: nowrap;
+}
+.badge-region { background: rgba(196,152,58,0.15); border: 1px solid rgba(196,152,58,0.35); color: var(--gold); }
+.badge-location { background: var(--forest-dim); border: 1px solid rgba(46,90,59,0.4); color: #70c890; }
+
+.entry-name {
+  font-family: 'Cinzel', serif;
+  color: var(--paper-deep);
+  font-size: 0.88rem;
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: linear-gradient(160deg, #151c24, #0d1219);
+  border: 1px solid var(--gold-dim);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: 1px solid rgba(220,199,154,0.2);
+  color: var(--mist);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: var(--paper-deep);
+  margin-bottom: 16px;
+  padding-right: 48px;
+}
+.fl {
+  font-size: 0.72rem;
+  color: var(--mist);
+  display: block;
+  margin-bottom: 2px;
+}
+.form-row { margin-bottom: 10px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+
+/* Campaign picker */
+.cpick-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.cpick-overlay.open { display: flex; }
+.cpick-box {
+  background: linear-gradient(160deg, #151c24, #0d1219);
+  border: 1px solid var(--gold-dim);
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.cpick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 7px;
+  margin-bottom: 4px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+}
+.cpick-row:hover { border-color: rgba(196,152,58,0.35); }
+.cpick-name { font-family: 'Cinzel', serif; color: var(--paper-deep); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<nav class="site-nav">
+  <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
+  <a href="index.html">Hub</a>
+  <a href="campaign.html" id="campaignNavLink" style="display:none;">Campaign</a>
+  <a href="character_creator.html">Character Creator</a>
+  <a href="location_creator.html">Map Creator</a>
+  <a href="atlas.html" class="active">Atlas</a>
+  <a href="monster_manual.html">Monster Manual</a>
+  <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html">Vault</a>
+</nav>
+<script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
+
+<div class="shell">
+
+  <section class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+      <h2 style="margin-bottom:0;">Atlas</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="openCreateModal('region')">+ New Region</button>
+        <button class="btn-secondary" onclick="openCreateModal('location')">+ New Location</button>
+        <button class="btn-gold" onclick="saveMapJson()">💾 Export Atlas JSON</button>
+        <label class="btn-gold" style="cursor:pointer;padding:7px 12px;border:1px solid rgba(196,152,58,0.5);border-radius:8px;color:var(--gold);font-weight:600;font-size:0.87rem;">
+          📂 Import Atlas JSON
+          <input type="file" id="importMapInput" accept=".json" style="display:none;">
+        </label>
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="btabs" style="margin-bottom:12px;">
+      <button class="btab btab-active" data-filter="all" onclick="setFilter('all')">All</button>
+      <button class="btab" data-filter="region" onclick="setFilter('region')">Regions</button>
+      <button class="btab" data-filter="location" onclick="setFilter('location')">Locations</button>
+    </div>
+
+    <input id="mapSearch" placeholder="Search by name or type…" style="max-width:320px;margin-bottom:12px;">
+
+    <div id="mapTableWrap"></div>
+    <div id="mapFlash" class="flash"></div>
+  </section>
+
+</div><!-- /shell -->
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeEditModal()">✕ Close</button>
+    <div class="modal-title" id="editModalTitle">Edit Entry</div>
+    <div id="editModalForm"></div>
+    <div class="actions">
+      <button id="editSaveBtn" class="btn-secondary" onclick="saveEditModal()">Save Changes</button>
+      <button class="btn-sm" onclick="closeEditModal()">Cancel</button>
+    </div>
+    <div id="editModalFlash" class="flash"></div>
+  </div>
+</div>
+
+<!-- Campaign Picker Modal -->
+<div class="cpick-overlay" id="cpickOverlay" onclick="if(event.target===this)closeCpick()">
+  <div class="cpick-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong style="font-family:'Cinzel',serif;color:var(--paper-deep);">Add to Campaign</strong>
+      <button onclick="closeCpick()" class="btn-sm">✕ Close</button>
+    </div>
+    <p style="color:var(--mist);font-size:0.84rem;margin-bottom:12px;">Select which campaign to add this entry to:</p>
+    <div id="cpickList"></div>
+    <div id="cpickFlash" class="flash"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  STORAGE HELPERS
+// ══════════════════════════════════════════════════════════════
+const SK = {
+  map:       'dndToolsMap',
+  campaigns: 'dndToolsCampaigns',
+  activeCampaign: 'dndToolsActiveCampaignId',
+  oldLocations: 'dndToolsLocations'
+};
+
+function safeRead(key) {
+  try { const v = JSON.parse(localStorage.getItem(key)||'null'); return Array.isArray(v)?v:[]; }
+  catch { return []; }
+}
+function safeWrite(key, v) { localStorage.setItem(key, JSON.stringify(v)); }
+function safeReadMap() {
+  try {
+    const v = JSON.parse(localStorage.getItem(SK.map)||'null');
+    if (v && typeof v==='object' && !Array.isArray(v)) return v;
+    return { regions:[], locations:[] };
+  } catch { return { regions:[], locations:[] }; }
+}
+function safeWriteMap(v) { safeWrite(SK.map, v); }
+function uid(p) { return `${p}-${Date.now()}-${Math.floor(Math.random()*1e5)}`; }
+function nowIso() { return new Date().toISOString(); }
+function esc(v) {
+  return String(v==null?'':v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function flash(id, msg, err) {
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.style.color=err?'#ff8673':'#c4983a';
+  clearTimeout(el._t); el._t=setTimeout(()=>{ el.textContent=''; },4000);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MIGRATE OLD LOCATIONS
+// ══════════════════════════════════════════════════════════════
+function migrateOldLocations() {
+  try {
+    const old = JSON.parse(localStorage.getItem(SK.oldLocations)||'null');
+    if (!old || !Array.isArray(old) || !old.length) return;
+    const mapData = safeReadMap();
+    const existingIds = new Set(mapData.locations.map(l=>l.id));
+    let added = 0;
+    old.forEach(loc => {
+      if (!loc.id || existingIds.has(loc.id)) return;
+      mapData.locations.push({
+        id: loc.id,
+        name: loc.name || '',
+        type: loc.type || 'Other',
+        atmosphere: loc.atmosphere || '',
+        description: loc.description || '',
+        notableFeatures: loc.features || '',
+        createdAt: loc.createdAt || nowIso(),
+        updatedAt: loc.updatedAt || nowIso()
+      });
+      added++;
+    });
+    if (added > 0) {
+      safeWriteMap(mapData);
+      flash('mapFlash', `Migrated ${added} location(s) from old registry.`);
+    }
+  } catch { /* ignore */ }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TABLE STATE
+// ══════════════════════════════════════════════════════════════
+let _filter = 'all';
+let _sort = { col: 'name', dir: 1 };
+let _search = '';
+
+function setFilter(f) {
+  _filter = f;
+  document.querySelectorAll('.btab').forEach(b => b.classList.toggle('btab-active', b.dataset.filter===f));
+  renderTable();
+}
+
+function setSort(col) {
+  if (_sort.col===col) _sort.dir*=-1;
+  else { _sort.col=col; _sort.dir=1; }
+  renderTable();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RENDER TABLE
+// ══════════════════════════════════════════════════════════════
+function renderTable() {
+  const mapData = safeReadMap();
+  let entries = [];
+  if (_filter !== 'location') {
+    (mapData.regions||[]).forEach(r => entries.push({ kind:'region', data:r }));
+  }
+  if (_filter !== 'region') {
+    (mapData.locations||[]).forEach(l => entries.push({ kind:'location', data:l }));
+  }
+
+  // Filter by search
+  if (_search) {
+    const q = _search.toLowerCase();
+    entries = entries.filter(e =>
+      (e.data.name||'').toLowerCase().includes(q) ||
+      (e.data.type||'').toLowerCase().includes(q) ||
+      (e.kind==='region' ? (e.data.blurb||'') : (e.data.atmosphere||'')).toLowerCase().includes(q)
+    );
+  }
+
+  // Sort
+  const col = _sort.col, dir = _sort.dir;
+  entries.sort((a, b) => {
+    let av, bv;
+    if (col==='type')    { av=a.kind; bv=b.kind; }
+    else if (col==='subtype') { av=(a.data.type||'').toLowerCase(); bv=(b.data.type||'').toLowerCase(); }
+    else if (col==='name')  { av=(a.data.name||'').toLowerCase(); bv=(b.data.name||'').toLowerCase(); }
+    else { av=''; bv=''; }
+    if (av<bv) return -dir; if (av>bv) return dir; return 0;
+  });
+
+  const wrap = document.getElementById('mapTableWrap');
+  if (!entries.length) {
+    wrap.innerHTML = '<div class="empty">No entries yet. Create a Region or Location, or import from the Location Creator.</div>';
+    return;
+  }
+
+  function arrow(c) {
+    if (_sort.col!==c) return '<span style="opacity:0.35;font-size:0.7rem;"> ⇅</span>';
+    return _sort.dir===1 ? '<span style="font-size:0.7rem;"> ▲</span>' : '<span style="font-size:0.7rem;"> ▼</span>';
+  }
+
+  const rows = entries.map(({ kind, data }) => {
+    const badge = kind==='region'
+      ? `<span class="type-badge badge-region">Region</span>`
+      : `<span class="type-badge badge-location">Location</span>`;
+    const subtype = esc(data.type||'—');
+    const preview = kind==='region'
+      ? esc((data.blurb||'').slice(0,80) + (data.blurb&&data.blurb.length>80?'…':''))
+      : esc((data.description||'').slice(0,80) + (data.description&&data.description.length>80?'…':''));
+    return `<tr>
+      <td>${badge}</td>
+      <td class="entry-name">${esc(data.name||'Unnamed')}</td>
+      <td style="color:var(--mist);font-size:0.82rem;">${subtype}</td>
+      <td style="color:var(--mist);font-size:0.82rem;max-width:300px;">${preview}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn-sm" onclick="openEditModal('${kind}','${esc(data.id)}')">Edit</button>
+        <button class="btn-sm btn-secondary" onclick="openCpick('${kind}','${esc(data.id)}')">+ Campaign</button>
+        <button class="btn-sm btn-danger" onclick="deleteEntry('${kind}','${esc(data.id)}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="map-table">
+    <thead><tr>
+      <th onclick="setSort('type')" ${_sort.col==='type'?'class="sorted"':''}>Type${arrow('type')}</th>
+      <th onclick="setSort('name')" ${_sort.col==='name'?'class="sorted"':''}>Name${arrow('name')}</th>
+      <th onclick="setSort('subtype')" ${_sort.col==='subtype'?'class="sorted"':''}>Sub-type${arrow('subtype')}</th>
+      <th>Preview</th>
+      <th>Actions</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DELETE
+// ══════════════════════════════════════════════════════════════
+function deleteEntry(kind, id) {
+  const mapData = safeReadMap();
+  const arr = kind==='region' ? mapData.regions : mapData.locations;
+  const entry = arr.find(x=>x.id===id);
+  if (!entry) return;
+  if (!confirm(`Delete "${entry.name||'this entry'}" from the Map registry?`)) return;
+  if (kind==='region') {
+    mapData.regions = mapData.regions.filter(x=>x.id!==id);
+  } else {
+    mapData.locations = mapData.locations.filter(x=>x.id!==id);
+  }
+  safeWriteMap(mapData);
+  renderTable();
+  flash('mapFlash','Entry deleted.');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EDIT MODAL
+// ══════════════════════════════════════════════════════════════
+let _editKind = '';
+let _editId   = '';
+
+function openCreateModal(kind) {
+  _editKind = kind;
+  _editId   = '';
+  document.getElementById('editModalTitle').textContent = kind==='region' ? 'New Region' : 'New Location';
+  renderEditForm(kind, null);
+  document.getElementById('editModal').classList.add('open');
+}
+
+function openEditModal(kind, id) {
+  const mapData = safeReadMap();
+  const arr = kind==='region' ? mapData.regions : mapData.locations;
+  const entry = arr.find(x=>x.id===id);
+  if (!entry) return;
+  _editKind = kind;
+  _editId   = id;
+  document.getElementById('editModalTitle').textContent = `Edit ${kind==='region'?'Region':'Location'}: ${entry.name||''}`;
+  renderEditForm(kind, entry);
+  document.getElementById('editModal').classList.add('open');
+}
+
+function renderEditForm(kind, entry) {
+  const v = (f, d='') => esc(entry ? (entry[f]||d) : d);
+  if (kind==='region') {
+    document.getElementById('editModalForm').innerHTML = `
+      <div class="form-row"><label class="fl">Name</label><input id="ef-name" value="${v('name')}" placeholder="Region name"></div>
+      <div class="form-row">
+        <label class="fl">Type</label>
+        <select id="ef-type">
+          ${['Town','City','Village','Dungeon','Wilderness','Port','Castle','Other'].map(t=>`<option ${(entry&&entry.type===t)?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row"><label class="fl">Blurb <span style="font-weight:400;">(1-2 sentences)</span></label><textarea id="ef-blurb" style="min-height:50px;">${entry?esc(entry.blurb||''):''}</textarea></div>
+      <div class="form-row"><label class="fl">Description</label><textarea id="ef-description" style="min-height:90px;">${entry?esc(entry.description||''):''}</textarea></div>`;
+  } else {
+    document.getElementById('editModalForm').innerHTML = `
+      <div class="form-row"><label class="fl">Name</label><input id="ef-name" value="${v('name')}" placeholder="Location name"></div>
+      <div class="form-row">
+        <label class="fl">Type</label>
+        <select id="ef-type">
+          ${['Tavern/Inn','Blacksmith','Town Square','Shrine','Market','Manor','Dungeon Room','Cave','Forest Clearing','Other'].map(t=>`<option ${(entry&&entry.type===t)?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row"><label class="fl">Atmosphere</label><input id="ef-atmosphere" value="${v('atmosphere')}" placeholder="Eerie, welcoming, dangerous…"></div>
+      <div class="form-row"><label class="fl">Description</label><textarea id="ef-description" style="min-height:90px;">${entry?esc(entry.description||''):''}</textarea></div>
+      <div class="form-row"><label class="fl">Notable Features</label><textarea id="ef-notableFeatures" style="min-height:60px;">${entry?esc(entry.notableFeatures||''):''}</textarea></div>`;
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  document.getElementById('editModalFlash').textContent = '';
+}
+
+function saveEditModal() {
+  const nameEl = document.getElementById('ef-name');
+  const name = nameEl ? nameEl.value.trim() : '';
+  if (!name) { flash('editModalFlash','Name is required.',true); return; }
+  const mapData = safeReadMap();
+  const now = nowIso();
+  if (_editKind==='region') {
+    const entry = {
+      id: _editId || uid('reg'),
+      name,
+      type: document.getElementById('ef-type').value,
+      blurb: document.getElementById('ef-blurb').value.trim(),
+      description: document.getElementById('ef-description').value.trim(),
+      createdAt: _editId ? (mapData.regions.find(r=>r.id===_editId)||{}).createdAt||now : now,
+      updatedAt: now
+    };
+    if (_editId) {
+      const idx = mapData.regions.findIndex(r=>r.id===_editId);
+      if (idx!==-1) mapData.regions[idx]=entry; else mapData.regions.unshift(entry);
+    } else {
+      mapData.regions.unshift(entry);
+    }
+  } else {
+    const entry = {
+      id: _editId || uid('loc'),
+      name,
+      type: document.getElementById('ef-type').value,
+      atmosphere: document.getElementById('ef-atmosphere').value.trim(),
+      description: document.getElementById('ef-description').value.trim(),
+      notableFeatures: document.getElementById('ef-notableFeatures').value.trim(),
+      createdAt: _editId ? (mapData.locations.find(l=>l.id===_editId)||{}).createdAt||now : now,
+      updatedAt: now
+    };
+    if (_editId) {
+      const idx = mapData.locations.findIndex(l=>l.id===_editId);
+      if (idx!==-1) mapData.locations[idx]=entry; else mapData.locations.unshift(entry);
+    } else {
+      mapData.locations.unshift(entry);
+    }
+  }
+  safeWriteMap(mapData);
+  closeEditModal();
+  renderTable();
+  flash('mapFlash', `"${name}" ${_editId?'updated':'created'}.`);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CAMPAIGN PICKER
+// ══════════════════════════════════════════════════════════════
+let _cpickKind = '';
+let _cpickId   = '';
+
+function openCpick(kind, id) {
+  _cpickKind = kind;
+  _cpickId   = id;
+  const campaigns = safeRead(SK.campaigns);
+  const list = document.getElementById('cpickList');
+  if (!campaigns.length) {
+    list.innerHTML = '<div class="empty" style="margin-top:0;">No campaigns found. Create one from the Hub first.</div>';
+  } else {
+    list.innerHTML = campaigns.map(c => `
+      <div class="cpick-row">
+        <div class="cpick-name">${esc(c.name||'Unnamed Campaign')}</div>
+        <button class="btn-sm btn-secondary" onclick="addToCampaign('${esc(c.id)}')">Add</button>
+      </div>`).join('');
+  }
+  document.getElementById('cpickFlash').textContent = '';
+  document.getElementById('cpickOverlay').classList.add('open');
+}
+
+function closeCpick() {
+  document.getElementById('cpickOverlay').classList.remove('open');
+}
+
+function addToCampaign(campaignId) {
+  const mapData = safeReadMap();
+  const campaigns = safeRead(SK.campaigns);
+  const campIdx = campaigns.findIndex(c=>c.id===campaignId);
+  if (campIdx===-1) { flash('cpickFlash','Campaign not found.',true); return; }
+  const camp = campaigns[campIdx];
+  camp.areas   = camp.areas   || [];
+  camp.regions = camp.regions || [];
+  const now = nowIso();
+
+  if (_cpickKind==='region') {
+    const reg = (mapData.regions||[]).find(r=>r.id===_cpickId);
+    if (!reg) { flash('cpickFlash','Region not found.',true); return; }
+    const alreadyHas = camp.regions.some(r=>r.sourceId===reg.id || r.id===reg.id);
+    if (alreadyHas) { flash('cpickFlash',`"${reg.name}" is already in this campaign.`,true); return; }
+    camp.regions.push({
+      id: uid('reg'), sourceId: reg.id, name: reg.name, blurb: reg.blurb||'',
+      notes: reg.description||'', order: camp.regions.length, createdAt: now, updatedAt: now
+    });
+    if (!camp.activeRegionId) camp.activeRegionId = camp.regions[camp.regions.length-1].id;
+    flash('cpickFlash', `"${reg.name}" added to ${camp.name||'campaign'}.`);
+  } else {
+    const loc = (mapData.locations||[]).find(l=>l.id===_cpickId);
+    if (!loc) { flash('cpickFlash','Location not found.',true); return; }
+    const alreadyHas = camp.areas.some(a=>a.sourceId===loc.id || a.id===loc.id);
+    if (alreadyHas) { flash('cpickFlash',`"${loc.name}" is already in this campaign.`,true); return; }
+    const noteParts = [];
+    if (loc.type) noteParts.push(`Type: ${loc.type}`);
+    if (loc.atmosphere) noteParts.push(`Atmosphere: ${loc.atmosphere}`);
+    if (loc.description) noteParts.push(loc.description);
+    if (loc.notableFeatures) noteParts.push(`Notable Features:\n${loc.notableFeatures}`);
+    camp.areas.push({
+      id: uid('area'), sourceId: loc.id, name: loc.name,
+      notes: noteParts.join('\n'), regionId: '', createdAt: now
+    });
+    if (!camp.activeAreaId) camp.activeAreaId = camp.areas[camp.areas.length-1].id;
+    flash('cpickFlash', `"${loc.name}" added to ${camp.name||'campaign'}.`);
+  }
+
+  camp.updatedAt = now;
+  campaigns[campIdx] = camp;
+  safeWrite(SK.campaigns, campaigns);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  IMPORT / EXPORT MAP JSON
+// ══════════════════════════════════════════════════════════════
+function saveMapJson() {
+  const mapData = safeReadMap();
+  const json = JSON.stringify(mapData, null, 2);
+  const blob = new Blob([json], { type:'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'dnd-map-registry.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  flash('mapFlash','Map exported.');
+}
+
+function importMapJson(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        flash('mapFlash','Invalid map JSON.',true); return;
+      }
+      if (!confirm('Import this Atlas JSON? Existing entries with matching IDs will be updated.')) return;
+      const existing = safeReadMap();
+      const regIds   = new Set(existing.regions.map(r=>r.id));
+      const locIds   = new Set(existing.locations.map(l=>l.id));
+      (data.regions||[]).forEach(r => {
+        if (regIds.has(r.id)) { const i=existing.regions.findIndex(x=>x.id===r.id); existing.regions[i]=r; }
+        else { existing.regions.push(r); }
+      });
+      (data.locations||[]).forEach(l => {
+        if (locIds.has(l.id)) { const i=existing.locations.findIndex(x=>x.id===l.id); existing.locations[i]=l; }
+        else { existing.locations.push(l); }
+      });
+      safeWriteMap(existing);
+      renderTable();
+      flash('mapFlash','Map imported successfully.');
+    } catch { flash('mapFlash','Failed to parse JSON.',true); }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closeEditModal(); closeCpick(); }
+});
+
+document.getElementById('mapSearch').addEventListener('input', e => {
+  _search = e.target.value.trim();
+  renderTable();
+});
+
+document.getElementById('importMapInput').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0];
+  if (f) importMapJson(f);
+  e.target.value = '';
+});
+
+migrateOldLocations();
+renderTable();
+</script>
+</body>
+</html>

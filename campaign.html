@@ -478,6 +478,8 @@ textarea { min-height: 58px; resize: vertical; }
 }
 .stat-grid-6 label { font-size: 0.7rem; color: var(--mist); display: block; margin-bottom: 2px; }
 .stat-grid-6 input { padding: 5px; text-align: center; }
+.stat-grid-6 > div { display: flex; flex-direction: column; align-items: center; }
+.stat-mod { font-size: 0.72rem; color: var(--gold); font-family: 'Cinzel', serif; font-weight: 600; margin-top: 2px; }
 
 button {
   border: 1px solid rgba(220,199,154,0.35);
@@ -930,6 +932,268 @@ button:hover { border-color: var(--gold); color: var(--gold); }
 .dm-preview strong { color: var(--paper-deep); font-weight: 700; }
 .dm-preview em { font-style: italic; color: var(--paper-deep); }
 .dm-preview .dm-blank { display: block; height: 6px; }
+
+/* ══ MAP / REGIONS / AREAS ══ */
+.region-block {
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(196,152,58,0.35);
+  background: rgba(196,152,58,0.03);
+  overflow: hidden;
+}
+.region-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  flex-wrap: nowrap;
+}
+.region-header:hover { background: rgba(255,255,255,0.02); }
+.region-name-input {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: var(--paper-deep);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  padding: 2px 4px;
+  flex: 1;
+  min-width: 0;
+}
+.region-name-input:focus { outline: none; border-bottom-color: var(--gold-dim); }
+.region-toggle { color: var(--mist); font-size: 0.7rem; width: 14px; flex-shrink: 0; }
+.region-body { padding: 10px 14px 14px; }
+.region-locs { margin-top: 10px; }
+.region-active-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(196,152,58,0.2);
+  border: 1px solid rgba(196,152,58,0.4);
+  color: var(--gold);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.area-block {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--purple);
+  background: rgba(60,45,110,0.05);
+  overflow: hidden;
+}
+.area-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  flex-wrap: nowrap;
+}
+.area-header:hover { background: rgba(255,255,255,0.02); }
+.area-name-input {
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  color: var(--paper-deep);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  padding: 2px 4px;
+  flex: 1;
+  min-width: 0;
+}
+.area-name-input:focus { outline: none; border-bottom-color: var(--gold-dim); }
+.area-body { padding: 8px 12px 12px; }
+.reorder-btn {
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.region-select {
+  font-size: 0.78rem;
+  padding: 3px 6px;
+  max-width: 140px;
+  flex-shrink: 0;
+}
+/* Encounter tracker location accordions */
+.et-region-blurb {
+  color: var(--mist);
+  font-style: italic;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+.et-loc-accordion {
+  border: 1px solid rgba(196,152,58,0.18);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.et-loc-acc-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  background: rgba(196,152,58,0.04);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--paper-deep);
+}
+.et-loc-acc-header:hover { background: rgba(196,152,58,0.08); }
+.et-loc-acc-toggle { color: var(--mist); font-size: 0.7rem; width: 14px; flex-shrink: 0; }
+.et-loc-acc-body { padding: 8px 12px 12px; }
+
+/* ══ BARRACKS ══ */
+.btabs { display:flex; gap:4px; }
+.btab {
+  padding:5px 12px; border-radius:20px; font-size:0.82rem;
+  border:1px solid rgba(196,152,58,0.3); background:transparent;
+  color:var(--mist); cursor:pointer; font-family:'Source Sans 3',sans-serif;
+  font-weight:600; white-space:nowrap;
+}
+.btab:hover { border-color:var(--gold); color:var(--gold); }
+.btab-active { border-color:var(--gold); color:var(--gold); background:rgba(196,152,58,0.1); }
+.barracks-tbl {
+  width:100%; border-collapse:collapse; font-size:0.88rem; margin-top:10px;
+}
+.barracks-tbl th {
+  text-align:left; padding:7px 8px; font-family:'Cinzel',serif; font-size:0.75rem;
+  color:var(--gold); border-bottom:1px solid rgba(196,152,58,0.3);
+  cursor:pointer; user-select:none; white-space:nowrap;
+}
+.barracks-tbl th:hover { color:var(--paper-deep); }
+.barracks-tbl th.sorted { color:var(--paper-deep); }
+.barracks-tbl td {
+  padding:6px 8px; border-bottom:1px solid rgba(255,255,255,0.05); vertical-align:middle;
+}
+.barracks-tbl tr:hover td { background:rgba(255,255,255,0.03); }
+.barracks-tbl input[type="number"] { width:56px; text-align:center; padding:4px 6px; font-size:0.85rem; }
+.barracks-tbl select { font-size:0.83rem; padding:4px 6px; }
+.b-name-btn {
+  background:none; border:none; color:var(--paper-deep); font-family:'Cinzel',serif;
+  font-size:0.85rem; cursor:pointer; padding:0; text-align:left;
+}
+.b-name-btn:hover { color:var(--gold); text-decoration:underline; }
+.b-badge {
+  display:inline-block; font-size:0.68rem; padding:2px 7px; border-radius:10px;
+  font-family:'Cinzel',serif; font-weight:700; letter-spacing:0.5px;
+}
+.b-badge-npc { background:rgba(46,90,59,0.25); border:1px solid rgba(46,90,59,0.5); color:#7fc496; }
+.b-badge-mon { background:rgba(139,26,26,0.25); border:1px solid rgba(139,26,26,0.5); color:#e07070; }
+.barracks-picker-panel {
+  background:rgba(10,14,20,0.97); border:1px solid rgba(196,152,58,0.3);
+  border-radius:10px; padding:16px; margin-top:12px;
+}
+.picker-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:8px 10px; border-radius:7px; margin-bottom:4px;
+  border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03);
+}
+.picker-row:hover { border-color:rgba(196,152,58,0.35); }
+.picker-row-name { font-family:'Cinzel',serif; color:var(--paper-deep); font-size:0.85rem; }
+.picker-row-meta { color:var(--mist); font-size:0.78rem; margin-top:2px; }
+/* ══ PC CARDS (new) ══ */
+.pc-card-new {
+  border: 1px solid rgba(196,152,58,0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.03);
+}
+.pc-card-new:hover { border-color: rgba(196,152,58,0.5); }
+.pc-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.pc-card-name {
+  font-family: 'Cinzel', serif;
+  color: var(--paper-deep);
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+.pc-card-meta-line {
+  color: var(--mist);
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+.pc-section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin: 12px 0 6px;
+  border-bottom: 1px solid rgba(196,152,58,0.2);
+  padding-bottom: 3px;
+}
+.xp-bar-wrap {
+  height: 5px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  margin: 6px 0 4px;
+  overflow: hidden;
+}
+.xp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), #e8b84e);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+.xp-meta { font-size: 0.78rem; color: var(--mist); margin-bottom: 4px; }
+/* Spell slots */
+.spellslots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.ss-cell {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(196,152,58,0.2);
+  border-radius: 8px;
+  padding: 6px 8px;
+  text-align: center;
+}
+.ss-cell-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 4px;
+}
+.ss-controls { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.ss-adj-btn {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(196,152,58,0.3); background: transparent;
+  color: var(--paper); font-size: 0.9rem; cursor: pointer; padding: 0;
+  line-height: 20px; text-align: center;
+}
+.ss-adj-btn:hover { border-color: var(--gold); color: var(--gold); }
+.ss-remaining { font-size: 0.95rem; color: var(--paper-deep); font-weight: 600; min-width: 14px; text-align: center; }
+.ss-max-input { width: 36px; text-align: center; padding: 2px 4px; font-size: 0.8rem; }
+.ss-sep { font-size: 0.72rem; color: var(--mist); }
+/* Spells */
+.pc-spells-wrap { margin-bottom: 8px; }
+.spell-tags { display: flex; flex-wrap: wrap; gap: 5px; min-height: 24px; margin-bottom: 6px; }
+.spell-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(46,90,59,0.2); border: 1px solid rgba(46,90,59,0.4);
+  border-radius: 12px; padding: 2px 8px; font-size: 0.78rem; color: #8fc6a8;
+}
+.spell-tag-remove {
+  background: none; border: none; color: rgba(143,198,168,0.5);
+  cursor: pointer; padding: 0; font-size: 0.8rem; line-height: 1;
+}
+.spell-tag-remove:hover { color: #ff8673; }
+.spell-add-row { display: flex; gap: 6px; }
 </style>
 </head>
 <body>
@@ -941,11 +1205,12 @@ button:hover { border-color: var(--gold); color: var(--gold); }
   <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
   <a href="index.html">Hub</a>
   <a href="campaign.html" id="campNavLink" class="campaign-link active" style="display:none;">Campaign</a>
-  <a href="dnd5e_character_generator.html">Characters</a>
-  <a href="npc_creator.html">NPC Creator</a>
-  <a href="location_creator.html">Locations</a>
+  <a href="character_creator.html">Character Creator</a>
+  <a href="location_creator.html">Map Creator</a>
+  <a href="atlas.html">Atlas</a>
   <a href="monster_manual.html">Monster Manual</a>
   <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html">Vault</a>
 </nav>
 <script>
   // Show campaign link immediately (before DOMContentLoaded)
@@ -960,12 +1225,11 @@ button:hover { border-color: var(--gold); color: var(--gold); }
   <div class="snav-heading">Navigation</div>
   <a class="snav-link" href="#infoSection">📋 Campaign</a>
   <a class="snav-link" href="#diceSection">🎲 Dice Roller</a>
-  <a class="snav-link" href="#encounterSection">⚔ Active Location</a>
+  <a class="snav-link" href="#encounterSection">⚔ Active Region</a>
   <a class="snav-link" href="#pcsSection">👥 Characters</a>
   <a class="snav-link" href="#dmNotesSection">📝 DM Notes</a>
-  <a class="snav-link" href="#locSection">📍 Locations</a>
-  <a class="snav-link" href="#npcsSection">🧑 NPCs</a>
-  <a class="snav-link" href="#monstersSection">🐉 Monsters</a>
+  <a class="snav-link" href="#mapSection">🗺 Atlas</a>
+  <a class="snav-link" href="#barracksSection">⚔ Barracks</a>
   <a class="snav-link" href="#exportSection">💾 Campaign Data</a>
 </nav>
 
@@ -981,28 +1245,40 @@ button:hover { border-color: var(--gold); color: var(--gold); }
        CAMPAIGN INFO
   ══════════════════════════════════════════ -->
   <section class="section" id="infoSection" style="display:none;">
-    <h2 id="campTitleH2">Campaign</h2>
-    <div class="row" style="margin-bottom:8px;">
-      <div><label class="fl">Campaign Name</label><input id="campName" placeholder="Campaign name"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <h2 id="campTitleH2" style="margin-bottom:0;">Campaign</h2>
+      <button id="editCampNameBtn" class="btn-sm" onclick="startEditCampName()">✎ Edit Name</button>
     </div>
-    <label class="fl">Campaign Notes</label>
-    <div class="dm-toolbar">
-      <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('# ','campNotes')" title="Heading 1">H1</button>
-      <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('## ','campNotes')" title="Heading 2">H2</button>
-      <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('### ','campNotes')" title="Heading 3">H3</button>
-      <span class="dm-tb-sep"></span>
-      <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('- ','campNotes')" title="Bullet list">•</button>
-      <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('1. ','campNotes')" title="Numbered list">1.</button>
-      <span class="dm-tb-sep"></span>
-      <button type="button" class="dm-tb-btn" onclick="dmWrap('**','campNotes')" title="Bold"><strong>B</strong></button>
-      <button type="button" class="dm-tb-btn" onclick="dmWrap('*','campNotes')" title="Italic"><em>I</em></button>
-      <span class="dm-tb-sep"></span>
-      <button type="button" class="dm-tb-btn" onclick="dmInsertHr('campNotes')" title="Horizontal rule">―</button>
-      <span style="flex:1;"></span>
-      <button type="button" class="dm-tb-btn" id="campPreviewToggle" onclick="toggleCampPreview()">Preview</button>
+    <div id="campNameEditRow" style="display:none;margin-bottom:12px;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="campName" placeholder="Campaign name" style="flex:1;max-width:320px;">
+        <button class="btn-sm btn-primary" onclick="saveCampName()">✓ Save</button>
+        <button class="btn-sm" onclick="cancelEditCampName()">Cancel</button>
+      </div>
     </div>
-    <textarea id="campNotes" style="min-height:160px;resize:vertical;border-radius:0 0 8px 8px;border-top:none;" placeholder="World notes, session summaries, story threads…"></textarea>
-    <div id="campNotesPreview" class="dm-preview" style="min-height:160px;"></div>
+    <div style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:0;padding:6px 0;" onclick="toggleCampNotesSection()">
+      <span id="campNotesToggleIcon" style="color:var(--mist);font-size:0.75rem;width:14px;flex-shrink:0;">▶</span>
+      <span style="font-family:'Cinzel',serif;font-size:0.85rem;color:var(--paper-deep);letter-spacing:0.5px;">Campaign Notes</span>
+    </div>
+    <div id="campNotesBody" style="display:none;margin-top:6px;">
+      <div class="dm-toolbar">
+        <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('# ','campNotes')" title="Heading 1">H1</button>
+        <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('## ','campNotes')" title="Heading 2">H2</button>
+        <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('### ','campNotes')" title="Heading 3">H3</button>
+        <span class="dm-tb-sep"></span>
+        <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('- ','campNotes')" title="Bullet list">•</button>
+        <button type="button" class="dm-tb-btn" onclick="dmInsertPrefix('1. ','campNotes')" title="Numbered list">1.</button>
+        <span class="dm-tb-sep"></span>
+        <button type="button" class="dm-tb-btn" onclick="dmWrap('**','campNotes')" title="Bold"><strong>B</strong></button>
+        <button type="button" class="dm-tb-btn" onclick="dmWrap('*','campNotes')" title="Italic"><em>I</em></button>
+        <span class="dm-tb-sep"></span>
+        <button type="button" class="dm-tb-btn" onclick="dmInsertHr('campNotes')" title="Horizontal rule">―</button>
+        <span style="flex:1;"></span>
+        <button type="button" class="dm-tb-btn" id="campPreviewToggle" onclick="toggleCampPreview()">Edit</button>
+      </div>
+      <textarea id="campNotes" style="display:none;min-height:160px;resize:vertical;border-radius:0 0 8px 8px;border-top:none;" placeholder="World notes, session summaries, story threads…"></textarea>
+      <div id="campNotesPreview" class="dm-preview" style="min-height:160px;"></div>
+    </div>
   </section>
 
   <!-- ══════════════════════════════════════════
@@ -1038,19 +1314,22 @@ button:hover { border-color: var(--gold); color: var(--gold); }
   </section>
 
   <!-- ══════════════════════════════════════════
-       ENCOUNTER TRACKER (Active Location)
+       ENCOUNTER TRACKER (Active Region)
   ══════════════════════════════════════════ -->
   <section class="section encounter-section" id="encounterSection" style="display:none;">
     <div class="et-header">
-      <div class="et-title">⚔ Active Location: <span id="etLocName">—</span></div>
+      <div class="et-title">⚔ Active Region: <span id="etRegionName">—</span></div>
       <div class="et-nav">
         <button id="prevLocBtn" class="btn-sm">← Prev</button>
         <span class="et-counter" id="etCounter">—</span>
         <button id="nextLocBtn" class="btn-sm">Next →</button>
       </div>
     </div>
-    <div id="etLocNotes"></div>
+    <div id="etRegionBlurb" class="et-region-blurb"></div>
+    <!-- PCs always shown -->
     <div id="encounterList"></div>
+    <!-- Locations within this region (accordion) -->
+    <div id="etLocationsList"></div>
     <div id="encounterFlash" class="flash"></div>
   </section>
 
@@ -1103,46 +1382,85 @@ button:hover { border-color: var(--gold); color: var(--gold); }
   </section>
 
   <!-- ══════════════════════════════════════════
-       LOCATIONS
+       MAP (Regions + Locations)
   ══════════════════════════════════════════ -->
-  <section class="section" id="locSection" style="display:none;">
-    <h2>Locations</h2>
-    <p class="small" style="margin-bottom:10px;">Create locations to organize NPCs and monsters. Set one as <strong>active</strong> to show it in the Encounter Tracker above.</p>
-    <div class="actions">
-      <input id="newLocName" placeholder="New location name…" style="max-width:240px;">
-      <button id="addLocBtn" class="btn-secondary">+ Add Location</button>
+  <section class="section" id="mapSection" style="display:none;">
+    <h2>Atlas</h2>
+    <p class="small" style="margin-bottom:10px;">Organize your campaign world into Regions and Locations. Add from the Atlas or create custom entries.</p>
+    <!-- Tabs: Regions | Locations -->
+    <div class="btabs" id="mapTabs" style="margin-bottom:14px;">
+      <button class="btab btab-active" data-maptab="regions" onclick="setMapTab('regions')">Regions</button>
+      <button class="btab" data-maptab="locations" onclick="setMapTab('locations')">Locations</button>
     </div>
-    <div id="locationList"></div>
-    <div id="locFlash" class="flash"></div>
+
+    <!-- REGIONS panel -->
+    <div id="mapRegionsPanel">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <input id="newRegionName" placeholder="New region name…" style="flex:1;min-width:160px;max-width:260px;">
+        <button id="addRegionBtn" class="btn-secondary">+ Create Region</button>
+        <button class="btn-secondary" onclick="openMapRegionPicker()">+ Add from Atlas</button>
+      </div>
+      <div id="regionList"></div>
+      <div id="regionsFlash" class="flash"></div>
+      <!-- Map region picker panel -->
+      <div id="mapRegionPicker" class="barracks-picker-panel" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <strong style="font-family:'Cinzel',serif;color:var(--paper-deep);">Add Region from Atlas</strong>
+          <button onclick="closeMapRegionPicker()" class="btn-sm">✕ Close</button>
+        </div>
+        <div id="mapRegionPickerList"></div>
+      </div>
+    </div>
+
+    <!-- LOCATIONS panel -->
+    <div id="mapLocationsPanel" style="display:none;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+        <input id="newAreaName" placeholder="New location name…" style="flex:1;min-width:160px;max-width:260px;">
+        <button id="addAreaBtn" class="btn-secondary">+ Create Location</button>
+        <button class="btn-secondary" onclick="openMapLocationPicker()">+ Add from Atlas</button>
+      </div>
+      <div id="areaList"></div>
+      <div id="areasFlash" class="flash"></div>
+      <!-- Map location picker panel -->
+      <div id="mapLocationPicker" class="barracks-picker-panel" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <strong style="font-family:'Cinzel',serif;color:var(--paper-deep);">Add Location from Atlas</strong>
+          <button onclick="closeMapLocationPicker()" class="btn-sm">✕ Close</button>
+        </div>
+        <div id="mapLocationPickerList"></div>
+      </div>
+    </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       NPCs
+       BARRACKS
   ══════════════════════════════════════════ -->
-  <section class="section" id="npcsSection" style="display:none;">
-    <h2>NPCs</h2>
-    <p class="small" style="margin-bottom:10px;">Key stats for running an NPC: AC (how hard to hit), Max HP &amp; Current HP (track damage), Initiative (when they act in combat), Attack (quick reference).</p>
-    <div class="actions">
-      <button id="addBlankNpcBtn" class="btn-secondary">+ Blank NPC</button>
-      <select id="registryNpcSelect" class="select-w"><option value="">— Add from Registry —</option></select>
-      <button id="addFromRegistryBtn">Add from Registry</button>
+  <section class="section" id="barracksSection" style="display:none;">
+    <h2>Barracks</h2>
+    <p class="small" style="margin-bottom:10px;">All NPCs and Monsters deployed to this campaign. Add from the Vault, assign to locations, and edit stats inline.</p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+      <div class="btabs" id="bFilterTabs">
+        <button class="btab btab-active" data-bfilter="all" onclick="setBFilter('all')">All</button>
+        <button class="btab" data-bfilter="npc" onclick="setBFilter('npc')">NPCs</button>
+        <button class="btab" data-bfilter="monster" onclick="setBFilter('monster')">Monsters</button>
+      </div>
+      <button class="btn-secondary" onclick="openBarracksPicker()">+ Add from Vault</button>
     </div>
-    <div id="campaignNpcList"></div>
-    <div id="npcsFlash" class="flash"></div>
-  </section>
-
-  <!-- ══════════════════════════════════════════
-       MONSTERS
-  ══════════════════════════════════════════ -->
-  <section class="section" id="monstersSection" style="display:none;">
-    <h2>Monsters</h2>
-    <div class="actions">
-      <select id="monsterSelect" class="select-w"></select>
-      <button id="addMonsterBtn">Add Monster</button>
-      <button id="addCustomMonsterBtn">+ Custom Monster</button>
+    <div id="barracksWrap"></div>
+    <div id="barracksFlash" class="flash"></div>
+    <!-- Vault picker panel -->
+    <div id="barracksPicker" class="barracks-picker-panel" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <strong style="font-family:'Cinzel',serif;color:var(--paper-deep);">Add from Vault</strong>
+        <button onclick="closeBarracksPicker()" class="btn-sm">✕ Close</button>
+      </div>
+      <div class="btabs" id="bPickerFilterTabs" style="margin-bottom:10px;">
+        <button class="btab btab-active" data-bpfilter="all" onclick="setBPickerFilter('all')">All</button>
+        <button class="btab" data-bpfilter="npc" onclick="setBPickerFilter('npc')">NPCs</button>
+        <button class="btab" data-bpfilter="monster" onclick="setBPickerFilter('monster')">Monsters</button>
+      </div>
+      <div id="barracksPickerList" style="max-height:320px;overflow-y:auto;"></div>
     </div>
-    <div id="campaignMonsterList"></div>
-    <div id="monstersFlash" class="flash"></div>
   </section>
 
   <!-- ══════════════════════════════════════════
@@ -1194,13 +1512,25 @@ button:hover { border-color: var(--gold); color: var(--gold); }
     <button class="modal-close" onclick="closeEntityModal()">✕ Close</button>
     <div class="modal-title" id="modalTitle"></div>
     <div class="modal-subtitle" id="modalSubtitle"></div>
-    <div class="modal-stats" id="modalStats"></div>
-    <div id="modalAttackBlock" style="display:none;">
-      <div class="modal-section-label" id="modalAttackLabel">Attack</div>
-      <div class="modal-text-block" id="modalAttackText"></div>
+    <!-- Read-only view (PC details) -->
+    <div id="modalReadView">
+      <div class="modal-stats" id="modalStats"></div>
+      <div id="modalAttackBlock" style="display:none;">
+        <div class="modal-section-label" id="modalAttackLabel">Attack</div>
+        <div class="modal-text-block" id="modalAttackText"></div>
+      </div>
+      <div class="modal-section-label">Notes</div>
+      <div class="modal-text-block" id="modalNotes"></div>
     </div>
-    <div class="modal-section-label">Notes</div>
-    <div class="modal-text-block" id="modalNotes"></div>
+    <!-- Edit form (NPC / Monster) -->
+    <div id="modalEditView" style="display:none;">
+      <div id="modalFormBody"></div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="saveModalEdit()">Save Changes</button>
+        <button onclick="closeEntityModal()">Cancel</button>
+      </div>
+      <div id="modalFlash" class="flash"></div>
+    </div>
   </div>
 </div>
 
@@ -1211,10 +1541,12 @@ button:hover { border-color: var(--gold); color: var(--gold); }
 const SK = {
   campaigns:     'dndToolsCampaigns',
   activeCampaign:'dndToolsActiveCampaignId',
-  vault:         'dndToolsPlayerCharacters',
-  registry:      'dndToolsNpcProfiles',
+  vault:         'dndToolsPlayerCharacters',  // legacy key — keep for backward compat
+  registry:      'dndToolsNpcProfiles',       // legacy key — keep for backward compat
+  unifiedVault:  'dndToolsVault',             // { pcs:[], npcs:[], monsters:[] }
   addMonster:    'dndToolsAddMonsterToCampaign',
-  addLocation:   'dndToolsAddLocationToCampaign'
+  addLocation:   'dndToolsAddLocationToCampaign',
+  unifiedMap:    'dndToolsMap'
 };
 
 const MONSTER_REF = [
@@ -1261,6 +1593,11 @@ function safeRead(key) {
   try { const v = JSON.parse(localStorage.getItem(key)||'null'); return Array.isArray(v)?v:[]; }
   catch { return []; }
 }
+/** Like safeRead but for stored objects (not arrays). Returns {} on missing/invalid data. */
+function safeReadObj(key) {
+  try { const v = JSON.parse(localStorage.getItem(key)||'null'); return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {}; }
+  catch { return {}; }
+}
 function safeWrite(key, v) { localStorage.setItem(key, JSON.stringify(v)); }
 function uid(p) { return `${p}-${Date.now()}-${Math.floor(Math.random()*1e5)}`; }
 function nowIso() { return new Date().toISOString(); }
@@ -1270,6 +1607,7 @@ function esc(v) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+function statMod(v) { const m = Math.floor((intOr(v,10)-10)/2); return (m>=0?'+':'')+m; }
 function flash(id, msg, err) {
   const el=document.getElementById(id); if(!el) return;
   el.textContent=msg; el.style.color=err?'#ff8673':'#c4983a';
@@ -1343,16 +1681,21 @@ function persistCampaign() {
 
 function normalize(c) {
   c.areas     = c.areas     || [];
+  c.regions   = c.regions   || [];
   c.pcs       = c.pcs       || [];
   c.npcs      = c.npcs      || [];
   c.monsters  = c.monsters  || [];
   c.dmNotes   = c.dmNotes   || '';
-  c.activeAreaId = c.activeAreaId || (c.areas.length ? c.areas[0].id : '');
+  c.activeAreaId  = c.activeAreaId  || (c.areas.length ? c.areas[0].id : '');
+  c.activeRegionId = c.activeRegionId || (c.regions.length ? c.regions[0].id : '');
   // Ensure all entities have currentHp and initiative
   c.pcs.forEach(pc => {
     if (pc.currentHp === undefined) pc.currentHp = intOr(pc.hp, 10);
     if (pc.initiative === undefined) pc.initiative = 0;
     if (pc.status === undefined) pc.status = '';
+    if (pc.xp === undefined) pc.xp = 0;
+    if (!pc.spellSlots || typeof pc.spellSlots !== 'object' || Array.isArray(pc.spellSlots)) pc.spellSlots = {};
+    if (!Array.isArray(pc.spells)) pc.spells = [];
   });
   c.npcs.forEach(npc => {
     if (npc.currentHp === undefined) npc.currentHp = intOr(npc.maxHp || npc.hp, 10);
@@ -1386,43 +1729,9 @@ function areaOptHtml(selectedId, attrs) {
 // ══════════════════════════════════════════════════════════════
 //  ENCOUNTER TRACKER
 // ══════════════════════════════════════════════════════════════
-function renderEncounterTracker() {
-  const section = document.getElementById('encounterSection');
-  if (!CAMPAIGN.areas.length) { section.style.display='none'; return; }
-  section.style.display = '';
-
-  const activeId = CAMPAIGN.activeAreaId;
-  const area = findById(CAMPAIGN.areas, activeId) || CAMPAIGN.areas[0];
-  if (!area) { section.style.display='none'; return; }
-
-  CAMPAIGN.activeAreaId = area.id;
-
-  const aIdx = CAMPAIGN.areas.findIndex(a=>a.id===area.id);
-  document.getElementById('etLocName').textContent = area.name || 'Unnamed Location';
-  document.getElementById('etCounter').textContent = `${aIdx+1} / ${CAMPAIGN.areas.length}`;
-
-  // Show location notes above the entity list
-  const notesEl = document.getElementById('etLocNotes');
-  if (area.notes && area.notes.trim()) {
-    notesEl.innerHTML = `<div class="et-loc-notes">${esc(area.notes)}</div>`;
-  } else {
-    notesEl.innerHTML = '';
-  }
-
-  // Build combined list: all PCs + NPCs/Monsters in this location
-  const entities = [];
-  CAMPAIGN.pcs.forEach(pc => entities.push({kind:'pc', entity:pc}));
-  CAMPAIGN.npcs.filter(n=>n.areaId===area.id).forEach(npc => entities.push({kind:'npc', entity:npc}));
-  CAMPAIGN.monsters.filter(m=>m.areaId===area.id).forEach(mon => entities.push({kind:'monster', entity:mon}));
-
+function buildEntityTableHtml(entities) {
+  if (!entities.length) return '<div class="et-empty">No entities here.</div>';
   sortEntities(entities);
-
-  if (!entities.length) {
-    document.getElementById('encounterList').innerHTML =
-      '<div class="et-empty">No PCs or entities assigned to this location yet.</div>';
-    return;
-  }
-
   const rows = entities.map(({kind, entity}) => {
     const name = kind==='monster'
       ? (entity.customName||entity.sourceName||'Monster')
@@ -1439,7 +1748,7 @@ function renderEncounterTracker() {
         <input type="number" data-et-field="initiative" data-et-kind="${kind}" data-et-id="${esc(entity.id)}"
           value="${esc(entity.initiative||0)}" title="Initiative roll">
       </td>
-      <td class="et-name-cell">${kind!=='pc' ? `<button class="et-name-link" onclick="openEntityModal('${kind}','${esc(entity.id)}')">${esc(name)}</button>` : esc(name)}</td>
+      <td class="et-name-cell"><button class="et-name-link" onclick="openEntityModal('${kind}','${esc(entity.id)}')">${esc(name)}</button></td>
       <td>${typeHtml}</td>
       <td class="et-ac-cell">${esc(entity.ac||'—')}</td>
       <td class="et-hp-cell">
@@ -1454,381 +1763,887 @@ function renderEncounterTracker() {
       </td>
     </tr>`;
   }).join('');
-
   const thHtml = (col, label, width) => {
     const active = etSort.col === col;
     const arrow = active ? `<span class="sort-arrow">${etSort.dir === -1 ? '▼' : '▲'}</span>` : '';
     const w = width ? ` style="width:${width};"` : '';
     return `<th class="sortable${active?' sort-active':''}"${w} onclick="setEtSort('${col}')">${label}${arrow}</th>`;
   };
-
-  document.getElementById('encounterList').innerHTML = `
-    <table class="initiative-table">
-      <thead><tr>
-        ${thHtml('initiative','Init','70px')}
-        ${thHtml('name','Name','')}
-        ${thHtml('type','Type','80px')}
-        ${thHtml('ac','AC','50px')}
-        ${thHtml('hp','HP','130px')}
-        ${thHtml('status','Status','140px')}
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+  return `<table class="initiative-table">
+    <thead><tr>
+      ${thHtml('initiative','Init','70px')}
+      ${thHtml('name','Name','')}
+      ${thHtml('type','Type','80px')}
+      ${thHtml('ac','AC','50px')}
+      ${thHtml('hp','HP','130px')}
+      ${thHtml('status','Status','140px')}
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
-function navigateLocation(direction) {
-  if (!CAMPAIGN.areas.length) return;
-  const idx = CAMPAIGN.areas.findIndex(a=>a.id===CAMPAIGN.activeAreaId);
-  let next = idx + direction;
-  if (next < 0) next = CAMPAIGN.areas.length - 1;
-  if (next >= CAMPAIGN.areas.length) next = 0;
-  CAMPAIGN.activeAreaId = CAMPAIGN.areas[next].id;
-  persistCampaign();
-  renderEncounterTracker();
-  renderLocations(); // update active badge
-}
+function renderEncounterTracker() {
+  const section = document.getElementById('encounterSection');
+  const hasRegions = CAMPAIGN.regions && CAMPAIGN.regions.length > 0;
+  const hasAreas   = CAMPAIGN.areas && CAMPAIGN.areas.length > 0;
+  if (!hasRegions && !hasAreas) { section.style.display='none'; return; }
+  section.style.display = '';
 
-// ══════════════════════════════════════════════════════════════
-//  LOCATIONS RENDER
-// ══════════════════════════════════════════════════════════════
-function renderLocations() {
-  const wrap = document.getElementById('locationList');
-  if (!CAMPAIGN.areas.length) {
-    wrap.innerHTML = '<div class="empty">No locations yet. Add one above.</div>';
+  // --- Region-based mode ---
+  if (hasRegions) {
+    const activeRegId = CAMPAIGN.activeRegionId;
+    const region = findById(CAMPAIGN.regions, activeRegId) || CAMPAIGN.regions[0];
+    if (!region) { section.style.display='none'; return; }
+    CAMPAIGN.activeRegionId = region.id;
+    const rIdx = CAMPAIGN.regions.findIndex(r=>r.id===region.id);
+    document.getElementById('etRegionName').textContent = region.name || 'Unnamed Region';
+    document.getElementById('etCounter').textContent = `${rIdx+1} / ${CAMPAIGN.regions.length}`;
+    const blurbEl = document.getElementById('etRegionBlurb');
+    blurbEl.textContent = region.blurb || '';
+    blurbEl.style.display = region.blurb ? '' : 'none';
+
+    // PCs always shown
+    const pcEntities = CAMPAIGN.pcs.map(pc=>({kind:'pc', entity:pc}));
+    document.getElementById('encounterList').innerHTML = buildEntityTableHtml(pcEntities);
+
+    // Locations within this region
+    const regionAreas = CAMPAIGN.areas.filter(a => a.regionId === region.id);
+    const locListEl = document.getElementById('etLocationsList');
+    if (!regionAreas.length) {
+      locListEl.innerHTML = '<div class="et-empty" style="margin-top:8px;">No locations in this region yet.</div>';
+    } else {
+      locListEl.innerHTML = regionAreas.map((area, i) => {
+        const areaEntities = [];
+        CAMPAIGN.npcs.filter(n=>n.areaId===area.id).forEach(npc => areaEntities.push({kind:'npc', entity:npc}));
+        CAMPAIGN.monsters.filter(m=>m.areaId===area.id).forEach(mon => areaEntities.push({kind:'monster', entity:mon}));
+        const bodyId = `et-loc-body-${esc(area.id)}`;
+        const togId  = `et-loc-tog-${esc(area.id)}`;
+        const notesHtml = area.notes && area.notes.trim()
+          ? `<div class="et-loc-notes" style="margin-bottom:8px;">${esc(area.notes)}</div>` : '';
+        return `<div class="et-loc-accordion">
+          <div class="et-loc-acc-header" onclick="etToggleLoc('${esc(area.id)}')">
+            <span class="et-loc-acc-toggle" id="${togId}">▶</span>
+            <span>${esc(area.name||'Unnamed Location')}</span>
+            <span style="color:var(--mist);font-size:0.75rem;margin-left:auto;">${areaEntities.length} entit${areaEntities.length!==1?'ies':'y'}</span>
+          </div>
+          <div class="et-loc-acc-body" id="${bodyId}" style="display:none;">
+            ${notesHtml}
+            ${buildEntityTableHtml(areaEntities)}
+          </div>
+        </div>`;
+      }).join('');
+    }
     return;
   }
 
-  wrap.innerHTML = CAMPAIGN.areas.map(area => {
-    const isActive = area.id === CAMPAIGN.activeAreaId;
-    const npcCnt = CAMPAIGN.npcs.filter(n=>n.areaId===area.id).length;
-    const monCnt = CAMPAIGN.monsters.filter(m=>m.areaId===area.id).length;
-    return `
-    <div class="location-block ${isActive?'active-location':''}" data-loc-id="${esc(area.id)}">
-      <div class="location-header" onclick="toggleLoc('${esc(area.id)}')">
-        <span class="loc-toggle" id="ltog-${esc(area.id)}">▶</span>
-        <input class="loc-name-input" data-loc-field="name" data-loc-id="${esc(area.id)}"
-          value="${esc(area.name||'')}" placeholder="Location name"
-          onclick="event.stopPropagation()">
-        ${isActive ? '<span class="active-badge">ACTIVE</span>' : ''}
-        <span class="loc-count">${npcCnt} NPC${npcCnt!==1?'s':''} · ${monCnt} monster${monCnt!==1?'s':''}</span>
-        ${!isActive ? `<button class="btn-sm btn-gold" data-action="set-active-loc" data-loc-id="${esc(area.id)}" onclick="event.stopPropagation()">Set Active</button>` : ''}
-        <button class="btn-sm btn-danger" data-action="delete-loc" data-loc-id="${esc(area.id)}" onclick="event.stopPropagation()">Remove</button>
-      </div>
-      <div class="location-body" id="lbody-${esc(area.id)}" style="display:none;">
-        <label class="fl">Location Notes</label>
-        <textarea data-loc-field="notes" data-loc-id="${esc(area.id)}"
-          placeholder="Description, traps, lore, read-aloud text…" style="margin-bottom:0;min-height:160px;">${esc(area.notes||'')}</textarea>
-      </div>
-    </div>`;
-  }).join('');
+  // --- Legacy area-based mode (no regions) ---
+  const activeId = CAMPAIGN.activeAreaId;
+  const area = findById(CAMPAIGN.areas, activeId) || CAMPAIGN.areas[0];
+  if (!area) { section.style.display='none'; return; }
+  CAMPAIGN.activeAreaId = area.id;
+  const aIdx = CAMPAIGN.areas.findIndex(a=>a.id===area.id);
+  document.getElementById('etRegionName').textContent = area.name || 'Unnamed Location';
+  document.getElementById('etCounter').textContent = `${aIdx+1} / ${CAMPAIGN.areas.length}`;
+  const blurbEl2 = document.getElementById('etRegionBlurb');
+  if (area.notes && area.notes.trim()) {
+    blurbEl2.textContent = area.notes;
+    blurbEl2.style.display = '';
+  } else {
+    blurbEl2.textContent = '';
+    blurbEl2.style.display = 'none';
+  }
+  document.getElementById('etLocationsList').innerHTML = '';
+
+  const entities = [];
+  CAMPAIGN.pcs.forEach(pc => entities.push({kind:'pc', entity:pc}));
+  CAMPAIGN.npcs.filter(n=>n.areaId===area.id).forEach(npc => entities.push({kind:'npc', entity:npc}));
+  CAMPAIGN.monsters.filter(m=>m.areaId===area.id).forEach(mon => entities.push({kind:'monster', entity:mon}));
+  document.getElementById('encounterList').innerHTML = buildEntityTableHtml(entities);
 }
 
-function toggleLoc(id) {
-  const body = document.getElementById(`lbody-${id}`);
-  const tog  = document.getElementById(`ltog-${id}`);
+function etToggleLoc(id) {
+  const body = document.getElementById(`et-loc-body-${id}`);
+  const tog  = document.getElementById(`et-loc-tog-${id}`);
   if (!body) return;
-  const open = body.style.display==='none';
+  const open = body.style.display === 'none';
   body.style.display = open ? '' : 'none';
   if (tog) tog.textContent = open ? '▼' : '▶';
 }
 
+function navigateLocation(direction) {
+  const hasRegions = CAMPAIGN.regions && CAMPAIGN.regions.length > 0;
+  if (hasRegions) {
+    if (!CAMPAIGN.regions.length) return;
+    const idx = CAMPAIGN.regions.findIndex(r=>r.id===CAMPAIGN.activeRegionId);
+    let next = idx + direction;
+    if (next < 0) next = CAMPAIGN.regions.length - 1;
+    if (next >= CAMPAIGN.regions.length) next = 0;
+    CAMPAIGN.activeRegionId = CAMPAIGN.regions[next].id;
+    persistCampaign();
+    renderEncounterTracker();
+    renderRegions();
+  } else {
+    if (!CAMPAIGN.areas.length) return;
+    const idx = CAMPAIGN.areas.findIndex(a=>a.id===CAMPAIGN.activeAreaId);
+    let next = idx + direction;
+    if (next < 0) next = CAMPAIGN.areas.length - 1;
+    if (next >= CAMPAIGN.areas.length) next = 0;
+    CAMPAIGN.activeAreaId = CAMPAIGN.areas[next].id;
+    persistCampaign();
+    renderEncounterTracker();
+    renderAreas();
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MAP TAB SWITCHING
+// ══════════════════════════════════════════════════════════════
+let _mapTab = 'regions';
+function setMapTab(tab) {
+  _mapTab = tab;
+  document.querySelectorAll('#mapTabs .btab').forEach(b => {
+    b.classList.toggle('btab-active', b.dataset.maptab === tab);
+  });
+  document.getElementById('mapRegionsPanel').style.display  = tab === 'regions'   ? '' : 'none';
+  document.getElementById('mapLocationsPanel').style.display = tab === 'locations' ? '' : 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  REGIONS RENDER
+// ══════════════════════════════════════════════════════════════
+function renderRegions() {
+  const wrap = document.getElementById('regionList');
+  if (!wrap) return;
+  if (!CAMPAIGN.regions.length) {
+    wrap.innerHTML = '<div class="empty">No regions yet. Create one above or add from the Atlas.</div>';
+    return;
+  }
+  const activeRegId = CAMPAIGN.activeRegionId || (CAMPAIGN.regions.length ? CAMPAIGN.regions[0].id : '');
+  wrap.innerHTML = CAMPAIGN.regions.map((region, idx) => {
+    const isActive = region.id === activeRegId;
+    const areaCnt = CAMPAIGN.areas.filter(a=>a.regionId===region.id).length;
+    return `
+    <div class="region-block" data-region-id="${esc(region.id)}">
+      <div class="region-header" onclick="toggleRegion('${esc(region.id)}')">
+        <span class="region-toggle" id="rtog-${esc(region.id)}">▶</span>
+        <input class="region-name-input" data-region-field="name" data-region-id="${esc(region.id)}"
+          value="${esc(region.name||'')}" placeholder="Region name"
+          onclick="event.stopPropagation()">
+        ${isActive ? '<span class="region-active-badge">ACTIVE</span>' : ''}
+        <span style="color:var(--mist);font-size:0.75rem;white-space:nowrap;">${areaCnt} loc${areaCnt!==1?'s':''}</span>
+        <button class="reorder-btn btn-sm" onclick="event.stopPropagation();reorderRegion('${esc(region.id)}',-1)" title="Move up">▲</button>
+        <button class="reorder-btn btn-sm" onclick="event.stopPropagation();reorderRegion('${esc(region.id)}',1)" title="Move down">▼</button>
+        ${!isActive ? `<button class="btn-sm btn-gold" onclick="event.stopPropagation();setActiveRegion('${esc(region.id)}')">Set Active</button>` : ''}
+        <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteRegion('${esc(region.id)}')">Remove</button>
+      </div>
+      <div class="region-body" id="rbody-${esc(region.id)}" style="display:none;">
+        <label class="fl">Blurb <span style="font-weight:400;font-family:inherit;">(short description)</span></label>
+        <input data-region-field="blurb" data-region-id="${esc(region.id)}"
+          value="${esc(region.blurb||'')}" placeholder="A brief description shown in the encounter tracker…"
+          style="margin-bottom:8px;">
+        <label class="fl">Notes</label>
+        <textarea data-region-field="notes" data-region-id="${esc(region.id)}"
+          placeholder="World details, lore, DM notes…" style="min-height:80px;margin-bottom:0;">${esc(region.notes||'')}</textarea>
+        <div class="region-locs">
+          <div class="loc-sub-label" style="margin-top:10px;">Locations in this region</div>
+          ${renderRegionAreasList(region.id)}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Wire region field changes
+  wrap.querySelectorAll('input[data-region-field], textarea[data-region-field]').forEach(el => {
+    el.addEventListener('input', () => updateRegionField(el.dataset.regionId, el.dataset.regionField, el.value));
+  });
+}
+
+function renderRegionAreasList(regionId) {
+  const areas = CAMPAIGN.areas.filter(a => a.regionId === regionId);
+  if (!areas.length) return '<div style="color:var(--mist);font-size:0.82rem;font-style:italic;">No locations assigned. Assign locations in the Locations tab.</div>';
+  return areas.map(a => `<div style="color:var(--paper-deep);font-size:0.85rem;padding:3px 0;">• ${esc(a.name||'Unnamed Location')}</div>`).join('');
+}
+
+function toggleRegion(id) {
+  const body = document.getElementById(`rbody-${id}`);
+  const tog  = document.getElementById(`rtog-${id}`);
+  if (!body) return;
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  if (tog) tog.textContent = open ? '▼' : '▶';
+}
+
+function addRegion() {
+  const inp = document.getElementById('newRegionName');
+  const name = inp.value.trim();
+  if (!name) { flash('regionsFlash','Enter a region name.',true); return; }
+  const region = { id:uid('reg'), name, blurb:'', notes:'', createdAt:nowIso(), updatedAt:nowIso() };
+  CAMPAIGN.regions.push(region);
+  if (!CAMPAIGN.activeRegionId) CAMPAIGN.activeRegionId = region.id;
+  persistCampaign();
+  inp.value = '';
+  renderRegions();
+  renderEncounterTracker();
+  flash('regionsFlash', `Region "${name}" created.`);
+}
+
+function deleteRegion(id) {
+  const region = findById(CAMPAIGN.regions, id);
+  if (!region) return;
+  if (!confirm(`Remove region "${region.name||'this region'}"? Locations will become unassigned.`)) return;
+  CAMPAIGN.regions = CAMPAIGN.regions.filter(r=>r.id!==id);
+  CAMPAIGN.areas.forEach(a=>{ if(a.regionId===id) a.regionId=''; });
+  if (CAMPAIGN.activeRegionId === id) {
+    CAMPAIGN.activeRegionId = CAMPAIGN.regions.length ? CAMPAIGN.regions[0].id : '';
+  }
+  persistCampaign();
+  renderRegions();
+  renderAreas();
+  renderEncounterTracker();
+  flash('regionsFlash', 'Region removed.');
+}
+
+function updateRegionField(id, field, value) {
+  const region = findById(CAMPAIGN.regions, id);
+  if (!region) return;
+  region[field] = value;
+  region.updatedAt = nowIso();
+  persistCampaign();
+  if (field === 'name') { renderEncounterTracker(); renderRegions(); }
+  if (field === 'blurb') { renderEncounterTracker(); }
+}
+
+function reorderRegion(id, dir) {
+  const idx = CAMPAIGN.regions.findIndex(r=>r.id===id);
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= CAMPAIGN.regions.length) return;
+  [CAMPAIGN.regions[idx], CAMPAIGN.regions[newIdx]] = [CAMPAIGN.regions[newIdx], CAMPAIGN.regions[idx]];
+  persistCampaign();
+  renderRegions();
+}
+
+function setActiveRegion(id) {
+  CAMPAIGN.activeRegionId = id;
+  persistCampaign();
+  renderRegions();
+  renderEncounterTracker();
+}
+
+// Map registry pickers for regions
+function openMapRegionPicker() {
+  document.getElementById('mapRegionPicker').style.display = '';
+  renderMapRegionPicker();
+}
+function closeMapRegionPicker() {
+  document.getElementById('mapRegionPicker').style.display = 'none';
+}
+function renderMapRegionPicker() {
+  const mapData = safeReadMap();
+  const existing = new Set(CAMPAIGN.regions.map(r=>r.sourceId||r.id));
+  const available = (mapData.regions||[]).filter(r=>!existing.has(r.id));
+  const el = document.getElementById('mapRegionPickerList');
+  if (!available.length) {
+    el.innerHTML = '<div class="empty" style="margin-top:0;">No new regions in the Map registry.</div>';
+    return;
+  }
+  el.innerHTML = available.map(r => `
+    <div class="picker-row">
+      <div>
+        <div class="picker-row-name">${esc(r.name||'Unnamed Region')}</div>
+        <div class="picker-row-meta">${esc(r.type||'')}${r.blurb ? ' — ' + esc(r.blurb.slice(0,60)) : ''}</div>
+      </div>
+      <button class="btn-sm btn-secondary" onclick="addRegionFromMap('${esc(r.id)}')">Add</button>
+    </div>`).join('');
+}
+function addRegionFromMap(id) {
+  const mapData = safeReadMap();
+  const r = (mapData.regions||[]).find(x=>x.id===id);
+  if (!r) return;
+  const region = { id:uid('reg'), sourceId:r.id, name:r.name||'', blurb:r.blurb||'', notes:r.description||'', createdAt:nowIso(), updatedAt:nowIso() };
+  CAMPAIGN.regions.push(region);
+  if (!CAMPAIGN.activeRegionId) CAMPAIGN.activeRegionId = region.id;
+  persistCampaign();
+  renderRegions();
+  renderMapRegionPicker();
+  renderEncounterTracker();
+  flash('regionsFlash', `"${region.name}" added from Atlas.`);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  AREAS (LOCATIONS) RENDER
+// ══════════════════════════════════════════════════════════════
+function renderAreas() {
+  const wrap = document.getElementById('areaList');
+  if (!wrap) return;
+  if (!CAMPAIGN.areas.length) {
+    wrap.innerHTML = '<div class="empty">No locations yet. Create one above or add from the Atlas.</div>';
+    return;
+  }
+  wrap.innerHTML = CAMPAIGN.areas.map((area, idx) => {
+    const npcCnt = CAMPAIGN.npcs.filter(n=>n.areaId===area.id).length;
+    const monCnt = CAMPAIGN.monsters.filter(m=>m.areaId===area.id).length;
+    const regionOpts = `<option value="">— No Region —</option>` +
+      CAMPAIGN.regions.map(r=>`<option value="${esc(r.id)}" ${r.id===area.regionId?'selected':''}>${esc(r.name||'Unnamed Region')}</option>`).join('');
+    return `
+    <div class="area-block" data-area-id="${esc(area.id)}">
+      <div class="area-header" onclick="toggleArea('${esc(area.id)}')">
+        <span class="region-toggle" id="atog-${esc(area.id)}">▶</span>
+        <input class="area-name-input" data-area-field="name" data-area-id="${esc(area.id)}"
+          value="${esc(area.name||'')}" placeholder="Location name"
+          onclick="event.stopPropagation()">
+        <select class="region-select" data-area-field="regionId" data-area-id="${esc(area.id)}"
+          onclick="event.stopPropagation()">${regionOpts}</select>
+        <span style="color:var(--mist);font-size:0.75rem;white-space:nowrap;">${npcCnt+monCnt} ent.</span>
+        <button class="reorder-btn btn-sm" onclick="event.stopPropagation();reorderArea('${esc(area.id)}',-1)" title="Move up">▲</button>
+        <button class="reorder-btn btn-sm" onclick="event.stopPropagation();reorderArea('${esc(area.id)}',1)" title="Move down">▼</button>
+        <button class="btn-sm btn-danger" onclick="event.stopPropagation();deleteArea('${esc(area.id)}')">Remove</button>
+      </div>
+      <div class="area-body" id="abody-${esc(area.id)}" style="display:none;">
+        <label class="fl">Location Notes</label>
+        <textarea data-area-field="notes" data-area-id="${esc(area.id)}"
+          placeholder="Description, traps, lore, read-aloud text…" style="margin-bottom:0;min-height:120px;">${esc(area.notes||'')}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Wire area field changes
+  wrap.querySelectorAll('input[data-area-field], textarea[data-area-field]').forEach(el => {
+    el.addEventListener('input', () => updateAreaField(el.dataset.areaId, el.dataset.areaField, el.value));
+  });
+  wrap.querySelectorAll('select[data-area-field]').forEach(el => {
+    el.addEventListener('change', () => updateAreaField(el.dataset.areaId, el.dataset.areaField, el.value));
+  });
+}
+
+function toggleArea(id) {
+  const body = document.getElementById(`abody-${id}`);
+  const tog  = document.getElementById(`atog-${id}`);
+  if (!body) return;
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  if (tog) tog.textContent = open ? '▼' : '▶';
+}
+
+function addArea() {
+  const inp = document.getElementById('newAreaName');
+  const name = inp.value.trim();
+  if (!name) { flash('areasFlash','Enter a location name.',true); return; }
+  const area = { id:uid('area'), name, notes:'', regionId:'' };
+  CAMPAIGN.areas.push(area);
+  if (!CAMPAIGN.activeAreaId) CAMPAIGN.activeAreaId = area.id;
+  persistCampaign();
+  inp.value = '';
+  renderAreas();
+  renderRegions();
+  renderEncounterTracker();
+  renderBarracks();
+  flash('areasFlash', `Location "${name}" created.`);
+}
+
+function deleteArea(id) {
+  const area = findById(CAMPAIGN.areas, id);
+  if (!area) return;
+  if (!confirm(`Remove location "${area.name||'this location'}"? NPCs and monsters will become unassigned.`)) return;
+  CAMPAIGN.areas = CAMPAIGN.areas.filter(a=>a.id!==id);
+  CAMPAIGN.npcs.forEach(n=>{ if(n.areaId===id) n.areaId=''; });
+  CAMPAIGN.monsters.forEach(m=>{ if(m.areaId===id) m.areaId=''; });
+  if (CAMPAIGN.activeAreaId === id) {
+    CAMPAIGN.activeAreaId = CAMPAIGN.areas.length ? CAMPAIGN.areas[0].id : '';
+  }
+  persistCampaign();
+  renderAreas();
+  renderRegions();
+  renderEncounterTracker();
+  renderBarracks();
+}
+
+function updateAreaField(id, field, value) {
+  const area = findById(CAMPAIGN.areas, id);
+  if (!area) return;
+  area[field] = value;
+  persistCampaign();
+  if (field==='name') { renderAreas(); renderEncounterTracker(); renderBarracks(); renderRegions(); }
+  if (field==='regionId') { renderAreas(); renderRegions(); renderEncounterTracker(); }
+}
+
+function reorderArea(id, dir) {
+  const idx = CAMPAIGN.areas.findIndex(a=>a.id===id);
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= CAMPAIGN.areas.length) return;
+  [CAMPAIGN.areas[idx], CAMPAIGN.areas[newIdx]] = [CAMPAIGN.areas[newIdx], CAMPAIGN.areas[idx]];
+  persistCampaign();
+  renderAreas();
+}
+
+// Map registry pickers for areas/locations
+function openMapLocationPicker() {
+  document.getElementById('mapLocationPicker').style.display = '';
+  renderMapLocationPicker();
+}
+function closeMapLocationPicker() {
+  document.getElementById('mapLocationPicker').style.display = 'none';
+}
+function renderMapLocationPicker() {
+  const mapData = safeReadMap();
+  const existing = new Set(CAMPAIGN.areas.map(a=>a.sourceId||a.id));
+  const available = (mapData.locations||[]).filter(l=>!existing.has(l.id));
+  const el = document.getElementById('mapLocationPickerList');
+  if (!available.length) {
+    el.innerHTML = '<div class="empty" style="margin-top:0;">No new locations in the Map registry.</div>';
+    return;
+  }
+  el.innerHTML = available.map(l => `
+    <div class="picker-row">
+      <div>
+        <div class="picker-row-name">${esc(l.name||'Unnamed Location')}</div>
+        <div class="picker-row-meta">${esc(l.type||'')}${l.atmosphere ? ' · ' + esc(l.atmosphere) : ''}</div>
+      </div>
+      <button class="btn-sm btn-secondary" onclick="addAreaFromMap('${esc(l.id)}')">Add</button>
+    </div>`).join('');
+}
+function addAreaFromMap(id) {
+  const mapData = safeReadMap();
+  const l = (mapData.locations||[]).find(x=>x.id===id);
+  if (!l) return;
+  const noteParts = [];
+  if (l.type) noteParts.push(`Type: ${l.type}`);
+  if (l.atmosphere) noteParts.push(`Atmosphere: ${l.atmosphere}`);
+  if (l.description) noteParts.push(l.description);
+  if (l.notableFeatures) noteParts.push(`Notable Features:\n${l.notableFeatures}`);
+  const area = { id:uid('area'), sourceId:l.id, name:l.name||'', notes:noteParts.join('\n'), regionId:'' };
+  CAMPAIGN.areas.push(area);
+  if (!CAMPAIGN.activeAreaId) CAMPAIGN.activeAreaId = area.id;
+  persistCampaign();
+  renderAreas();
+  renderRegions();
+  renderMapLocationPicker();
+  renderEncounterTracker();
+  renderBarracks();
+  flash('areasFlash', `"${area.name}" added from Atlas.`);
+}
+
+// Map safe read/write helpers
+function safeReadMap() {
+  try {
+    const v = JSON.parse(localStorage.getItem(SK.unifiedMap)||'null');
+    if (v && typeof v === 'object' && !Array.isArray(v)) return v;
+    return { regions:[], locations:[] };
+  } catch { return { regions:[], locations:[] }; }
+}
+
+// Keep backward compat: updateLocField still works on CAMPAIGN.areas
+function updateLocField(id, field, value) {
+  updateAreaField(id, field, value);
+}
+// Keep backward compat: renderLocations delegates to renderAreas
+function renderLocations() {
+  renderAreas();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LEGACY location set-active / delete (kept for compat)
+// ══════════════════════════════════════════════════════════════
 function setActiveLocation(id) {
   CAMPAIGN.activeAreaId = id;
   persistCampaign();
-  renderLocations();
+  renderAreas();
   renderEncounterTracker();
 }
 
 function deleteLocation(id) {
-  const loc = findById(CAMPAIGN.areas, id);
-  if (!loc) return;
-  if (!confirm(`Remove location "${loc.name||'this location'}"? NPCs and monsters will become unassigned.`)) return;
-  CAMPAIGN.areas = CAMPAIGN.areas.filter(a=>a.id!==id);
-  CAMPAIGN.npcs.forEach(n=>{ if(n.areaId===id) n.areaId=''; });
-  CAMPAIGN.monsters.forEach(m=>{ if(m.areaId===id) m.areaId=''; });
-  if (CAMPAIGN.activeAreaId===id) {
-    CAMPAIGN.activeAreaId = CAMPAIGN.areas.length ? CAMPAIGN.areas[0].id : '';
-  }
-  persistCampaign();
-  renderLocations();
-  renderEncounterTracker();
-  renderNpcs();
-  renderMonsters();
+  deleteArea(id);
 }
 
 function addLocation() {
+  // Legacy: reads from #newLocName if present, else do nothing
   const inp = document.getElementById('newLocName');
+  if (!inp) return;
   const name = inp.value.trim();
   if (!name) { flash('locFlash','Enter a location name.',true); return; }
-  const loc = { id:uid('loc'), name, notes:'' };
-  CAMPAIGN.areas.push(loc);
-  if (!CAMPAIGN.activeAreaId) CAMPAIGN.activeAreaId = loc.id;
+  const area = { id:uid('area'), name, notes:'', regionId:'' };
+  CAMPAIGN.areas.push(area);
+  if (!CAMPAIGN.activeAreaId) CAMPAIGN.activeAreaId = area.id;
   persistCampaign();
-  inp.value='';
-  renderLocations();
+  inp.value = '';
+  renderAreas();
   renderEncounterTracker();
-  renderNpcs();
-  renderMonsters();
+  renderBarracks();
 }
 
 // ══════════════════════════════════════════════════════════════
 //  PCs RENDER
 // ══════════════════════════════════════════════════════════════
+const XP_THRESHOLDS = [0,300,900,2700,6500,14000,23000,34000,48000,64000,85000,100000,120000,140000,165000,195000,225000,265000,305000,355000];
+const ORDINALS = ['','1st','2nd','3rd','4th','5th','6th','7th','8th','9th'];
+
+function profBonus(level) {
+  const l = intOr(level, 1);
+  return Math.ceil(l / 4) + 1;
+}
+
+function xpMeta(pc) {
+  const xp = intOr(pc.xp, 0);
+  const level = intOr(pc.level, 1);
+  const clampedLevel = Math.max(1, Math.min(20, level));
+  const nextLvl = clampedLevel < 20 ? clampedLevel + 1 : 20;
+  const currentThresh = XP_THRESHOLDS[clampedLevel - 1] || 0;
+  const nextThresh = XP_THRESHOLDS[nextLvl - 1] || XP_THRESHOLDS[19];
+  const pct = clampedLevel >= 20 ? 100 : Math.min(100, Math.round(((xp - currentThresh) / (nextThresh - currentThresh)) * 100));
+  const label = clampedLevel >= 20 ? 'Max level reached' : `${xp.toLocaleString()} / ${nextThresh.toLocaleString()} XP  ·  Level ${clampedLevel} → ${nextLvl}  ·  Prof +${profBonus(clampedLevel)}`;
+  return { pct: Math.max(0, pct), label };
+}
+
+function getSlotData(pc, level) {
+  const slots = pc.spellSlots || {};
+  const s = slots[level] || { max: 0, remaining: 0 };
+  return { max: intOr(s.max, 0), remaining: intOr(s.remaining !== undefined ? s.remaining : s.max, 0) };
+}
+
+function pcSpellSlotsHtml(pc) {
+  let html = '';
+  for (let lvl = 1; lvl <= 9; lvl++) {
+    const { max, remaining } = getSlotData(pc, lvl);
+    html += `<div class="ss-cell">
+      <span class="ss-cell-label">${ORDINALS[lvl]}</span>
+      <div class="ss-controls">
+        <button class="ss-adj-btn" onclick="adjustPcSlot('${esc(pc.id)}',${lvl},-1)">−</button>
+        <span class="ss-remaining" id="ssr-${esc(pc.id)}-${lvl}">${remaining}</span>
+        <span class="ss-sep">/</span>
+        <input class="ss-max-input" type="number" min="0" max="9" value="${max}" title="Max slots"
+          onchange="setPcSlotMax('${esc(pc.id)}',${lvl},this.value)">
+        <button class="ss-adj-btn" onclick="adjustPcSlot('${esc(pc.id)}',${lvl},1)">+</button>
+      </div>
+    </div>`;
+  }
+  return html;
+}
+
+function pcSpellTagsHtml(pc) {
+  const spells = pc.spells || [];
+  if (!spells.length) return '<span style="color:var(--mist);font-size:0.82rem;font-style:italic;">No spells added yet.</span>';
+  return spells.map((s, i) =>
+    `<span class="spell-tag">${esc(s)}<button class="spell-tag-remove" onclick="removePcSpell('${esc(pc.id)}',${i})" title="Remove">✕</button></span>`
+  ).join('');
+}
+
 function renderPcs() {
   const wrap = document.getElementById('campaignPcList');
   if (!CAMPAIGN.pcs.length) {
     wrap.innerHTML='<div class="empty">No characters in this campaign yet.</div>'; return;
   }
-  wrap.innerHTML = CAMPAIGN.pcs.map(pc => `
-    <article class="pc-card" data-pc-id="${esc(pc.id)}">
-      <div class="card-head">
-        <div class="card-title">${esc(pc.name||'Unnamed Character')}</div>
-        <div style="display:flex;gap:6px;align-items:center;">
+  wrap.innerHTML = CAMPAIGN.pcs.map(pc => {
+    const xm = xpMeta(pc);
+    return `
+    <article class="pc-card-new" data-pc-id="${esc(pc.id)}">
+      <div class="pc-card-top">
+        <div>
+          <div class="pc-card-name">${esc(pc.name||'Unnamed Character')}</div>
+          <div class="pc-card-meta-line">${[pc.race,pc.className,pc.level?'Level '+pc.level:''].filter(Boolean).join(' · ')||'—'}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           <span class="card-badge badge-pc">PC</span>
           <button data-action="delete-pc" data-id="${esc(pc.id)}" class="btn-sm btn-danger">Remove</button>
         </div>
       </div>
+
       <div class="row">
         <div><label class="fl">Name</label><input data-pc-field="name" data-id="${esc(pc.id)}" value="${esc(pc.name||'')}"></div>
         <div><label class="fl">Class</label><input data-pc-field="className" data-id="${esc(pc.id)}" value="${esc(pc.className||'')}"></div>
         <div><label class="fl">Race</label><input data-pc-field="race" data-id="${esc(pc.id)}" value="${esc(pc.race||'')}"></div>
-        <div><label class="fl">Level</label><input data-pc-field="level" data-id="${esc(pc.id)}" value="${esc(pc.level||1)}" type="number" min="1" max="20"></div>
+        <div><label class="fl">Level</label><input data-pc-field="level" data-id="${esc(pc.id)}" value="${esc(pc.level||1)}" type="number" min="1" max="20" oninput="updatePcXpMeta('${esc(pc.id)}')"></div>
         <div><label class="fl">Background</label><input data-pc-field="background" data-id="${esc(pc.id)}" value="${esc(pc.background||'')}"></div>
         <div><label class="fl">Alignment</label><input data-pc-field="alignment" data-id="${esc(pc.id)}" value="${esc(pc.alignment||'')}"></div>
       </div>
+
+      <div class="pc-section-label">Ability Scores</div>
       <div class="stat-grid-6">
         ${['STR','DEX','CON','INT','WIS','CHA'].map(s =>
-          `<div><label>${s}</label><input data-pc-field="${s}" data-id="${esc(pc.id)}" value="${esc(pc[s]||10)}" type="number"></div>`
+          `<div><label>${s}</label><input data-pc-field="${s}" data-id="${esc(pc.id)}" value="${esc(pc[s]||10)}" type="number" oninput="updatePcStatMod(this,'${esc(pc.id)}','${s}')"><span class="stat-mod" id="sm-${esc(pc.id)}-${s}">${statMod(pc[s]||10)}</span></div>`
         ).join('')}
       </div>
+
+      <div class="pc-section-label">Combat &amp; Resources</div>
       <div class="row-compact">
-        <div class="stat-chip">
-          <span class="stat-chip-label">Initiative</span>
-          <input data-pc-field="initiative" data-id="${esc(pc.id)}" value="${esc(pc.initiative||0)}"
-            type="number" style="width:60px;text-align:center;" title="Rolled initiative for encounter">
-        </div>
-        <div class="stat-chip">
-          <span class="stat-chip-label">Current HP</span>
-          <input data-pc-field="currentHp" data-id="${esc(pc.id)}" value="${esc(pc.currentHp!==undefined?pc.currentHp:pc.hp||10)}"
-            type="number" class="hp-current-input" style="width:60px;text-align:center;">
-        </div>
-        <div class="stat-chip">
-          <span class="stat-chip-label">Max HP</span>
-          <input data-pc-field="hp" data-id="${esc(pc.id)}" value="${esc(pc.hp||10)}" type="number" style="width:60px;text-align:center;">
-        </div>
-        <div class="stat-chip">
-          <span class="stat-chip-label">AC</span>
-          <input data-pc-field="ac" data-id="${esc(pc.id)}" value="${esc(pc.ac||10)}" type="number" style="width:55px;text-align:center;">
-        </div>
-        <div class="stat-chip">
-          <span class="stat-chip-label">Speed</span>
-          <input data-pc-field="speed" data-id="${esc(pc.id)}" value="${esc(pc.speed||30)}" type="number" style="width:60px;text-align:center;">
+        <div class="stat-chip"><span class="stat-chip-label">AC</span><input data-pc-field="ac" data-id="${esc(pc.id)}" value="${esc(pc.ac||10)}" type="number" style="width:55px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Max HP</span><input data-pc-field="hp" data-id="${esc(pc.id)}" value="${esc(pc.hp||10)}" type="number" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Cur HP</span><input data-pc-field="currentHp" data-id="${esc(pc.id)}" value="${esc(pc.currentHp!==undefined?pc.currentHp:pc.hp||10)}" type="number" class="hp-current-input" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Speed</span><input data-pc-field="speed" data-id="${esc(pc.id)}" value="${esc(pc.speed||30)}" type="number" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Gold (gp)</span><input data-pc-field="gold" data-id="${esc(pc.id)}" value="${esc(pc.gold||0)}" type="number" min="0" style="width:70px;text-align:center;"></div>
+      </div>
+
+      <div class="pc-section-label">Experience &amp; Progression</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+        <div class="stat-chip"><span class="stat-chip-label">XP</span><input data-pc-field="xp" data-id="${esc(pc.id)}" value="${esc(pc.xp||0)}" type="number" min="0" style="width:80px;text-align:center;" oninput="updatePcXpMeta('${esc(pc.id)}')"></div>
+        <span id="xpmeta-${esc(pc.id)}" class="xp-meta">${xm.label}</span>
+      </div>
+      <div class="xp-bar-wrap"><div class="xp-bar" id="xpbar-${esc(pc.id)}" style="width:${xm.pct}%;"></div></div>
+
+      <div class="pc-section-label" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Spell Slots</span>
+        <button class="btn-sm" onclick="longRestPc('${esc(pc.id)}')" style="font-size:0.72rem;padding:2px 8px;">Long Rest</button>
+      </div>
+      <div class="spellslots-grid" id="ssGrid-${esc(pc.id)}">${pcSpellSlotsHtml(pc)}</div>
+
+      <div class="pc-section-label">Known Spells</div>
+      <div class="pc-spells-wrap">
+        <div class="spell-tags" id="spellTags-${esc(pc.id)}">${pcSpellTagsHtml(pc)}</div>
+        <div class="spell-add-row">
+          <input id="spellInput-${esc(pc.id)}" placeholder="Spell name…" style="flex:1;" onkeydown="if(event.key==='Enter')addPcSpell('${esc(pc.id)}')">
+          <button class="btn-sm" onclick="addPcSpell('${esc(pc.id)}')">+ Add Spell</button>
         </div>
       </div>
-      <label class="fl">Notes</label>
-      <textarea data-pc-field="notes" data-id="${esc(pc.id)}" placeholder="Inventory, conditions, backstory…">${esc(pc.notes||'')}</textarea>
-    </article>`).join('');
+
+      <div class="pc-section-label">Notes</div>
+      <textarea data-pc-field="notes" data-id="${esc(pc.id)}" placeholder="Inventory, conditions, backstory…" style="margin-bottom:0;">${esc(pc.notes||'')}</textarea>
+    </article>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════════════════════════════
-//  NPCs RENDER (grouped by location, sorted by initiative)
+//  BARRACKS — unified NPC + Monster list view
 // ══════════════════════════════════════════════════════════════
-function renderNpcs() {
-  const wrap = document.getElementById('campaignNpcList');
-  if (!CAMPAIGN.npcs.length) {
-    wrap.innerHTML='<div class="empty">No NPCs yet.</div>'; return;
-  }
+let bFilter = 'all';
+let bSort = { col: 'name', dir: 1 };
+let bPickerFilter = 'all';
 
-  let html = '';
-  for (const area of CAMPAIGN.areas) {
-    const group = sortByInit(CAMPAIGN.npcs.filter(n=>n.areaId===area.id));
-    if (!group.length) continue;
-    html += `<div style="margin-bottom:14px;">
-      <div class="loc-sub-label" style="margin-top:0;">📍 ${esc(area.name||'Unnamed Location')}</div>
-      ${group.map(npc=>npcCardHtml(npc)).join('')}
-    </div>`;
-  }
-  const unassigned = sortByInit(CAMPAIGN.npcs.filter(n=>!n.areaId));
-  if (unassigned.length) {
-    html += `<div class="unassigned-group">
-      <div class="unassigned-label">Unassigned</div>
-      ${unassigned.map(npc=>npcCardHtml(npc)).join('')}
-    </div>`;
-  }
-  wrap.innerHTML = html || '<div class="empty">No NPCs yet.</div>';
+function setBFilter(f) {
+  bFilter = f;
+  document.querySelectorAll('#bFilterTabs .btab').forEach(b => {
+    b.classList.toggle('btab-active', b.dataset.bfilter === f);
+  });
+  renderBarracks();
 }
 
-function npcCardHtml(npc) {
-  return `
-  <article class="npc-card" data-npc-id="${esc(npc.id)}">
-    <div class="card-head">
-      <div class="card-title">${esc(npc.name||'Unnamed NPC')}</div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="card-badge badge-npc">NPC</span>
-        <button data-action="delete-npc" data-id="${esc(npc.id)}" class="btn-sm btn-danger">Remove</button>
-      </div>
-    </div>
-    <div class="row">
-      <div><label class="fl">Name</label><input data-npc-field="name" data-id="${esc(npc.id)}" value="${esc(npc.name||'')}"></div>
-      <div><label class="fl">Role / Class</label><input data-npc-field="className" data-id="${esc(npc.id)}" value="${esc(npc.className||'')}" placeholder="e.g. Guard Captain"></div>
-      <div><label class="fl">Alignment</label><input data-npc-field="alignment" data-id="${esc(npc.id)}" value="${esc(npc.alignment||'')}"></div>
-    </div>
-    <div class="row-compact">
-      <div class="stat-chip">
-        <span class="stat-chip-label">Initiative</span>
-        <input data-npc-field="initiative" data-id="${esc(npc.id)}" value="${esc(npc.initiative||0)}"
-          type="number" style="width:60px;text-align:center;" title="Rolled initiative">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">Current HP</span>
-        <input data-npc-field="currentHp" data-id="${esc(npc.id)}"
-          value="${esc(npc.currentHp!==undefined?npc.currentHp:npc.maxHp||10)}"
-          type="number" class="hp-current-input" style="width:60px;text-align:center;">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">Max HP</span>
-        <input data-npc-field="maxHp" data-id="${esc(npc.id)}" value="${esc(npc.maxHp||10)}"
-          type="number" style="width:60px;text-align:center;">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">AC</span>
-        <input data-npc-field="ac" data-id="${esc(npc.id)}" value="${esc(npc.ac||10)}"
-          type="number" style="width:55px;text-align:center;">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">Speed</span>
-        <input data-npc-field="speed" data-id="${esc(npc.id)}" value="${esc(npc.speed||30)}"
-          type="number" style="width:60px;text-align:center;">
-      </div>
-    </div>
-    <div class="row">
-      <div><label class="fl">Attack (quick ref)</label><input data-npc-field="attack" data-id="${esc(npc.id)}" value="${esc(npc.attack||'')}" placeholder="e.g. +4 to hit, 1d6+2 piercing"></div>
-      <div><label class="fl">Location</label>${areaOptHtml(npc.areaId||'', `data-npc-field="areaId" data-id="${esc(npc.id)}"`)}</div>
-    </div>
-    <label class="fl">Notes (personality, secrets, voice, plot hooks)</label>
-    <textarea data-npc-field="notes" data-id="${esc(npc.id)}" placeholder="What do they want? What do they hide? How do they speak?">${esc(npc.notes||'')}</textarea>
-  </article>`;
+function setBPickerFilter(f) {
+  bPickerFilter = f;
+  document.querySelectorAll('#bPickerFilterTabs .btab').forEach(b => {
+    b.classList.toggle('btab-active', b.dataset.bpfilter === f);
+  });
+  renderBarracksPicker();
 }
 
-// ══════════════════════════════════════════════════════════════
-//  MONSTERS RENDER (grouped by location, sorted by initiative)
-// ══════════════════════════════════════════════════════════════
-function renderMonsters() {
-  const wrap = document.getElementById('campaignMonsterList');
-  if (!CAMPAIGN.monsters.length) {
-    wrap.innerHTML='<div class="empty">No monsters yet.</div>'; return;
-  }
-
-  let html = '';
-  for (const area of CAMPAIGN.areas) {
-    const group = sortByInit(CAMPAIGN.monsters.filter(m=>m.areaId===area.id));
-    if (!group.length) continue;
-    html += `<div style="margin-bottom:14px;">
-      <div class="loc-sub-label" style="margin-top:0;">⚔ ${esc(area.name||'Unnamed Location')}</div>
-      ${group.map(mon=>monsterCardHtml(mon)).join('')}
-    </div>`;
-  }
-  const unassigned = sortByInit(CAMPAIGN.monsters.filter(m=>!m.areaId));
-  if (unassigned.length) {
-    html += `<div class="unassigned-group">
-      <div class="unassigned-label">Unassigned</div>
-      ${unassigned.map(mon=>monsterCardHtml(mon)).join('')}
-    </div>`;
-  }
-  wrap.innerHTML = html || '<div class="empty">No monsters yet.</div>';
+function setBSort(col) {
+  if (bSort.col === col) bSort.dir *= -1;
+  else { bSort.col = col; bSort.dir = 1; }
+  renderBarracks();
 }
 
-function monsterCardHtml(mon) {
-  return `
-  <article class="monster-card" data-mon-id="${esc(mon.id)}">
-    <div class="card-head">
-      <div class="card-title">${esc(mon.customName||mon.sourceName||'Unnamed Monster')}</div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="card-badge badge-monster">CR ${esc(mon.cr||'?')}</span>
-        <button data-action="delete-monster" data-id="${esc(mon.id)}" class="btn-sm btn-danger">Remove</button>
+function barracksEntities() {
+  const npcs = (CAMPAIGN.npcs || []).map(n => ({ ...n, _kind: 'npc' }));
+  const mons = (CAMPAIGN.monsters || []).map(m => ({ ...m, _kind: 'monster' }));
+  return [...npcs, ...mons];
+}
+
+function barracksEntityName(e) {
+  return e._kind === 'npc' ? (e.name || 'Unnamed NPC') : (e.customName || e.sourceName || 'Unnamed Monster');
+}
+
+function barracksEntityRole(e) {
+  return e._kind === 'npc' ? (e.className || e.role || '—') : (e.cr ? `CR ${e.cr}` : (e.type || '—'));
+}
+
+function renderBarracks() {
+  const wrap = document.getElementById('barracksWrap');
+  let entities = barracksEntities();
+
+  if (bFilter === 'npc') entities = entities.filter(e => e._kind === 'npc');
+  if (bFilter === 'monster') entities = entities.filter(e => e._kind === 'monster');
+
+  const col = bSort.col;
+  const dir = bSort.dir;
+  entities.sort((a, b) => {
+    let av, bv;
+    if (col === 'name') { av = barracksEntityName(a).toLowerCase(); bv = barracksEntityName(b).toLowerCase(); }
+    else if (col === 'type') { av = a._kind; bv = b._kind; }
+    else if (col === 'role') { av = barracksEntityRole(a).toLowerCase(); bv = barracksEntityRole(b).toLowerCase(); }
+    else if (col === 'ac') { av = intOr(a.ac, 0); bv = intOr(b.ac, 0); }
+    else if (col === 'initiative') { av = intOr(a.initiative, 0); bv = intOr(b.initiative, 0); }
+    else if (col === 'location') {
+      const al = CAMPAIGN.areas.find(x=>x.id===a.areaId); const bl = CAMPAIGN.areas.find(x=>x.id===b.areaId);
+      av = (al ? al.name : '').toLowerCase(); bv = (bl ? bl.name : '').toLowerCase();
+    }
+    else { av = ''; bv = ''; }
+    if (av < bv) return -dir; if (av > bv) return dir; return 0;
+  });
+
+  if (!entities.length) {
+    wrap.innerHTML = '<div class="empty">No NPCs or Monsters yet. Add some from the Vault.</div>';
+    return;
+  }
+
+  function arrow(c) {
+    if (bSort.col !== c) return '<span style="opacity:0.35;font-size:0.7rem;"> ⇅</span>';
+    return bSort.dir === 1
+      ? '<span style="font-size:0.7rem;"> ▲</span>'
+      : '<span style="font-size:0.7rem;"> ▼</span>';
+  }
+
+  const rows = entities.map(e => {
+    const id = esc(e.id);
+    const kind = e._kind;
+    const fieldPfx = kind === 'npc' ? 'npc' : 'mon';
+    const maxHpField = kind === 'npc' ? 'maxHp' : 'hpRolled';
+    const maxHpVal = kind === 'npc' ? intOr(e.maxHp, intOr(e.hp, 10)) : intOr(e.hpRolled, 10);
+    const curHp = e.currentHp !== undefined ? e.currentHp : maxHpVal;
+    const ac = intOr(e.ac, 10);
+    const init = intOr(e.initiative, 0);
+    const loc = CAMPAIGN.areas.find(a => a.id === e.areaId);
+    const badge = kind === 'npc'
+      ? `<span class="b-badge b-badge-npc">NPC</span>`
+      : `<span class="b-badge b-badge-mon">MON</span>`;
+
+    return `<tr data-barracks-id="${id}" data-barracks-kind="${kind}">
+      <td>${badge}</td>
+      <td><button class="b-name-btn" onclick="openEntityModal('${kind}','${id}')">${esc(barracksEntityName(e))}</button></td>
+      <td style="color:var(--mist);font-size:0.82rem;">${esc(barracksEntityRole(e))}</td>
+      <td><input type="number" data-id="${id}" data-${fieldPfx}-field="ac" value="${ac}" style="width:56px;text-align:center;padding:4px 6px;font-size:0.85rem;"></td>
+      <td style="white-space:nowrap;">
+        <input type="number" data-id="${id}" data-${fieldPfx}-field="currentHp" value="${esc(curHp)}" class="hp-current-input" style="width:56px;text-align:center;padding:4px 6px;font-size:0.85rem;">
+        <span style="color:var(--mist);font-size:0.8rem;"> / </span>
+        <input type="number" data-id="${id}" data-${fieldPfx}-field="${maxHpField}" value="${maxHpVal}" style="width:56px;text-align:center;padding:4px 6px;font-size:0.85rem;">
+      </td>
+      <td>${areaOptHtml(e.areaId||'', `data-id="${id}" data-${fieldPfx}-field="areaId"`)}</td>
+      <td><button class="btn-sm btn-danger" data-action="remove-barracks" data-id="${id}" data-kind="${kind}">Remove</button></td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="barracks-tbl">
+    <thead><tr>
+      <th onclick="setBSort('type')" ${bSort.col==='type'?'class="sorted"':''}>Type${arrow('type')}</th>
+      <th onclick="setBSort('name')" ${bSort.col==='name'?'class="sorted"':''}>Name${arrow('name')}</th>
+      <th onclick="setBSort('role')" ${bSort.col==='role'?'class="sorted"':''}>Role / CR${arrow('role')}</th>
+      <th onclick="setBSort('ac')" ${bSort.col==='ac'?'class="sorted"':''}>AC${arrow('ac')}</th>
+      <th>HP (cur / max)</th>
+      <th onclick="setBSort('location')" ${bSort.col==='location'?'class="sorted"':''}>Location${arrow('location')}</th>
+      <th></th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+
+  // Wire inline input changes
+  wrap.querySelectorAll('input[data-npc-field], select[data-npc-field]').forEach(el => {
+    const f = el.dataset.npcField; const id = el.dataset.id;
+    const evt = (f === 'areaId') ? 'change' : 'input';
+    el.addEventListener(evt, () => updateNpcField(id, f, el.value));
+  });
+  wrap.querySelectorAll('input[data-mon-field], select[data-mon-field]').forEach(el => {
+    const f = el.dataset.monField; const id = el.dataset.id;
+    const evt = (f === 'areaId') ? 'change' : 'input';
+    el.addEventListener(evt, () => updateMonsterField(id, f, el.value));
+  });
+  wrap.querySelectorAll('button[data-action="remove-barracks"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const { id, kind } = btn.dataset;
+      if (kind === 'npc') deleteNpc(id);
+      else deleteMonster(id);
+    });
+  });
+}
+
+function openBarracksPicker() {
+  bPickerFilter = 'all';
+  document.querySelectorAll('#bPickerFilterTabs .btab').forEach(b => {
+    b.classList.toggle('btab-active', b.dataset.bpfilter === 'all');
+  });
+  document.getElementById('barracksPicker').style.display = '';
+  renderBarracksPicker();
+}
+
+function closeBarracksPicker() {
+  document.getElementById('barracksPicker').style.display = 'none';
+}
+
+function renderBarracksPicker() {
+  const unified = safeReadObj(SK.unifiedVault);
+  const vaultNpcs = (unified.npcs || []).map(n => ({ ...n, _kind: 'npc' }));
+  const vaultMons = (unified.monsters || []).map(m => ({ ...m, _kind: 'monster' }));
+  const existingNpcIds = new Set((CAMPAIGN.npcs || []).map(n => n.id));
+  const existingMonIds = new Set((CAMPAIGN.monsters || []).map(m => m.id));
+
+  let available = [
+    ...vaultNpcs.filter(n => !existingNpcIds.has(n.id)),
+    ...vaultMons.filter(m => !existingMonIds.has(m.id))
+  ];
+  if (bPickerFilter === 'npc') available = available.filter(e => e._kind === 'npc');
+  if (bPickerFilter === 'monster') available = available.filter(e => e._kind === 'monster');
+
+  const el = document.getElementById('barracksPickerList');
+  if (!available.length) {
+    el.innerHTML = '<div class="empty" style="margin-top:0;">No new vault entries to add.</div>';
+    return;
+  }
+  el.innerHTML = available.map(e => {
+    const name = e._kind === 'npc' ? (e.name || 'Unnamed NPC') : (e.customName || e.sourceName || 'Unnamed Monster');
+    const role = e._kind === 'npc' ? (e.className || e.role || '') : (e.type || '');
+    const badge = e._kind === 'npc'
+      ? `<span class="b-badge b-badge-npc">NPC</span>`
+      : `<span class="b-badge b-badge-mon">MON</span>`;
+    const ac = intOr(e.ac, 10);
+    const hp = e._kind === 'npc' ? intOr(e.hp, intOr(e.maxHp, 10)) : intOr(e.hpRolled, intOr(e.hp, 10));
+    return `<div class="picker-row">
+      <div>
+        <div style="display:flex;gap:6px;align-items:center;">${badge} <span class="picker-row-name">${esc(name)}</span></div>
+        <div class="picker-row-meta">${esc(role)}${role?' · ':''}AC ${ac} · HP ${hp}</div>
       </div>
-    </div>
-    <div class="row">
-      <div><label class="fl">Display Name (custom)</label><input data-mon-field="customName" data-id="${esc(mon.id)}" value="${esc(mon.customName||'')}" placeholder="Custom name (overrides source)"></div>
-      <div><label class="fl">Source Name</label><input data-mon-field="sourceName" data-id="${esc(mon.id)}" value="${esc(mon.sourceName||'')}"></div>
-      <div><label class="fl">Type</label><input data-mon-field="type" data-id="${esc(mon.id)}" value="${esc(mon.type||'')}"></div>
-      <div><label class="fl">CR</label><input data-mon-field="cr" data-id="${esc(mon.id)}" value="${esc(mon.cr||'')}"></div>
-    </div>
-    <div class="row-compact">
-      <div class="stat-chip">
-        <span class="stat-chip-label">Initiative</span>
-        <input data-mon-field="initiative" data-id="${esc(mon.id)}" value="${esc(mon.initiative||0)}"
-          type="number" style="width:60px;text-align:center;" title="Rolled initiative">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">Current HP</span>
-        <input data-mon-field="currentHp" data-id="${esc(mon.id)}"
-          value="${esc(mon.currentHp!==undefined?mon.currentHp:mon.hpRolled||10)}"
-          type="number" class="hp-current-input" style="width:60px;text-align:center;">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">Max HP</span>
-        <input data-mon-field="hpRolled" data-id="${esc(mon.id)}" value="${esc(mon.hpRolled||10)}"
-          type="number" style="width:60px;text-align:center;" title="Rolled HP total for this monster">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">AC</span>
-        <input data-mon-field="ac" data-id="${esc(mon.id)}" value="${esc(mon.ac||10)}"
-          type="number" style="width:55px;text-align:center;">
-      </div>
-      <div class="stat-chip">
-        <span class="stat-chip-label">Count</span>
-        <input data-mon-field="count" data-id="${esc(mon.id)}" value="${esc(mon.count||1)}"
-          type="number" min="1" style="width:55px;text-align:center;">
-      </div>
-    </div>
-    <div class="row">
-      <div><label class="fl">Status</label><input data-mon-field="status" data-id="${esc(mon.id)}" value="${esc(mon.status||'')}" placeholder="Alive, Bloodied, Defeated…"></div>
-      <div><label class="fl">Location</label>${areaOptHtml(mon.areaId||'', `data-mon-field="areaId" data-id="${esc(mon.id)}"`)}</div>
-    </div>
-    <label class="fl">HP Reference</label>
-    <input data-mon-field="hpRef" data-id="${esc(mon.id)}" value="${esc(mon.hpRef||mon.hp||'')}" placeholder="e.g. 22 (5d8) — reference only" style="margin-bottom:6px;">
-    <label class="fl">Notes</label>
-    <textarea data-mon-field="notes" data-id="${esc(mon.id)}" placeholder="Tactics, lair features, special conditions…">${esc(mon.notes||'')}</textarea>
-  </article>`;
+      <button class="btn-sm btn-secondary" onclick="addToBarracksFromVault('${esc(e._kind)}','${esc(e.id)}')">Add</button>
+    </div>`;
+  }).join('');
+}
+
+function addToBarracksFromVault(kind, id) {
+  const unified = safeReadObj(SK.unifiedVault);
+  if (kind === 'npc') {
+    const npc = (unified.npcs || []).find(n => n.id === id);
+    if (!npc) return;
+    const maxHp = intOr(npc.hp, intOr(npc.maxHp, 10));
+    CAMPAIGN.npcs.push({ ...npc, maxHp, currentHp: maxHp, initiative: 0, status: '', areaId: '', addedAt: nowIso() });
+    flash('barracksFlash', `${npc.name || 'NPC'} added to Barracks.`);
+  } else {
+    const mon = (unified.monsters || []).find(m => m.id === id);
+    if (!mon) return;
+    const hp = intOr(mon.hpRolled, intOr(mon.hp, 10));
+    CAMPAIGN.monsters.push({ ...mon, hpRolled: hp, currentHp: hp, initiative: 0, status: '', areaId: '', addedAt: nowIso() });
+    flash('barracksFlash', `${mon.customName || mon.sourceName || 'Monster'} added to Barracks.`);
+  }
+  persistCampaign();
+  renderBarracks();
+  renderBarracksPicker();
+  renderAreas();
+  renderEncounterTracker();
 }
 
 // ══════════════════════════════════════════════════════════════
 //  POPULATE SELECTS
 // ══════════════════════════════════════════════════════════════
-function populateMonsterSelect() {
-  const sel = document.getElementById('monsterSelect');
-  sel.innerHTML = `<option value="">— Select monster —</option>` +
-    MONSTER_REF.map(m=>`<option value="${esc(m.name)}">${esc(m.name)} (CR ${m.cr}, ${m.type})</option>`).join('');
-}
+function populateMonsterSelect() { /* no-op: monster select removed */ }
 
 function populateVaultSelect() {
-  const vault = safeRead(SK.vault);
+  const unified = safeReadObj(SK.unifiedVault);
+  const pcs = unified.pcs || safeRead(SK.vault);
   const existing = new Set(CAMPAIGN.pcs.map(p=>p.id));
-  const avail = vault.filter(p=>!existing.has(p.id));
+  const avail = pcs.filter(p=>!existing.has(p.id));
   const sel = document.getElementById('vaultPcSelect');
   sel.innerHTML = avail.length
     ? `<option value="">— Add from Vault —</option>` + avail.map(p=>`<option value="${esc(p.id)}">${esc(p.name||'Unnamed')} (${esc(p.className||'?')})</option>`).join('')
     : `<option value="">— No new vault characters —</option>`;
 }
 
-function populateRegistrySelect() {
-  const reg = safeRead(SK.registry);
-  const existing = new Set(CAMPAIGN.npcs.map(n=>n.id));
-  const avail = reg.filter(n=>!existing.has(n.id));
-  const sel = document.getElementById('registryNpcSelect');
-  sel.innerHTML = avail.length
-    ? `<option value="">— Add from Registry —</option>` + avail.map(n=>`<option value="${esc(n.id)}">${esc(n.name||'Unnamed')} (${esc(n.className||'?')})</option>`).join('')
-    : `<option value="">— No new registry NPCs —</option>`;
-}
+function populateRegistrySelect() { /* no-op: registry select removed */ }
 
 // ══════════════════════════════════════════════════════════════
 //  UPDATE FIELD HANDLERS
 // ══════════════════════════════════════════════════════════════
+function updatePcStatMod(input, id, stat) {
+  const el = document.getElementById(`sm-${id}-${stat}`);
+  if (el) el.textContent = statMod(input.value);
+}
+
 function updatePcField(id, field, value) {
   const pc = findById(CAMPAIGN.pcs, id);
   if (!pc) return;
-  const nums = ['level','STR','DEX','CON','INT','WIS','CHA','hp','ac','initiative','speed','currentHp'];
+  const nums = ['level','STR','DEX','CON','INT','WIS','CHA','hp','ac','initiative','speed','currentHp','gold'];
   pc[field] = nums.includes(field) ? intOr(value,0) : value;
   pc.updatedAt = nowIso();
   persistCampaign();
@@ -1843,9 +2658,8 @@ function updateNpcField(id, field, value) {
   npc[field] = nums.includes(field) ? intOr(value,0) : value;
   npc.updatedAt = nowIso();
   persistCampaign();
-  if (field==='areaId') { renderNpcs(); renderLocations(); renderEncounterTracker(); return; }
-  if (field==='initiative') { renderNpcs(); renderEncounterTracker(); return; }
-  if (field==='name') { const c=document.querySelector(`[data-npc-id="${id}"]`); if(c){const t=c.querySelector('.card-title');if(t)t.textContent=value||'—';} }
+  if (field==='areaId') { renderBarracks(); renderAreas(); renderEncounterTracker(); return; }
+  if (field==='initiative') { renderBarracks(); renderEncounterTracker(); return; }
   if (field==='currentHp') renderEncounterTracker();
 }
 
@@ -1856,22 +2670,9 @@ function updateMonsterField(id, field, value) {
   mon[field] = nums.includes(field) ? intOr(value,0) : value;
   mon.updatedAt = nowIso();
   persistCampaign();
-  if (field==='areaId') { renderMonsters(); renderLocations(); renderEncounterTracker(); return; }
-  if (field==='initiative') { renderMonsters(); renderEncounterTracker(); return; }
-  if (field==='customName'||field==='sourceName') {
-    const c=document.querySelector(`[data-mon-id="${id}"]`);
-    if(c){const t=c.querySelector('.card-title');if(t)t.textContent=mon.customName||mon.sourceName||'—';}
-    renderEncounterTracker();
-  }
-  if (field==='currentHp') renderEncounterTracker();
-}
-
-function updateLocField(id, field, value) {
-  const loc = findById(CAMPAIGN.areas, id);
-  if (!loc) return;
-  loc[field] = value;
-  persistCampaign();
-  if (field==='name') { renderLocations(); renderEncounterTracker(); renderNpcs(); renderMonsters(); }
+  if (field==='areaId') { renderBarracks(); renderAreas(); renderEncounterTracker(); return; }
+  if (field==='initiative') { renderBarracks(); renderEncounterTracker(); return; }
+  if (field==='currentHp'||field==='customName'||field==='sourceName') renderEncounterTracker();
 }
 
 // Encounter tracker field updates
@@ -1894,7 +2695,8 @@ function addBlankPc() {
     id:uid('cpc'), name:'New Character', className:'Fighter', race:'Human',
     background:'', alignment:'', level:1,
     STR:10,DEX:10,CON:10,INT:10,WIS:10,CHA:10,
-    hp:10, currentHp:10, ac:10, initiative:0, speed:30, notes:'', status:'',
+    hp:10, currentHp:10, ac:10, initiative:0, speed:30, gold:0, xp:0,
+    spellSlots:{}, spells:[], notes:'', status:'',
     createdAt:nowIso(), updatedAt:nowIso()
   });
   persistCampaign();
@@ -1904,9 +2706,20 @@ function addBlankPc() {
 function addFromVault() {
   const id = document.getElementById('vaultPcSelect').value;
   if (!id) return;
-  const pc = safeRead(SK.vault).find(p=>p.id===id);
+  const unified = safeReadObj(SK.unifiedVault);
+  const pcs = unified.pcs || safeRead(SK.vault);
+  const pc = pcs.find(p=>p.id===id);
   if (!pc) return;
-  const entry = {...pc, currentHp:intOr(pc.hp,10), initiative:0, status:'', addedAt:nowIso()};
+  const entry = {
+    ...pc,
+    currentHp: intOr(pc.hp, 10),
+    initiative: 0,
+    status: '',
+    addedAt: nowIso(),
+    xp: pc.xp ?? 0,
+    spellSlots: (pc.spellSlots && typeof pc.spellSlots === 'object' && !Array.isArray(pc.spellSlots)) ? pc.spellSlots : {},
+    spells: Array.isArray(pc.spells) ? pc.spells : []
+  };
   CAMPAIGN.pcs.push(entry);
   persistCampaign();
   renderPcs(); populateVaultSelect(); renderEncounterTracker();
@@ -1927,45 +2740,20 @@ function addBlankNpc() {
     createdAt:nowIso(), updatedAt:nowIso()
   });
   persistCampaign();
-  renderNpcs(); populateRegistrySelect(); renderLocations();
+  renderBarracks(); renderAreas();
 }
 
-function addFromRegistry() {
-  const id = document.getElementById('registryNpcSelect').value;
-  if (!id) return;
-  const npc = safeRead(SK.registry).find(n=>n.id===id);
-  if (!npc) return;
-  const maxHp = intOr(npc.hp, 10);
-  CAMPAIGN.npcs.push({
-    ...npc, maxHp, currentHp:maxHp, initiative:0, attack:'', status:'', areaId:'', addedAt:nowIso()
-  });
-  persistCampaign();
-  renderNpcs(); populateRegistrySelect(); renderLocations();
-  flash('npcsFlash', `${npc.name} added.`);
-}
+/** Dead — registryNpcSelect element was removed; NPCs are added via the Vault deploy flow. */
+function addFromRegistry() { /* no-op */ }
 
 function deleteNpc(id) {
   CAMPAIGN.npcs = CAMPAIGN.npcs.filter(n=>n.id!==id);
   persistCampaign();
-  renderNpcs(); populateRegistrySelect(); renderLocations(); renderEncounterTracker();
+  renderBarracks(); renderAreas(); renderEncounterTracker();
 }
 
-function addMonsterFromSelect() {
-  const name = document.getElementById('monsterSelect').value;
-  if (!name) return;
-  const ref = MONSTER_REF.find(m=>m.name===name);
-  const hpNum = ref ? ref.hpNum : 10;
-  CAMPAIGN.monsters.push({
-    id:uid('cmon'), customName:'', sourceName:ref?ref.name:name,
-    type:ref?ref.type:'', cr:ref?ref.cr:'', ac:ref?ref.ac:10,
-    hpRef:ref?ref.hp:'', hpRolled:hpNum, currentHp:hpNum,
-    count:1, status:'', initiative:0, notes:'', areaId:'',
-    addedAt:nowIso(), updatedAt:nowIso()
-  });
-  persistCampaign();
-  renderMonsters(); renderLocations();
-  flash('monstersFlash', `${name} added.`);
-}
+/** Dead — monsterSelect element was removed; monsters are added via addCustomMonster() and the Vault deploy flow. */
+function addMonsterFromSelect() { /* no-op */ }
 
 function addCustomMonster() {
   CAMPAIGN.monsters.push({
@@ -1975,13 +2763,13 @@ function addCustomMonster() {
     addedAt:nowIso(), updatedAt:nowIso()
   });
   persistCampaign();
-  renderMonsters(); renderLocations();
+  renderBarracks(); renderAreas();
 }
 
 function deleteMonster(id) {
   CAMPAIGN.monsters = CAMPAIGN.monsters.filter(m=>m.id!==id);
   persistCampaign();
-  renderMonsters(); renderLocations(); renderEncounterTracker();
+  renderBarracks(); renderAreas(); renderEncounterTracker();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2066,12 +2854,12 @@ function locName(id) { const a=findById(CAMPAIGN.areas,id); return a?a.name:''; 
 function exportPcs() {
   const d = new Date().toISOString().slice(0,10);
   const hdrs = ['id','name','className','race','background','alignment','level',
-    'STR','DEX','CON','INT','WIS','CHA','maxHp','currentHp','ac','initiative','speed','status','notes'];
+    'STR','DEX','CON','INT','WIS','CHA','maxHp','currentHp','ac','initiative','speed','gold','status','notes'];
   dlCsv(toCsv([hdrs, ...CAMPAIGN.pcs.map(pc=>[
     pc.id,pc.name,pc.className,pc.race,pc.background,pc.alignment,pc.level,
     pc.STR,pc.DEX,pc.CON,pc.INT,pc.WIS,pc.CHA,
     pc.hp,pc.currentHp!==undefined?pc.currentHp:pc.hp,
-    pc.ac,pc.initiative,pc.speed,pc.status||'',pc.notes||''
+    pc.ac,pc.initiative,pc.speed,pc.gold||0,pc.status||'',pc.notes||''
   ])]), `${CAMPAIGN.name||'campaign'}-characters-${d}.csv`);
   flash('exportFlash','Characters CSV exported.');
 }
@@ -2155,7 +2943,7 @@ function importCsv(file) {
             addedAt:nowIso(), updatedAt:nowIso()
           });
         }
-        persistCampaign(); renderMonsters(); renderLocations();
+        persistCampaign(); renderBarracks(); renderLocations();
         flash('exportFlash','Monsters imported.');
       } else if (hdrs.includes('role')||hdrs.includes('ancestry')) {
         for(let r=1;r<rows.length;r++){
@@ -2175,7 +2963,7 @@ function importCsv(file) {
             createdAt:nowIso(), updatedAt:nowIso()
           });
         }
-        persistCampaign(); renderNpcs(); populateRegistrySelect(); renderLocations();
+        persistCampaign(); renderBarracks(); renderLocations();
         flash('exportFlash','NPCs imported.');
       } else if (hdrs.includes('STR')||hdrs.includes('maxHp')) {
         for(let r=1;r<rows.length;r++){
@@ -2226,8 +3014,8 @@ function checkIncomingMonster() {
       addedAt:nowIso(), updatedAt:nowIso()
     });
     persistCampaign();
-    renderMonsters(); renderLocations();
-    flash('monstersFlash', `${mon.name} added from Monster Manual.`);
+    renderBarracks(); renderAreas();
+    flash('barracksFlash', `${mon.name} added from Monster Manual.`);
   } catch { /* ignore */ }
 }
 
@@ -2241,14 +3029,15 @@ function checkIncomingLocation() {
     localStorage.removeItem(SK.addLocation);
     const data = JSON.parse(raw);
     if (!data || !data.name) return;
-    CAMPAIGN.areas.push({ id: uid('area'), name: data.name, notes: data.notes || '' });
+    CAMPAIGN.areas.push({ id: uid('area'), name: data.name, notes: data.notes || '', regionId: '' });
     if (!CAMPAIGN.activeAreaId && CAMPAIGN.areas.length === 1) {
       CAMPAIGN.activeAreaId = CAMPAIGN.areas[0].id;
     }
     persistCampaign();
-    renderLocations();
+    renderAreas();
+    renderRegions();
     renderEncounterTracker();
-    flash('locFlash', `Location "${data.name}" added from Location Creator.`);
+    flash('areasFlash', `Location "${data.name}" added from Location Creator.`);
   } catch { /* ignore */ }
 }
 
@@ -2314,57 +3103,257 @@ function renderDiceHistory() {
 // ══════════════════════════════════════════════════════════════
 //  ENTITY DETAIL MODAL
 // ══════════════════════════════════════════════════════════════
+let _modalEditKind = '';
+let _modalEditId = '';
+
 function openEntityModal(kind, id) {
-  const entity = kind === 'npc' ? findById(CAMPAIGN.npcs, id) : findById(CAMPAIGN.monsters, id);
+  _modalEditKind = kind;
+  _modalEditId = id;
+  const entity = kind === 'pc' ? findById(CAMPAIGN.pcs, id)
+               : kind === 'npc' ? findById(CAMPAIGN.npcs, id)
+               : findById(CAMPAIGN.monsters, id);
   if (!entity) return;
 
-  if (kind === 'npc') {
-    document.getElementById('modalTitle').textContent = entity.name || 'Unnamed NPC';
-    document.getElementById('modalSubtitle').textContent =
-      [entity.className, entity.alignment].filter(Boolean).join(' · ') || 'NPC';
-    document.getElementById('modalStats').innerHTML = [
-      { label: 'AC',      value: entity.ac ?? '—' },
-      { label: 'Max HP',  value: entity.maxHp ?? '—' },
-      { label: 'Cur HP',  value: entity.currentHp ?? '—' },
-      { label: 'Init',    value: entity.initiative ?? 0 },
-      { label: 'Speed',   value: entity.speed ? entity.speed + ' ft' : '—' },
-    ].map(s => `<div class="modal-stat"><span class="modal-stat-label">${esc(s.label)}</span><span class="modal-stat-value">${esc(String(s.value))}</span></div>`).join('');
-    const attackBlock = document.getElementById('modalAttackBlock');
-    if (entity.attack) {
-      attackBlock.style.display = '';
-      document.getElementById('modalAttackLabel').textContent = 'Attack';
-      document.getElementById('modalAttackText').textContent = entity.attack;
-    } else {
-      attackBlock.style.display = 'none';
-    }
-  } else {
-    const name = entity.customName || entity.sourceName || 'Unnamed Monster';
-    document.getElementById('modalTitle').textContent = name;
-    document.getElementById('modalSubtitle').textContent =
-      [entity.type, entity.cr ? 'CR ' + entity.cr : ''].filter(Boolean).join(' · ') || 'Monster';
-    document.getElementById('modalStats').innerHTML = [
-      { label: 'AC',      value: entity.ac ?? '—' },
-      { label: 'Max HP',  value: entity.hpRolled ?? '—' },
-      { label: 'Cur HP',  value: entity.currentHp ?? '—' },
-      { label: 'Init',    value: entity.initiative ?? 0 },
-      { label: 'Count',   value: entity.count ?? 1 },
-    ].map(s => `<div class="modal-stat"><span class="modal-stat-label">${esc(s.label)}</span><span class="modal-stat-value">${esc(String(s.value))}</span></div>`).join('');
-    const attackBlock = document.getElementById('modalAttackBlock');
-    if (entity.hpRef) {
-      attackBlock.style.display = '';
-      document.getElementById('modalAttackLabel').textContent = 'HP Reference';
-      document.getElementById('modalAttackText').textContent = entity.hpRef;
-    } else {
-      attackBlock.style.display = 'none';
-    }
-  }
+  document.getElementById('modalReadView').style.display  = kind === 'pc' ? '' : 'none';
+  document.getElementById('modalEditView').style.display  = kind === 'pc' ? 'none' : '';
+  document.getElementById('modalFlash').textContent = '';
 
-  document.getElementById('modalNotes').textContent = entity.notes || '(no notes)';
+  if (kind === 'pc') {
+    document.getElementById('modalTitle').textContent = entity.name || 'Unnamed Character';
+    document.getElementById('modalSubtitle').textContent =
+      [entity.className, entity.race, entity.level ? 'Level ' + entity.level : ''].filter(Boolean).join(' · ') || 'PC';
+    document.getElementById('modalStats').innerHTML = [
+      { label: 'AC',      value: entity.ac ?? '—' },
+      { label: 'Max HP',  value: entity.hp ?? '—' },
+      { label: 'Cur HP',  value: entity.currentHp ?? '—' },
+      { label: 'Speed',   value: entity.speed ? entity.speed + ' ft' : '—' },
+      ...['STR','DEX','CON','INT','WIS','CHA'].map(s => ({ label: s, value: entity[s] != null ? `${entity[s]} (${statMod(entity[s])})` : '—' })),
+    ].map(s => `<div class="modal-stat"><span class="modal-stat-label">${esc(s.label)}</span><span class="modal-stat-value">${esc(String(s.value))}</span></div>`).join('');
+    document.getElementById('modalAttackBlock').style.display = 'none';
+    document.getElementById('modalNotes').textContent = entity.notes || '(no notes)';
+
+  } else if (kind === 'npc') {
+    document.getElementById('modalTitle').textContent = entity.name || 'Edit NPC';
+    document.getElementById('modalSubtitle').textContent = [entity.className, entity.alignment].filter(Boolean).join(' · ') || 'NPC';
+    document.getElementById('modalFormBody').innerHTML = `
+      <div class="row">
+        <div><label class="fl">Name</label><input id="mef-name" value="${esc(entity.name||'')}"></div>
+        <div><label class="fl">Role / Class</label><input id="mef-className" value="${esc(entity.className||'')}"></div>
+        <div><label class="fl">Alignment</label><input id="mef-alignment" value="${esc(entity.alignment||'')}"></div>
+      </div>
+      <div class="row-compact">
+        <div class="stat-chip"><span class="stat-chip-label">AC</span><input id="mef-ac" type="number" value="${intOr(entity.ac,10)}" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Max HP</span><input id="mef-maxHp" type="number" value="${intOr(entity.maxHp||entity.hp,10)}" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Cur HP</span><input id="mef-currentHp" type="number" value="${intOr(entity.currentHp,entity.maxHp||10)}" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Speed</span><input id="mef-speed" type="number" value="${intOr(entity.speed,30)}" style="width:60px;text-align:center;"></div>
+      </div>
+      <div><label class="fl">Attack (quick ref)</label><input id="mef-attack" value="${esc(entity.attack||'')}" placeholder="e.g. +4 to hit, 1d6+2 piercing"></div>
+      <label class="fl">Notes</label>
+      <textarea id="mef-notes" style="min-height:80px;">${esc(entity.notes||'')}</textarea>`;
+
+  } else {
+    const name = entity.customName || entity.sourceName || 'Edit Monster';
+    document.getElementById('modalTitle').textContent = name;
+    document.getElementById('modalSubtitle').textContent = [entity.type, entity.cr ? 'CR '+entity.cr : ''].filter(Boolean).join(' · ') || 'Monster';
+    document.getElementById('modalFormBody').innerHTML = `
+      <div class="row">
+        <div><label class="fl">Display Name</label><input id="mef-customName" value="${esc(entity.customName||'')}"></div>
+        <div><label class="fl">Source Name</label><input id="mef-sourceName" value="${esc(entity.sourceName||'')}"></div>
+        <div><label class="fl">Type</label><input id="mef-type" value="${esc(entity.type||'')}"></div>
+        <div><label class="fl">CR</label><input id="mef-cr" value="${esc(entity.cr||'')}"></div>
+      </div>
+      <div class="row-compact">
+        <div class="stat-chip"><span class="stat-chip-label">AC</span><input id="mef-ac" type="number" value="${intOr(entity.ac,10)}" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Max HP</span><input id="mef-hpRolled" type="number" value="${intOr(entity.hpRolled,10)}" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Cur HP</span><input id="mef-currentHp" type="number" value="${intOr(entity.currentHp,entity.hpRolled||10)}" style="width:60px;text-align:center;"></div>
+        <div class="stat-chip"><span class="stat-chip-label">Count</span><input id="mef-count" type="number" value="${intOr(entity.count,1)}" min="1" style="width:60px;text-align:center;"></div>
+      </div>
+      <div><label class="fl">HP Reference</label><input id="mef-hpRef" value="${esc(entity.hpRef||'')}"></div>
+      <div><label class="fl">Status</label><input id="mef-status" value="${esc(entity.status||'')}"></div>
+      <label class="fl">Notes</label>
+      <textarea id="mef-notes" style="min-height:80px;">${esc(entity.notes||'')}</textarea>`;
+  }
   document.getElementById('entityModal').classList.add('open');
+}
+
+function saveModalEdit() {
+  const kind = _modalEditKind;
+  const id = _modalEditId;
+  function g(eid) { const el = document.getElementById(eid); return el ? el.value : ''; }
+  if (kind === 'npc') {
+    const npc = findById(CAMPAIGN.npcs, id);
+    if (!npc) return;
+    npc.name        = g('mef-name');
+    npc.className   = g('mef-className');
+    npc.alignment   = g('mef-alignment');
+    npc.ac          = intOr(g('mef-ac'), 10);
+    npc.maxHp       = intOr(g('mef-maxHp'), 10);
+    npc.currentHp   = intOr(g('mef-currentHp'), npc.maxHp);
+    npc.speed       = intOr(g('mef-speed'), 30);
+    npc.attack      = g('mef-attack');
+    npc.notes       = g('mef-notes');
+    npc.updatedAt   = nowIso();
+    document.getElementById('modalTitle').textContent = npc.name || 'Unnamed NPC';
+  } else if (kind === 'monster') {
+    const mon = findById(CAMPAIGN.monsters, id);
+    if (!mon) return;
+    mon.customName  = g('mef-customName');
+    mon.sourceName  = g('mef-sourceName');
+    mon.type        = g('mef-type');
+    mon.cr          = g('mef-cr');
+    mon.ac          = intOr(g('mef-ac'), 10);
+    mon.hpRolled    = intOr(g('mef-hpRolled'), 10);
+    mon.currentHp   = intOr(g('mef-currentHp'), mon.hpRolled);
+    mon.count       = intOr(g('mef-count'), 1);
+    mon.hpRef       = g('mef-hpRef');
+    mon.status      = g('mef-status');
+    mon.notes       = g('mef-notes');
+    mon.updatedAt   = nowIso();
+    document.getElementById('modalTitle').textContent = mon.customName || mon.sourceName || 'Unnamed Monster';
+  }
+  persistCampaign();
+  renderBarracks();
+  renderEncounterTracker();
+  flash('modalFlash', 'Saved.');
 }
 
 function closeEntityModal() {
   document.getElementById('entityModal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CAMPAIGN NAME EDIT
+// ══════════════════════════════════════════════════════════════
+function startEditCampName() {
+  document.getElementById('campName').value = CAMPAIGN.name || '';
+  document.getElementById('campNameEditRow').style.display = '';
+  document.getElementById('editCampNameBtn').style.display = 'none';
+  document.getElementById('campName').focus();
+}
+function saveCampName() {
+  const v = document.getElementById('campName').value.trim();
+  if (v) { CAMPAIGN.name = v; persistCampaign(); }
+  document.getElementById('campTitleH2').textContent = CAMPAIGN.name || 'Campaign';
+  document.title = (CAMPAIGN.name||'Campaign') + ' — D&D Hub';
+  document.getElementById('campNameEditRow').style.display = 'none';
+  document.getElementById('editCampNameBtn').style.display = '';
+}
+function cancelEditCampName() {
+  document.getElementById('campNameEditRow').style.display = 'none';
+  document.getElementById('editCampNameBtn').style.display = '';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CAMPAIGN NOTES COLLAPSIBLE
+// ══════════════════════════════════════════════════════════════
+let campNotesExpanded = false;
+function toggleCampNotesSection() {
+  campNotesExpanded = !campNotesExpanded;
+  const body = document.getElementById('campNotesBody');
+  const icon = document.getElementById('campNotesToggleIcon');
+  body.style.display = campNotesExpanded ? '' : 'none';
+  icon.textContent = campNotesExpanded ? '▼' : '▶';
+  if (campNotesExpanded) {
+    // Always start in preview mode when expanding
+    const ta = document.getElementById('campNotes');
+    const preview = document.getElementById('campNotesPreview');
+    const btn = document.getElementById('campPreviewToggle');
+    ta.value = CAMPAIGN.notes || '';
+    preview.innerHTML = dmRenderMd(CAMPAIGN.notes || '');
+    preview.style.display = 'block';
+    ta.style.display = 'none';
+    btn.textContent = 'Edit';
+    btn.classList.add('dm-active');
+    campNotesPreviewOn = true;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PC SPELL SLOTS
+// ══════════════════════════════════════════════════════════════
+function adjustPcSlot(pcId, level, delta) {
+  const pc = findById(CAMPAIGN.pcs, pcId);
+  if (!pc) return;
+  if (!pc.spellSlots) pc.spellSlots = {};
+  if (!pc.spellSlots[level]) pc.spellSlots[level] = { max: 0, remaining: 0 };
+  const s = pc.spellSlots[level];
+  s.remaining = Math.max(0, Math.min(s.max, intOr(s.remaining, s.max) + delta));
+  persistCampaign();
+  const el = document.getElementById(`ssr-${pcId}-${level}`);
+  if (el) el.textContent = s.remaining;
+}
+
+function setPcSlotMax(pcId, level, value) {
+  const pc = findById(CAMPAIGN.pcs, pcId);
+  if (!pc) return;
+  if (!pc.spellSlots) pc.spellSlots = {};
+  if (!pc.spellSlots[level]) pc.spellSlots[level] = { max: 0, remaining: 0 };
+  const s = pc.spellSlots[level];
+  s.max = Math.max(0, intOr(value, 0));
+  s.remaining = Math.min(s.remaining !== undefined ? intOr(s.remaining, s.max) : s.max, s.max);
+  persistCampaign();
+  const el = document.getElementById(`ssr-${pcId}-${level}`);
+  if (el) el.textContent = s.remaining;
+}
+
+function longRestPc(pcId) {
+  const pc = findById(CAMPAIGN.pcs, pcId);
+  if (!pc) return;
+  if (!pc.spellSlots) return;
+  Object.keys(pc.spellSlots).forEach(lvl => {
+    const s = pc.spellSlots[lvl];
+    s.remaining = intOr(s.max, 0);
+    const el = document.getElementById(`ssr-${pcId}-${lvl}`);
+    if (el) el.textContent = s.remaining;
+  });
+  // Also restore HP
+  pc.currentHp = intOr(pc.hp, pc.currentHp || 0);
+  persistCampaign();
+  renderPcs();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PC SPELLS
+// ══════════════════════════════════════════════════════════════
+function addPcSpell(pcId) {
+  const pc = findById(CAMPAIGN.pcs, pcId);
+  if (!pc) return;
+  const inp = document.getElementById(`spellInput-${pcId}`);
+  const name = (inp ? inp.value : '').trim();
+  if (!name) return;
+  if (!pc.spells) pc.spells = [];
+  pc.spells.push(name);
+  if (inp) inp.value = '';
+  persistCampaign();
+  const tagsEl = document.getElementById(`spellTags-${pcId}`);
+  if (tagsEl) tagsEl.innerHTML = pcSpellTagsHtml(pc);
+}
+
+function removePcSpell(pcId, index) {
+  const pc = findById(CAMPAIGN.pcs, pcId);
+  if (!pc || !pc.spells) return;
+  pc.spells.splice(index, 1);
+  persistCampaign();
+  const tagsEl = document.getElementById(`spellTags-${pcId}`);
+  if (tagsEl) tagsEl.innerHTML = pcSpellTagsHtml(pc);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PC XP META UPDATE (live update without full re-render)
+// ══════════════════════════════════════════════════════════════
+function updatePcXpMeta(pcId) {
+  const pc = findById(CAMPAIGN.pcs, pcId);
+  if (!pc) return;
+  // Read current field values
+  const xpInput = document.querySelector(`[data-pc-field="xp"][data-id="${pcId}"]`);
+  const lvlInput = document.querySelector(`[data-pc-field="level"][data-id="${pcId}"]`);
+  if (xpInput) pc.xp = intOr(xpInput.value, 0);
+  if (lvlInput) pc.level = intOr(lvlInput.value, 1);
+  const xm = xpMeta(pc);
+  const metaEl = document.getElementById(`xpmeta-${pcId}`);
+  const barEl  = document.getElementById(`xpbar-${pcId}`);
+  if (metaEl) metaEl.textContent = xm.label;
+  if (barEl)  barEl.style.width  = xm.pct + '%';
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2605,27 +3594,33 @@ function dmSearchJumpTo(idx) {
 // ══════════════════════════════════════════════════════════════
 function renderAll() {
   document.getElementById('campTitleH2').textContent = CAMPAIGN.name || 'Campaign';
-  document.getElementById('campName').value = CAMPAIGN.name || '';
-  document.getElementById('campNotes').value = CAMPAIGN.notes || '';
+  // campName and campNotes are set when entering edit mode
   document.getElementById('dmNotes').value = CAMPAIGN.dmNotes || '';
   // Show sidebar
   document.getElementById('sectionNav').style.display = '';
-  // Reset camp notes preview on new campaign load
+  // Collapse campaign notes by default on load
+  campNotesExpanded = false;
   campNotesPreviewOn = false;
-  toggleCampPreview();
+  document.getElementById('campNotesBody').style.display = 'none';
+  document.getElementById('campNotesToggleIcon').textContent = '▶';
+  // Reset preview state (textarea hidden, preview hidden until section expanded)
+  const campTA = document.getElementById('campNotes');
+  const campPrev = document.getElementById('campNotesPreview');
+  const campBtn = document.getElementById('campPreviewToggle');
+  if (campTA) campTA.style.display = 'none';
+  if (campPrev) campPrev.style.display = 'none';
+  if (campBtn) { campBtn.textContent = 'Edit'; campBtn.classList.add('dm-active'); }
   // Reset dm notes preview
   dmPreviewOn = false;
   toggleDmPreview();
-  populateMonsterSelect();
   populateVaultSelect();
-  populateRegistrySelect();
   renderEncounterTracker();
   renderPcs();
-  renderLocations();
-  renderNpcs();
-  renderMonsters();
+  renderRegions();
+  renderAreas();
+  renderBarracks();
   // Show sections
-  ['infoSection','diceSection','encounterSection','pcsSection','dmNotesSection','locSection','npcsSection','monstersSection','exportSection']
+  ['infoSection','diceSection','encounterSection','pcsSection','dmNotesSection','mapSection','barracksSection','exportSection']
     .forEach(id => {
       const el=document.getElementById(id);
       if(el) el.style.display='';
@@ -2636,12 +3631,8 @@ function renderAll() {
 //  EVENT WIRING
 // ══════════════════════════════════════════════════════════════
 function setupEvents() {
-  // Campaign info
-  document.getElementById('campName').addEventListener('input', e => {
-    CAMPAIGN.name=e.target.value; persistCampaign();
-    document.getElementById('campTitleH2').textContent = CAMPAIGN.name||'Campaign';
-    document.title = (CAMPAIGN.name||'Campaign') + ' — D&D Hub';
-  });
+  // Campaign name is updated via saveCampName(), campName input listener kept for Enter key
+  document.getElementById('campName').addEventListener('keydown', e => { if (e.key === 'Enter') saveCampName(); });
   document.getElementById('campNotes').addEventListener('input', e => {
     CAMPAIGN.notes = e.target.value;
     persistCampaign();
@@ -2671,49 +3662,12 @@ function setupEvents() {
     if(e.target.dataset.action==='delete-pc') deletePc(e.target.dataset.id);
   });
 
-  // Locations
-  document.getElementById('addLocBtn').addEventListener('click', addLocation);
-  document.getElementById('newLocName').addEventListener('keydown', e => { if(e.key==='Enter') addLocation(); });
-  document.getElementById('locationList').addEventListener('input', e => {
-    const t=e.target; const id=t.dataset.locId; const f=t.dataset.locField;
-    if(id&&f) updateLocField(id,f,t.value);
-  });
-  document.getElementById('locationList').addEventListener('click', e => {
-    const btn=e.target.closest('button');
-    if(!btn) return;
-    if(btn.dataset.action==='delete-loc') deleteLocation(btn.dataset.locId);
-    if(btn.dataset.action==='set-active-loc') setActiveLocation(btn.dataset.locId);
-  });
-
-  // NPCs
-  document.getElementById('addBlankNpcBtn').addEventListener('click', addBlankNpc);
-  document.getElementById('addFromRegistryBtn').addEventListener('click', addFromRegistry);
-  document.getElementById('campaignNpcList').addEventListener('input', e => {
-    const t=e.target; const id=t.dataset.id; const f=t.dataset.npcField;
-    if(id&&f&&f!=='areaId') updateNpcField(id,f,t.value);
-  });
-  document.getElementById('campaignNpcList').addEventListener('change', e => {
-    const t=e.target; const id=t.dataset.id; const f=t.dataset.npcField;
-    if(id&&f==='areaId') updateNpcField(id,f,t.value);
-  });
-  document.getElementById('campaignNpcList').addEventListener('click', e => {
-    if(e.target.dataset.action==='delete-npc') deleteNpc(e.target.dataset.id);
-  });
-
-  // Monsters
-  document.getElementById('addMonsterBtn').addEventListener('click', addMonsterFromSelect);
-  document.getElementById('addCustomMonsterBtn').addEventListener('click', addCustomMonster);
-  document.getElementById('campaignMonsterList').addEventListener('input', e => {
-    const t=e.target; const id=t.dataset.id; const f=t.dataset.monField;
-    if(id&&f&&f!=='areaId') updateMonsterField(id,f,t.value);
-  });
-  document.getElementById('campaignMonsterList').addEventListener('change', e => {
-    const t=e.target; const id=t.dataset.id; const f=t.dataset.monField;
-    if(id&&f==='areaId') updateMonsterField(id,f,t.value);
-  });
-  document.getElementById('campaignMonsterList').addEventListener('click', e => {
-    if(e.target.dataset.action==='delete-monster') deleteMonster(e.target.dataset.id);
-  });
+  // Map: Regions
+  document.getElementById('addRegionBtn').addEventListener('click', addRegion);
+  document.getElementById('newRegionName').addEventListener('keydown', e => { if(e.key==='Enter') addRegion(); });
+  // Map: Areas/Locations
+  document.getElementById('addAreaBtn').addEventListener('click', addArea);
+  document.getElementById('newAreaName').addEventListener('keydown', e => { if(e.key==='Enter') addArea(); });
 
   // Dice roller
   document.getElementById('diceSection').addEventListener('click', e => {
@@ -2765,7 +3719,7 @@ function setupEvents() {
 // ══════════════════════════════════════════════════════════════
 function setupSidebarHighlight() {
   const sectionIds = ['infoSection','diceSection','encounterSection','pcsSection',
-    'dmNotesSection','locSection','npcsSection','monstersSection','exportSection'];
+    'dmNotesSection','mapSection','barracksSection','exportSection'];
 
   function updateActive() {
     let current = sectionIds[0];

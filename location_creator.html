@@ -261,17 +261,63 @@ button:hover { border-color: var(--accent-2); color: var(--accent-2); }
   <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
   <a href="index.html">Hub</a>
   <a href="campaign.html" id="campaignNavLink" style="display:none;">Campaign</a>
-  <a href="dnd5e_character_generator.html">Characters</a>
-  <a href="npc_creator.html">NPC Creator</a>
-  <a href="location_creator.html" class="active">Locations</a>
+  <a href="character_creator.html">Character Creator</a>
+  <a href="location_creator.html" class="active">Map Creator</a>
+  <a href="atlas.html">Atlas</a>
   <a href="monster_manual.html">Monster Manual</a>
   <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html">Vault</a>
 </nav>
 <script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
 <div class="shell">
 
-  <!-- Builder -->
-  <section class="card">
+  <!-- Tabs -->
+  <div style="display:flex;gap:6px;margin-bottom:14px;">
+    <button id="tabLocBtn" onclick="setCreatorTab('location')"
+      style="padding:6px 16px;border-radius:20px;border:1px solid rgba(196,152,58,0.4);background:rgba(196,152,58,0.12);color:#c4983a;font-weight:600;cursor:pointer;font-size:0.88rem;">Location</button>
+    <button id="tabRegBtn" onclick="setCreatorTab('region')"
+      style="padding:6px 16px;border-radius:20px;border:1px solid rgba(46,90,59,0.4);background:transparent;color:#a8b6c8;font-weight:600;cursor:pointer;font-size:0.88rem;">Region</button>
+  </div>
+
+  <!-- Region Builder -->
+  <section class="card" id="regionBuilderCard" style="display:none;">
+    <h2>Region Builder</h2>
+    <div class="row">
+      <div>
+        <label for="regName">Name</label>
+        <input id="regName" type="text" placeholder="Name of the region">
+      </div>
+      <div>
+        <label for="regType">Type</label>
+        <select id="regType">
+          <option>Town</option>
+          <option>City</option>
+          <option>Village</option>
+          <option>Dungeon</option>
+          <option>Wilderness</option>
+          <option>Port</option>
+          <option>Castle</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <label for="regBlurb">Blurb <span style="font-size:0.8rem;color:#8fc6a8;">(1-2 sentences)</span></label>
+      <textarea id="regBlurb" class="short" placeholder="A brief description — shown in the encounter tracker…"></textarea>
+    </div>
+    <div>
+      <label for="regDescription">Full Description</label>
+      <textarea id="regDescription" class="tall" placeholder="Detailed description, lore, DM notes…"></textarea>
+    </div>
+    <div class="actions">
+      <button id="saveRegBtn" class="btn-main">Save to Map</button>
+      <a href="atlas.html" style="padding:8px 13px;border:1px solid rgba(196,152,58,0.4);border-radius:8px;color:#c4983a;text-decoration:none;font-weight:600;font-size:0.88rem;white-space:nowrap;">View Atlas →</a>
+    </div>
+    <div id="regFlash" class="flash"></div>
+  </section>
+
+  <!-- Location Builder -->
+  <section class="card" id="locationBuilderCard">
     <h2>Location Builder</h2>
 
     <div class="row">
@@ -354,12 +400,14 @@ button:hover { border-color: var(--accent-2); color: var(--accent-2); }
       <button id="genDetailsBtn">Generate Details</button>
       <button id="genAllBtn" class="btn-main">Generate Full Location</button>
       <button id="saveLocBtn" class="btn-main">Save to Registry</button>
+      <button id="saveToMapBtn" class="btn-main">Save to Map</button>
       <button id="addCampaignBtn" class="btn-campaign">+ Add to Campaign</button>
+      <a href="atlas.html" style="padding:8px 13px;border:1px solid rgba(196,152,58,0.4);border-radius:8px;color:#c4983a;text-decoration:none;font-weight:600;font-size:0.88rem;white-space:nowrap;">View Atlas →</a>
     </div>
 
     <div id="preview" class="preview">Generate or fill in details to preview the location.</div>
     <div id="flash" class="flash"></div>
-  </section>
+  </section><!-- /locationBuilderCard -->
 
   <!-- Registry -->
   <section class="card">
@@ -372,6 +420,84 @@ button:hover { border-color: var(--accent-2); color: var(--accent-2); }
 <script>
 const STORAGE_KEY = 'dndToolsLocations';
 const ADD_KEY     = 'dndToolsAddLocationToCampaign';
+const MAP_KEY     = 'dndToolsMap';
+
+// ── Map Storage Helpers ───────────────────────────────────────
+function safeReadMap() {
+  try {
+    const v = JSON.parse(localStorage.getItem(MAP_KEY)||'null');
+    if (v && typeof v === 'object' && !Array.isArray(v)) return v;
+    return { regions:[], locations:[] };
+  } catch { return { regions:[], locations:[] }; }
+}
+function safeWriteMap(v) { localStorage.setItem(MAP_KEY, JSON.stringify(v)); }
+function uidMap(p) { return `${p}-${Date.now()}-${Math.floor(Math.random()*100000)}`; }
+
+// ── Tab Switching ─────────────────────────────────────────────
+function setCreatorTab(tab) {
+  const isLoc = tab === 'location';
+  document.getElementById('locationBuilderCard').style.display = isLoc ? '' : 'none';
+  document.getElementById('regionBuilderCard').style.display   = isLoc ? 'none' : '';
+  const locBtn = document.getElementById('tabLocBtn');
+  const regBtn = document.getElementById('tabRegBtn');
+  if (isLoc) {
+    locBtn.style.background = 'rgba(196,152,58,0.12)'; locBtn.style.color = '#c4983a'; locBtn.style.borderColor = 'rgba(196,152,58,0.4)';
+    regBtn.style.background = 'transparent';           regBtn.style.color = '#a8b6c8'; regBtn.style.borderColor = 'rgba(46,90,59,0.4)';
+  } else {
+    regBtn.style.background = 'rgba(46,90,59,0.18)'; regBtn.style.color = '#8fc6a8'; regBtn.style.borderColor = 'rgba(46,90,59,0.5)';
+    locBtn.style.background = 'transparent';          locBtn.style.color = '#a8b6c8'; locBtn.style.borderColor = 'rgba(196,152,58,0.2)';
+  }
+}
+
+// ── Region Save ───────────────────────────────────────────────
+function saveRegion() {
+  const name = document.getElementById('regName').value.trim();
+  if (!name) { showRegFlash('Enter a region name.', true); return; }
+  const mapData = safeReadMap();
+  const type    = document.getElementById('regType').value;
+  const blurb   = document.getElementById('regBlurb').value.trim();
+  const desc    = document.getElementById('regDescription').value.trim();
+  const existing = mapData.regions.findIndex(r => r.name.toLowerCase()===name.toLowerCase() && r.type===type);
+  const now = new Date().toISOString();
+  if (existing !== -1) {
+    mapData.regions[existing] = { ...mapData.regions[existing], name, type, blurb, description:desc, updatedAt:now };
+    showRegFlash(`"${name}" updated in Map.`);
+  } else {
+    mapData.regions.unshift({ id:uidMap('reg'), name, type, blurb, description:desc, createdAt:now, updatedAt:now });
+    showRegFlash(`"${name}" saved to Map.`);
+  }
+  safeWriteMap(mapData);
+}
+
+function showRegFlash(msg, err) {
+  const el = document.getElementById('regFlash');
+  el.textContent = msg;
+  el.style.color = err ? '#ff8a7b' : '#8fc6a8';
+}
+
+// ── Location Save to Map ──────────────────────────────────────
+function saveLocationToMap() {
+  const loc = locationFromInputs();
+  if (!loc.name) { showFlash('Enter a name before saving to Map.', true); return; }
+  const mapData = safeReadMap();
+  const existing = mapData.locations.findIndex(l => l.name.toLowerCase()===loc.name.toLowerCase());
+  const now = new Date().toISOString();
+  const entry = {
+    id: existing !== -1 ? mapData.locations[existing].id : uidMap('loc'),
+    name: loc.name, type: loc.type, atmosphere: loc.atmosphere,
+    description: loc.description, notableFeatures: loc.features,
+    createdAt: existing !== -1 ? mapData.locations[existing].createdAt : now,
+    updatedAt: now
+  };
+  if (existing !== -1) {
+    mapData.locations[existing] = entry;
+    showFlash(`"${loc.name}" updated in Map.`);
+  } else {
+    mapData.locations.unshift(entry);
+    showFlash(`"${loc.name}" saved to Map.`);
+  }
+  safeWriteMap(mapData);
+}
 
 // ── Seed Data ──────────────────────────────────────────────────
 const TAVERN_ADJ  = ['Rusty','Golden','Silver','Laughing','Drunken','Wandering','Weeping','Broken','Sleeping','Howling','Tipsy','Leaning','Grizzled','Old','Gilded'];
@@ -688,7 +814,9 @@ document.getElementById('genNameBtn').addEventListener('click',    () => { gener
 document.getElementById('genDetailsBtn').addEventListener('click', () => { generateDetails(); updatePreview(); });
 document.getElementById('genAllBtn').addEventListener('click',     generateFull);
 document.getElementById('saveLocBtn').addEventListener('click',    saveLocation);
+document.getElementById('saveToMapBtn').addEventListener('click',  saveLocationToMap);
 document.getElementById('addCampaignBtn').addEventListener('click',addToCampaign);
+document.getElementById('saveRegBtn').addEventListener('click',    saveRegion);
 document.getElementById('locType').addEventListener('change', updatePreview);
 
 ['locName','locRegion','locAtmosphere','locDescription','locFeatures','locEncounters','locLore','locNotes']

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Creator — D&D Hub</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Serif+Text:ital@0;1&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+:root {
+  --bg-deep: #0b0f14;
+  --bg-mid:  #151c24;
+  --card-bg: rgba(12,16,22,0.88);
+  --mist:    #a8b6c8;
+  --paper:   #efe5cf;
+  --paper-deep: #dcc79a;
+  --gold:    #c4983a;
+  --gold-dim: rgba(196,152,58,0.25);
+  --ember:   #a33a2b;
+  --forest:  #2e5a3b;
+  --shadow:  rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(164,58,43,0.18), transparent 55%),
+    radial-gradient(900px 600px at 100% 100%, rgba(46,90,59,0.18), transparent 50%),
+    linear-gradient(135deg, #0b0f14 0%, #151c24 55%, #101317 100%);
+  color: var(--paper);
+  font-family: 'Source Sans 3', sans-serif;
+  line-height: 1.4;
+  padding-bottom: 60px;
+}
+
+/* ── NAV ── */
+.site-nav {
+  background: rgba(10,13,18,0.95);
+  border-bottom: 1px solid var(--gold-dim);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 20px var(--shadow);
+  flex-wrap: wrap;
+}
+.nav-brand {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  padding: 14px 20px 14px 0;
+  margin-right: 8px;
+  border-right: 1px solid var(--gold-dim);
+  white-space: nowrap;
+}
+.nav-brand span { color: var(--paper-deep); font-size: 0.8rem; display: block; letter-spacing: 0.5px; }
+.site-nav a {
+  color: var(--mist);
+  text-decoration: none;
+  padding: 14px;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-nav a:hover { color: var(--gold); border-bottom-color: var(--gold-dim); }
+.site-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── LAYOUT ── */
+.main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+}
+
+.page-header { margin-bottom: 28px; }
+.page-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.85rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.page-header p { color: var(--mist); font-size: 0.9rem; }
+
+/* ── CREATOR TABS ── */
+.creator-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--gold-dim);
+  margin-bottom: 24px;
+}
+.creator-tab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--mist);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  padding: 10px 28px;
+  margin-bottom: -2px;
+  text-transform: uppercase;
+  transition: color 0.15s, border-color 0.15s;
+}
+.creator-tab:hover { color: var(--paper); }
+.creator-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── CARD ── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gold-dim);
+  margin-bottom: 14px;
+}
+
+/* ── FORM GRID ── */
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.row.cols-2 { grid-template-columns: 1fr 1fr; }
+.row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.row.full   { grid-template-columns: 1fr; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.fl {
+  color: var(--mist);
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+input[type="text"], input[type="number"], input:not([type]), select, textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(196,152,58,0.25);
+  border-radius: 5px;
+  color: var(--paper);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+select option { background: #151c24; color: var(--paper); }
+textarea { min-height: 80px; resize: vertical; }
+
+/* ── STAT GRID ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stat-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  padding: 10px 6px 8px;
+}
+.stat-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--mist);
+  text-transform: uppercase;
+}
+.stat-cell input {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 5px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--gold-dim);
+  border-radius: 0;
+  background: transparent;
+}
+.stat-cell input:focus { border-bottom-color: var(--gold); }
+.stat-mod {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.stat-roll-btn {
+  background: rgba(196,152,58,0.12);
+  border: 1px solid rgba(196,152,58,0.3);
+  border-radius: 3px;
+  color: var(--mist);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  transition: all 0.15s;
+}
+.stat-roll-btn:hover { background: rgba(196,152,58,0.25); color: var(--gold); }
+
+/* Race bonuses strip */
+.race-bonuses {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: rgba(196,152,58,0.07);
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  font-size: 0.82rem;
+}
+.race-bonuses .rb-label { color: var(--mist); margin-right: 4px; }
+.race-bonus-chip {
+  background: rgba(196,152,58,0.18);
+  border: 1px solid rgba(196,152,58,0.4);
+  border-radius: 4px;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+}
+
+/* Derived stats row */
+.derived-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.derived-chip {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+}
+.derived-chip .dc-label { font-family: 'Cinzel', serif; font-size: 0.68rem; color: var(--mist); letter-spacing: 0.8px; text-transform: uppercase; }
+.derived-chip input { text-align: center; font-size: 1.1rem; font-weight: 700; padding: 4px; width: 100%; border: none; border-bottom: 1px solid var(--gold-dim); border-radius: 0; background: transparent; }
+.derived-chip input:focus { border-bottom-color: var(--gold); }
+
+/* ── BUTTONS ── */
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 16px; }
+.btn-primary, .btn-secondary, .btn-ghost, .btn-roll, .btn-vault {
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 9px 18px;
+  transition: all 0.15s;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  font-size: 0.82rem;
+}
+.btn-primary { background: rgba(196,152,58,0.18); border-color: rgba(196,152,58,0.5); color: var(--gold); }
+.btn-primary:hover { background: rgba(196,152,58,0.32); border-color: var(--gold); }
+.btn-secondary { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: var(--mist); }
+.btn-secondary:hover { background: rgba(255,255,255,0.12); color: var(--paper); }
+.btn-ghost { background: none; border-color: transparent; color: var(--mist); font-size: 0.78rem; }
+.btn-ghost:hover { color: var(--paper); }
+.btn-roll { background: rgba(46,90,59,0.2); border-color: rgba(46,90,59,0.5); color: #7ecf9e; font-size: 0.78rem; padding: 7px 14px; }
+.btn-roll:hover { background: rgba(46,90,59,0.35); }
+.btn-vault { background: rgba(163,58,43,0.18); border-color: rgba(163,58,43,0.4); color: #e99; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.btn-vault:hover { background: rgba(163,58,43,0.3); }
+
+/* ── FLASH ── */
+.flash-bar {
+  align-items: center;
+  border-radius: 6px;
+  display: none;
+  font-size: 0.88rem;
+  margin-top: 12px;
+  padding: 10px 14px;
+}
+.flash-bar.show { display: flex; }
+.flash-bar.ok    { background: rgba(46,90,59,0.35); border: 1px solid rgba(46,90,59,0.6); color: #7ecf9e; }
+.flash-bar.error { background: rgba(163,58,43,0.25); border: 1px solid rgba(163,58,43,0.5); color: #f99; }
+
+/* ── PREVIEW ── */
+.npc-preview {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--gold-dim);
+  border-radius: 6px;
+  color: var(--mist);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  padding: 12px 14px;
+  margin-top: 14px;
+  min-height: 60px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
+  <a href="index.html">Hub</a>
+  <a href="campaign.html" id="campaignNavLink" style="display:none;">Campaign</a>
+  <a href="character_creator.html" class="active">Character Creator</a>
+  <a href="location_creator.html">Map Creator</a>
+  <a href="atlas.html">Atlas</a>
+  <a href="monster_manual.html">Monster Manual</a>
+  <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html">Vault</a>
+</nav>
+<script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
+
+<div class="main">
+  <div class="page-header">
+    <h1>Character Creator</h1>
+    <p>Build player characters, NPCs, and monsters — all saved to your Vault.</p>
+  </div>
+
+  <div class="creator-tabs">
+    <button class="creator-tab active" data-tab="pc"      onclick="switchTab('pc')">Player Character</button>
+    <button class="creator-tab"        data-tab="npc"     onclick="switchTab('npc')">NPC</button>
+    <button class="creator-tab"        data-tab="monster" onclick="switchTab('monster')">Monster</button>
+  </div>
+
+  <!-- ══════════════════════════ PC TAB ══════════════════════════ -->
+  <div id="tab-pc">
+
+    <div class="card">
+      <div class="section-title">Identity</div>
+      <div class="row">
+        <div class="field"><label class="fl">Name</label><input id="pc-name" placeholder="Aelindra Moonwhisper"></div>
+        <div class="field"><label class="fl">Class</label>
+          <select id="pc-class" onchange="updateDerived()">
+            <option>Barbarian</option><option>Bard</option><option>Cleric</option><option>Druid</option>
+            <option selected>Fighter</option><option>Monk</option><option>Paladin</option><option>Ranger</option>
+            <option>Rogue</option><option>Sorcerer</option><option>Warlock</option><option>Wizard</option>
+          </select>
+        </div>
+        <div class="field"><label class="fl">Race</label>
+          <select id="pc-race" onchange="updateRaceBonuses()">
+            <option>Human</option>
+            <option>Elf (High)</option><option>Elf (Wood)</option><option>Elf (Drow)</option>
+            <option>Dwarf (Hill)</option><option>Dwarf (Mountain)</option>
+            <option>Halfling (Lightfoot)</option><option>Halfling (Stout)</option>
+            <option>Gnome (Forest)</option><option>Gnome (Rock)</option>
+            <option>Half-Elf</option><option>Half-Orc</option><option>Tiefling</option>
+            <option>Dragonborn</option><option>Aasimar</option><option>Tabaxi</option>
+            <option>Warforged</option><option>Firbolg</option><option>Kenku</option><option>Lizardfolk</option>
+          </select>
+        </div>
+        <div class="field"><label class="fl">Level</label><input id="pc-level" type="number" min="1" max="20" value="1" oninput="updateDerived()"></div>
+        <div class="field"><label class="fl">Background</label>
+          <select id="pc-background">
+            <option>Acolyte</option><option>Charlatan</option><option>Criminal</option>
+            <option>Entertainer</option><option>Folk Hero</option><option>Guild Artisan</option>
+            <option>Hermit</option><option>Noble</option><option>Outlander</option>
+            <option>Sage</option><option>Sailor</option><option>Soldier</option><option>Urchin</option>
+          </select>
+        </div>
+        <div class="field"><label class="fl">Alignment</label>
+          <select id="pc-alignment">
+            <option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option>
+            <option>Lawful Neutral</option><option selected>True Neutral</option><option>Chaotic Neutral</option>
+            <option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Ability Scores</div>
+      <div id="race-bonus-bar" class="race-bonuses">
+        <span class="rb-label">Race bonuses:</span>
+        <span id="race-bonus-text" style="color:var(--mist);font-style:italic;">Select a race above</span>
+      </div>
+      <div class="stat-grid" id="stat-grid">
+        <!-- rendered by JS -->
+      </div>
+      <div class="actions" style="margin-top:0; margin-bottom:0;">
+        <button class="btn-roll" onclick="rollAllStats()">🎲 Roll All (4d6 drop lowest)</button>
+        <button class="btn-secondary" onclick="resetStats()">Reset to 10</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Combat &amp; Wealth</div>
+      <div class="derived-row">
+        <div class="derived-chip"><span class="dc-label">Max HP</span><input id="pc-hp" type="number" value="10" oninput=""></div>
+        <div class="derived-chip"><span class="dc-label">AC</span><input id="pc-ac" type="number" value="10" oninput=""></div>
+        <div class="derived-chip"><span class="dc-label">Initiative</span><input id="pc-initiative" type="number" value="0" readonly style="color:var(--mist)"></div>
+        <div class="derived-chip"><span class="dc-label">Speed (ft)</span><input id="pc-speed" type="number" value="30"></div>
+        <div class="derived-chip"><span class="dc-label">Gold (gp)</span><input id="pc-gold" type="number" value="0" min="0"></div>
+      </div>
+      <p style="font-size:0.78rem;color:var(--mist);margin-top:-8px;">HP and AC are auto-suggested — override as needed.</p>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Notes</div>
+      <textarea id="pc-notes" placeholder="Inventory, backstory, personality traits, bonds, flaws…" style="min-height:100px;"></textarea>
+    </div>
+
+    <div class="card" style="padding:16px 20px;">
+      <div class="actions" style="margin:0;">
+        <button class="btn-primary" onclick="savePcToVault()">⚔ Save to Vault</button>
+        <button class="btn-secondary" onclick="clearPcForm()">Clear</button>
+        <a href="vault.html" class="btn-vault">View Vault →</a>
+      </div>
+      <div id="pc-flash" class="flash-bar"></div>
+    </div>
+
+  </div><!-- /tab-pc -->
+
+  <!-- ══════════════════════════ NPC TAB ══════════════════════════ -->
+  <div id="tab-npc" style="display:none;">
+
+    <div class="card">
+      <div class="section-title">Identity</div>
+      <div class="row">
+        <div class="field" style="grid-column:1/-1;">
+          <label class="fl">Name</label>
+          <div style="display:flex;gap:8px;">
+            <input id="npc-name" placeholder="Mordecai Ashveil" style="flex:1;">
+            <button class="btn-secondary" onclick="generateNpcName()" style="white-space:nowrap;padding:8px 12px;">🎲 Name</button>
+          </div>
+        </div>
+        <div class="field"><label class="fl">Class / Role</label>
+          <select id="npc-class">
+            <option value="">— select —</option>
+            <option>Barbarian</option><option>Bard</option><option>Cleric</option><option>Druid</option>
+            <option>Fighter</option><option>Monk</option><option>Paladin</option><option>Ranger</option>
+            <option>Rogue</option><option>Sorcerer</option><option>Warlock</option><option>Wizard</option>
+            <option>Artificer</option><option>Blood Hunter</option>
+          </select>
+        </div>
+        <div class="field"><label class="fl">Ancestry</label>
+          <select id="npc-ancestry">
+            <option value="">— select —</option>
+            <option>Human</option><option>Elf</option><option>Dwarf</option><option>Halfling</option>
+            <option>Gnome</option><option>Half-Elf</option><option>Half-Orc</option><option>Tiefling</option>
+            <option>Dragonborn</option><option>Aasimar</option><option>Tabaxi</option>
+            <option>Firbolg</option><option>Goliath</option><option>Kenku</option>
+          </select>
+        </div>
+        <div class="field"><label class="fl">Role / Title</label>
+          <select id="npc-role">
+            <option value="">— select —</option>
+            <option>Guard Captain</option><option>Scholar</option><option>Merchant</option>
+            <option>Innkeeper</option><option>Cult Agent</option><option>Scout</option>
+            <option>Fixer</option><option>Courier</option><option>Priest</option>
+            <option>Sellsword</option><option>Healer</option><option>Courtier</option>
+          </select>
+        </div>
+        <div class="field"><label class="fl">Alignment</label>
+          <select id="npc-alignment">
+            <option>Lawful Good</option><option>Neutral Good</option><option>Chaotic Good</option>
+            <option>Lawful Neutral</option><option selected>True Neutral</option><option>Chaotic Neutral</option>
+            <option>Lawful Evil</option><option>Neutral Evil</option><option>Chaotic Evil</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Combat</div>
+      <div class="row">
+        <div class="field"><label class="fl">Armor Class</label><input id="npc-ac" type="number" value="12"></div>
+        <div class="field"><label class="fl">Hit Points</label><input id="npc-hp" type="number" value="18"></div>
+        <div class="field"><label class="fl">Speed (ft)</label><input id="npc-speed" type="number" value="30"></div>
+        <div class="field"><label class="fl">Attack / Weapon</label><input id="npc-attack" placeholder="Shortsword +4 (1d6+2)"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Personality &amp; Secrets</div>
+      <div class="row cols-3">
+        <div class="field"><label class="fl">Personality</label><input id="npc-personality" placeholder="Calm under pressure…"></div>
+        <div class="field"><label class="fl">Motivation</label><input id="npc-motivation" placeholder="What drives them?"></div>
+        <div class="field"><label class="fl">Secret</label><input id="npc-secret" placeholder="Hidden truth or hook…"></div>
+      </div>
+      <div class="row full">
+        <div class="field"><label class="fl">Notes</label><textarea id="npc-notes" placeholder="Rumors, voice, faction ties, quest hooks…" style="min-height:90px;"></textarea></div>
+      </div>
+      <div id="npc-preview" class="npc-preview" style="display:none;"></div>
+    </div>
+
+    <div class="card" style="padding:16px 20px;">
+      <div class="actions" style="margin:0;">
+        <button class="btn-primary" onclick="saveNpcToVault()">⚔ Save to Vault</button>
+        <button class="btn-roll" onclick="generateFullNpc()">🎲 Generate Full NPC</button>
+        <button class="btn-secondary" onclick="clearNpcForm()">Clear</button>
+        <a href="vault.html" class="btn-vault">View Vault →</a>
+      </div>
+      <div id="npc-flash" class="flash-bar"></div>
+    </div>
+
+  </div><!-- /tab-npc -->
+
+  <!-- ══════════════════════════ MONSTER TAB ══════════════════════════ -->
+  <div id="tab-monster" style="display:none;">
+
+    <div class="card">
+      <div class="section-title">Identity</div>
+      <div class="row">
+        <div class="field"><label class="fl">Name</label><input id="mon-name" placeholder="Goblin Warboss"></div>
+        <div class="field"><label class="fl">Type</label><input id="mon-type" placeholder="Humanoid, Beast…"></div>
+        <div class="field"><label class="fl">Challenge Rating</label><input id="mon-cr" placeholder="1/4, 2, 15…"></div>
+        <div class="field"><label class="fl">Count</label><input id="mon-count" type="number" min="1" value="1"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Stats</div>
+      <div class="row">
+        <div class="field"><label class="fl">Armor Class</label><input id="mon-ac" type="number" value="13"></div>
+        <div class="field"><label class="fl">HP / HP Dice</label><input id="mon-hp" placeholder="52 or 8d8+16"></div>
+        <div class="field"><label class="fl">HP Reference</label><input id="mon-hpRef" placeholder="e.g. 52 (8d8+16)"></div>
+        <div class="field"><label class="fl">Speed (ft)</label><input id="mon-speed" type="number" value="30"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Notes</div>
+      <textarea id="mon-notes" placeholder="Special abilities, lair actions, tactics, loot…" style="min-height:100px;"></textarea>
+    </div>
+
+    <div class="card" style="padding:16px 20px;">
+      <div class="actions" style="margin:0;">
+        <button class="btn-primary" onclick="saveMonsterToVault()">⚔ Save to Vault</button>
+        <button class="btn-secondary" onclick="clearMonsterForm()">Clear</button>
+        <a href="vault.html" class="btn-vault">View Vault →</a>
+      </div>
+      <div id="mon-flash" class="flash-bar"></div>
+    </div>
+
+  </div><!-- /tab-monster -->
+
+</div><!-- /main -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════════════
+const RACIAL_BONUSES = {
+  'Human':              { STR:1, DEX:1, CON:1, INT:1, WIS:1, CHA:1 },
+  'Elf (High)':         { DEX:2, INT:1 },
+  'Elf (Wood)':         { DEX:2, WIS:1 },
+  'Elf (Drow)':         { DEX:2, CHA:1 },
+  'Dwarf (Hill)':       { CON:2, WIS:1 },
+  'Dwarf (Mountain)':   { STR:2, CON:2 },
+  'Halfling (Lightfoot)':{ DEX:2, CHA:1 },
+  'Halfling (Stout)':   { DEX:2, CON:1 },
+  'Gnome (Forest)':     { INT:2, DEX:1 },
+  'Gnome (Rock)':       { INT:2, CON:1 },
+  'Half-Elf':           { CHA:2, STR:1, DEX:1 },
+  'Half-Orc':           { STR:2, CON:1 },
+  'Tiefling':           { INT:1, CHA:2 },
+  'Dragonborn':         { STR:2, CHA:1 },
+  'Aasimar':            { WIS:1, CHA:2 },
+  'Tabaxi':             { DEX:2, CHA:1 },
+  'Warforged':          { CON:2, STR:1 },
+  'Firbolg':            { STR:1, WIS:2 },
+  'Kenku':              { DEX:2, WIS:1 },
+  'Lizardfolk':         { CON:2, WIS:1 },
+};
+
+const RACE_SPEEDS = {
+  'Dwarf (Hill)': 25, 'Dwarf (Mountain)': 25,
+  'Halfling (Lightfoot)': 25, 'Halfling (Stout)': 25,
+  'Gnome (Forest)': 25, 'Gnome (Rock)': 25,
+};
+
+const CLASS_HD = {
+  'Barbarian': 12, 'Fighter': 10, 'Paladin': 10, 'Ranger': 10,
+  'Bard': 8, 'Cleric': 8, 'Druid': 8, 'Monk': 8, 'Rogue': 8, 'Warlock': 8,
+  'Sorcerer': 6, 'Wizard': 6,
+};
+
+const STATS = ['STR','DEX','CON','INT','WIS','CHA'];
+
+// NPC generation tables
+const NPC_CLASSES    = ['Barbarian','Bard','Cleric','Druid','Fighter','Monk','Paladin','Ranger','Rogue','Sorcerer','Warlock','Wizard','Artificer','Blood Hunter'];
+const NPC_ANCESTRIES = ['Human','Elf','Dwarf','Halfling','Gnome','Half-Elf','Half-Orc','Tiefling','Dragonborn','Aasimar','Tabaxi','Firbolg','Goliath','Kenku'];
+const NPC_ROLES      = ['Guard Captain','Scholar','Merchant','Innkeeper','Cult Agent','Scout','Fixer','Courier','Priest','Sellsword','Healer','Courtier'];
+const NPC_PERSONALITY = ['calm under pressure','suspicious of strangers','charming but evasive','strict and duty-bound','recklessly brave','dryly humorous','always watching exits','warm and empathetic','boisterous and loud','melancholy and reflective'];
+const NPC_MOTIVATIONS = ['protect their family','gain political influence','repay an old debt','hide a dangerous mistake','recover a stolen heirloom','break a curse','secure rare knowledge','escape their past','prove their worth','find belonging'];
+const NPC_SECRETS     = ['is secretly an informant','owes money to a criminal syndicate','is the missing heir to a noble line','accidentally caused a past tragedy','is under magical surveillance','is sheltering a fugitive','carries a cursed item','was once an adventurer','has faked their own death'];
+const NAME_PREFIXES = ['Aer','Bel','Cor','Dar','El','Fen','Gar','Hel','Is','Jar','Kel','Lor','Mor','Nor','Or','Per','Quin','Rin','Syl','Tor','Val','Wyn','Xan','Yor','Zel'];
+const NAME_SUFFIXES = ['adin','bryn','cor','dell','eth','fira','gorn','hild','ian','jara','kas','lor','mund','nys','or','pris','quil','ras','sor','tor','um','vash','wyn','xil','yra','zorn'];
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+function uid(p) { return `${p}-${Date.now()}-${Math.floor(Math.random()*1e5)}`; }
+function nowIso() { return new Date().toISOString(); }
+function intOr(v, d = 0) { const n = parseInt(v, 10); return isNaN(n) ? d : n; }
+function esc(v) { return String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function d(sides) { return Math.floor(Math.random() * sides) + 1; }
+function statMod(v) { const m = Math.floor((intOr(v,10)-10)/2); return (m>=0?'+':'')+m; }
+function roll4d6dl() { const r=[d(6),d(6),d(6),d(6)].sort((a,b)=>a-b); return r[1]+r[2]+r[3]; }
+function normalizeKey(n, c) { return `${String(n||'').trim().toLowerCase()}::${String(c||'').trim().toLowerCase()}`; }
+
+function showFlash(elId, msg, isErr) {
+  const el = document.getElementById(elId);
+  el.textContent = msg;
+  el.className = 'flash-bar show ' + (isErr ? 'error' : 'ok');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.className = 'flash-bar'; }, 3500);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  ['pc','npc','monster'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.creator-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  VAULT SYNC
+// ══════════════════════════════════════════════════════════════
+function readVault() {
+  try {
+    const v = JSON.parse(localStorage.getItem('dndToolsVault'));
+    return (v && typeof v === 'object') ? { pcs:[], npcs:[], monsters:[], ...v } : { pcs:[], npcs:[], monsters:[] };
+  } catch { return { pcs:[], npcs:[], monsters:[] }; }
+}
+
+function writeVault(vault) {
+  localStorage.setItem('dndToolsVault', JSON.stringify(vault));
+  // backward compat
+  localStorage.setItem('dndToolsPlayerCharacters', JSON.stringify(vault.pcs));
+  localStorage.setItem('dndToolsNpcProfiles', JSON.stringify(vault.npcs));
+}
+
+function upsertIntoArray(arr, entity, keyFn) {
+  const k = keyFn(entity);
+  const idx = arr.findIndex(e => keyFn(e) === k);
+  if (idx >= 0) { arr[idx] = { ...arr[idx], ...entity, id: arr[idx].id || entity.id, updatedAt: nowIso() }; return 'updated'; }
+  arr.unshift(entity);
+  return 'added';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PC TAB
+// ══════════════════════════════════════════════════════════════
+function buildStatGrid() {
+  const grid = document.getElementById('stat-grid');
+  grid.innerHTML = STATS.map(s => `
+    <div class="stat-cell" id="sc-${s}">
+      <span class="stat-label">${s}</span>
+      <input id="stat-${s}" type="number" min="1" max="30" value="10" oninput="onStatInput('${s}')">
+      <span class="stat-mod" id="mod-${s}">+0</span>
+      <button class="stat-roll-btn" onclick="rollOneStat('${s}')">Roll</button>
+    </div>`).join('');
+}
+
+function onStatInput(s) {
+  document.getElementById(`mod-${s}`).textContent = statMod(document.getElementById(`stat-${s}`).value);
+  updateDerived();
+}
+
+function rollOneStat(s) {
+  const val = roll4d6dl();
+  document.getElementById(`stat-${s}`).value = val;
+  onStatInput(s);
+}
+
+function rollAllStats() {
+  STATS.forEach(s => rollOneStat(s));
+}
+
+function resetStats() {
+  STATS.forEach(s => {
+    document.getElementById(`stat-${s}`).value = 10;
+    document.getElementById(`mod-${s}`).textContent = '+0';
+  });
+  updateDerived();
+}
+
+function updateRaceBonuses() {
+  const race = document.getElementById('pc-race').value;
+  const bonuses = RACIAL_BONUSES[race] || {};
+  const chips = Object.entries(bonuses).map(([stat, val]) =>
+    `<span class="race-bonus-chip">${stat} ${val>0?'+':''}${val}</span>`
+  ).join('');
+  document.getElementById('race-bonus-text').innerHTML = chips || '<span style="color:var(--mist);font-style:italic;">No bonuses</span>';
+  // Update speed suggestion
+  const speed = RACE_SPEEDS[race] || 30;
+  document.getElementById('pc-speed').value = speed;
+  updateDerived();
+}
+
+function updateDerived() {
+  const cls   = document.getElementById('pc-class').value;
+  const level = intOr(document.getElementById('pc-level').value, 1);
+  const conVal = intOr(document.getElementById('stat-CON')?.value, 10);
+  const dexVal = intOr(document.getElementById('stat-DEX')?.value, 10);
+  const conMod = Math.floor((conVal - 10) / 2);
+  const dexMod = Math.floor((dexVal - 10) / 2);
+
+  // HP: max at level 1, average for subsequent levels
+  const hd = CLASS_HD[cls] || 8;
+  const hpL1 = hd + conMod;
+  const hpRest = level > 1 ? (level - 1) * (Math.floor(hd / 2) + 1 + conMod) : 0;
+  document.getElementById('pc-hp').value = Math.max(1, hpL1 + hpRest);
+
+  // AC: 10 + DEX mod (unarmored)
+  document.getElementById('pc-ac').value = 10 + dexMod;
+
+  // Initiative: DEX mod
+  document.getElementById('pc-initiative').value = dexMod;
+}
+
+function getPcData() {
+  return {
+    id: uid('pc'),
+    name:       document.getElementById('pc-name').value.trim() || 'Unnamed Adventurer',
+    className:  document.getElementById('pc-class').value,
+    race:       document.getElementById('pc-race').value,
+    background: document.getElementById('pc-background').value,
+    alignment:  document.getElementById('pc-alignment').value,
+    level:      intOr(document.getElementById('pc-level').value, 1),
+    STR: intOr(document.getElementById('stat-STR').value, 10),
+    DEX: intOr(document.getElementById('stat-DEX').value, 10),
+    CON: intOr(document.getElementById('stat-CON').value, 10),
+    INT: intOr(document.getElementById('stat-INT').value, 10),
+    WIS: intOr(document.getElementById('stat-WIS').value, 10),
+    CHA: intOr(document.getElementById('stat-CHA').value, 10),
+    hp:    intOr(document.getElementById('pc-hp').value, 10),
+    ac:    intOr(document.getElementById('pc-ac').value, 10),
+    speed: intOr(document.getElementById('pc-speed').value, 30),
+    gold:  intOr(document.getElementById('pc-gold').value, 0),
+    notes: document.getElementById('pc-notes').value.trim(),
+    createdAt: nowIso(), updatedAt: nowIso(),
+  };
+}
+
+function savePcToVault() {
+  const pc = getPcData();
+  const vault = readVault();
+  const result = upsertIntoArray(vault.pcs, pc, e => normalizeKey(e.name, e.className));
+  writeVault(vault);
+  showFlash('pc-flash', result === 'updated' ? `${pc.name} updated in Vault.` : `${pc.name} saved to Vault!`);
+}
+
+function clearPcForm() {
+  document.getElementById('pc-name').value = '';
+  document.getElementById('pc-notes').value = '';
+  document.getElementById('pc-gold').value = 0;
+  document.getElementById('pc-level').value = 1;
+  resetStats();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NPC TAB
+// ══════════════════════════════════════════════════════════════
+function generateNpcName() {
+  const first = pick(NAME_PREFIXES) + pick(NAME_SUFFIXES);
+  const last  = pick(NAME_PREFIXES) + pick(NAME_SUFFIXES);
+  const cap   = s => s.charAt(0).toUpperCase() + s.slice(1);
+  document.getElementById('npc-name').value = `${cap(first)} ${cap(last)}`;
+}
+
+function generateFullNpc() {
+  generateNpcName();
+  // Set selects by value
+  const setSelectVal = (id, val) => {
+    const sel = document.getElementById(id);
+    for (let i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === val || sel.options[i].text === val) { sel.selectedIndex = i; break; }
+    }
+  };
+  setSelectVal('npc-class',    pick(NPC_CLASSES));
+  setSelectVal('npc-ancestry', pick(NPC_ANCESTRIES));
+  setSelectVal('npc-role',     pick(NPC_ROLES));
+  document.getElementById('npc-alignment').selectedIndex = Math.floor(Math.random() * 9);
+  document.getElementById('npc-ac').value   = 10 + Math.floor(Math.random() * 8);
+  document.getElementById('npc-hp').value   = 8  + Math.floor(Math.random() * 40);
+  document.getElementById('npc-speed').value = pick([25, 30, 30, 30, 35]);
+  document.getElementById('npc-personality').value = pick(NPC_PERSONALITY);
+  document.getElementById('npc-motivation').value  = pick(NPC_MOTIVATIONS);
+  document.getElementById('npc-secret').value      = pick(NPC_SECRETS);
+  updateNpcPreview();
+}
+
+function updateNpcPreview() {
+  const name  = document.getElementById('npc-name').value || '—';
+  const cls   = document.getElementById('npc-class').value || '—';
+  const anc   = document.getElementById('npc-ancestry').value || '—';
+  const role  = document.getElementById('npc-role').value || '—';
+  const align = document.getElementById('npc-alignment').value;
+  const pers  = document.getElementById('npc-personality').value;
+  const mot   = document.getElementById('npc-motivation').value;
+  const sec   = document.getElementById('npc-secret').value;
+  const prev  = document.getElementById('npc-preview');
+  prev.style.display = '';
+  prev.innerHTML = `<strong style="color:var(--paper)">${esc(name)}</strong> — ${esc(anc)} ${esc(cls)} (${esc(role)}) · ${esc(align)}<br>
+    <em>Personality:</em> ${esc(pers) || '—'}<br>
+    <em>Motivation:</em> ${esc(mot) || '—'}<br>
+    <em>Secret:</em> ${esc(sec) || '—'}`;
+}
+
+function getNpcData() {
+  return {
+    id:          uid('npc-profile'),
+    name:        document.getElementById('npc-name').value.trim(),
+    className:   document.getElementById('npc-class').value,
+    ancestry:    document.getElementById('npc-ancestry').value,
+    role:        document.getElementById('npc-role').value,
+    alignment:   document.getElementById('npc-alignment').value,
+    ac:          intOr(document.getElementById('npc-ac').value, 12),
+    hp:          intOr(document.getElementById('npc-hp').value, 10),
+    speed:       intOr(document.getElementById('npc-speed').value, 30),
+    attack:      document.getElementById('npc-attack').value.trim(),
+    personality: document.getElementById('npc-personality').value.trim(),
+    motivation:  document.getElementById('npc-motivation').value.trim(),
+    secret:      document.getElementById('npc-secret').value.trim(),
+    notes:       document.getElementById('npc-notes').value.trim(),
+    createdAt: nowIso(), updatedAt: nowIso(),
+  };
+}
+
+function saveNpcToVault() {
+  const npc = getNpcData();
+  if (!npc.name) { showFlash('npc-flash', 'Name is required.', true); return; }
+  const vault = readVault();
+  const result = upsertIntoArray(vault.npcs, npc, e => normalizeKey(e.name, e.className));
+  writeVault(vault);
+  showFlash('npc-flash', result === 'updated' ? `${npc.name} updated in Vault.` : `${npc.name} saved to Vault!`);
+}
+
+function clearNpcForm() {
+  ['npc-name','npc-attack','npc-personality','npc-motivation','npc-secret','npc-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('npc-class').selectedIndex    = 0;
+  document.getElementById('npc-ancestry').selectedIndex = 0;
+  document.getElementById('npc-role').selectedIndex     = 0;
+  document.getElementById('npc-ac').value    = 12;
+  document.getElementById('npc-hp').value    = 18;
+  document.getElementById('npc-speed').value = 30;
+  document.getElementById('npc-preview').style.display = 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MONSTER TAB
+// ══════════════════════════════════════════════════════════════
+function getMonsterData() {
+  return {
+    id:    uid('mon'),
+    name:  document.getElementById('mon-name').value.trim(),
+    type:  document.getElementById('mon-type').value.trim(),
+    cr:    document.getElementById('mon-cr').value.trim(),
+    count: intOr(document.getElementById('mon-count').value, 1),
+    ac:    intOr(document.getElementById('mon-ac').value, 13),
+    hp:    document.getElementById('mon-hp').value.trim(),
+    hpRef: document.getElementById('mon-hpRef').value.trim(),
+    speed: intOr(document.getElementById('mon-speed').value, 30),
+    notes: document.getElementById('mon-notes').value.trim(),
+    createdAt: nowIso(), updatedAt: nowIso(),
+  };
+}
+
+function saveMonsterToVault() {
+  const mon = getMonsterData();
+  if (!mon.name) { showFlash('mon-flash', 'Name is required.', true); return; }
+  const vault = readVault();
+  const result = upsertIntoArray(vault.monsters, mon, e => String(e.name || '').toLowerCase());
+  writeVault(vault);
+  showFlash('mon-flash', result === 'updated' ? `${mon.name} updated in Vault.` : `${mon.name} saved to Vault!`);
+}
+
+function clearMonsterForm() {
+  ['mon-name','mon-type','mon-cr','mon-hp','mon-hpRef','mon-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('mon-count').value = 1;
+  document.getElementById('mon-ac').value    = 13;
+  document.getElementById('mon-speed').value = 30;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+buildStatGrid();
+updateRaceBonuses();
+updateDerived();
+</script>
+</body>
+</html>

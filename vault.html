@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vault — D&D Hub</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Serif+Text:ital@0;1&family=Source+Sans+3:wght@400;600;700&display=swap');
+
+:root {
+  --bg-deep: #0b0f14;
+  --bg-mid:  #151c24;
+  --mist:    #a8b6c8;
+  --paper:   #efe5cf;
+  --paper-deep: #dcc79a;
+  --gold:    #c4983a;
+  --gold-dim: rgba(196,152,58,0.25);
+  --ember:   #a33a2b;
+  --shadow:  rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(164,58,43,0.18), transparent 55%),
+    radial-gradient(900px 600px at 100% 100%, rgba(46,90,59,0.18), transparent 50%),
+    linear-gradient(135deg, #0b0f14 0%, #151c24 55%, #101317 100%);
+  color: var(--paper);
+  font-family: 'Source Sans 3', sans-serif;
+  line-height: 1.4;
+  padding-bottom: 40px;
+}
+
+/* ── NAV ── */
+.site-nav {
+  background: rgba(10,13,18,0.95);
+  border-bottom: 1px solid var(--gold-dim);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 20px var(--shadow);
+  flex-wrap: wrap;
+}
+.nav-brand {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  font-size: 0.95rem;
+  letter-spacing: 1.5px;
+  padding: 14px 20px 14px 0;
+  margin-right: 8px;
+  border-right: 1px solid var(--gold-dim);
+  white-space: nowrap;
+}
+.nav-brand span { color: var(--paper-deep); font-size: 0.8rem; display: block; letter-spacing: 0.5px; }
+.site-nav a {
+  color: var(--mist);
+  text-decoration: none;
+  padding: 14px;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.site-nav a:hover { color: var(--gold); border-bottom-color: var(--gold-dim); }
+.site-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 28px 24px 0;
+}
+
+.vault-header { margin-bottom: 24px; }
+.vault-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.85rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.vault-header p { color: var(--mist); font-size: 0.9rem; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.toolbar-right { display: flex; gap: 8px; align-items: center; margin-left: auto; flex-wrap: wrap; }
+
+/* ── INPUTS ── */
+input, select, textarea {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(196,152,58,0.25);
+  border-radius: 4px;
+  color: var(--paper);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88rem;
+  padding: 7px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+select option { background: #151c24; color: var(--paper); }
+#vaultSearch { width: 220px; }
+
+/* ── FILTER TABS ── */
+.filter-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--gold-dim);
+}
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--mist);
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  padding: 9px 20px;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab:hover { color: var(--paper); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-count { font-family: 'Source Sans 3', sans-serif; font-size: 0.75rem; opacity: 0.6; margin-left: 4px; }
+
+/* ── TABLE ── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--gold-dim);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+}
+.vault-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.vault-table th {
+  background: rgba(196,152,58,0.1);
+  color: var(--paper-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 10px 12px;
+  text-align: left;
+  text-transform: uppercase;
+  user-select: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.vault-table th:last-child { cursor: default; }
+.vault-table th:hover:not(:last-child) { color: var(--gold); }
+.vault-table th.sort-active { color: var(--gold); }
+.sort-arrow { margin-left: 4px; font-size: 0.65rem; }
+.vault-table td {
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+}
+.vault-table tr:hover td { background: rgba(255,255,255,0.025); }
+
+.badge {
+  display: inline-block;
+  border-radius: 3px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  text-transform: uppercase;
+}
+.badge-pc      { background: rgba(46,90,59,0.45);   color: #7ecf9e; border: 1px solid rgba(46,90,59,0.7); }
+.badge-npc     { background: rgba(196,152,58,0.18); color: var(--gold); border: 1px solid rgba(196,152,58,0.4); }
+.badge-monster { background: rgba(163,58,43,0.28);  color: #e99;   border: 1px solid rgba(163,58,43,0.5); }
+
+.entity-name { color: var(--paper); font-weight: 600; }
+.entity-sub  { color: var(--mist); font-size: 0.82rem; }
+.action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* ── BUTTONS ── */
+.btn-primary, .btn-secondary, .btn-ghost, .btn-danger, .btn-deploy, .btn-sm {
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 7px 14px;
+  transition: all 0.15s;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.btn-primary  { background: rgba(196,152,58,0.18); border-color: rgba(196,152,58,0.45); color: var(--gold); }
+.btn-primary:hover  { background: rgba(196,152,58,0.32); border-color: var(--gold); }
+.btn-secondary { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); color: var(--mist); }
+.btn-secondary:hover { background: rgba(255,255,255,0.12); color: var(--paper); }
+.btn-ghost  { background: none; border-color: transparent; color: var(--mist); }
+.btn-ghost:hover { color: var(--paper); }
+.btn-danger { background: rgba(163,58,43,0.18); border-color: rgba(163,58,43,0.4); color: #e99; font-size: 0.72rem; padding: 5px 10px; }
+.btn-danger:hover { background: rgba(163,58,43,0.32); }
+.btn-deploy { background: rgba(46,90,59,0.28); border-color: rgba(46,90,59,0.55); color: #7ecf9e; font-size: 0.72rem; padding: 5px 10px; }
+.btn-deploy:hover { background: rgba(46,90,59,0.45); }
+.btn-sm { font-size: 0.72rem; padding: 5px 10px; }
+
+/* ── MODALS ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg-mid);
+  border: 1px solid var(--gold-dim);
+  border-radius: 8px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.65);
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  align-items: center;
+  border-bottom: 1px solid var(--gold-dim);
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  background: var(--bg-mid);
+  z-index: 1;
+}
+.modal-header h3 { color: var(--gold); font-family: 'Cinzel', serif; font-size: 1rem; letter-spacing: 1px; }
+.modal-close { background: none; border: none; color: var(--mist); cursor: pointer; font-size: 1.4rem; line-height: 1; padding: 2px 6px; }
+.modal-close:hover { color: var(--paper); }
+.modal-body  { padding: 20px; flex: 1; }
+.modal-footer { border-top: 1px solid var(--gold-dim); display: flex; gap: 8px; justify-content: flex-end; padding: 14px 20px; }
+
+/* ── FORMS ── */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+.form-row.full   { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label {
+  color: var(--mist);
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.form-group input, .form-group select, .form-group textarea { width: 100%; }
+.form-group textarea { min-height: 72px; resize: vertical; }
+
+.form-section-title {
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.76rem;
+  letter-spacing: 1.5px;
+  margin: 16px 0 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--gold-dim);
+  text-transform: uppercase;
+}
+.form-section-title:first-child { margin-top: 0; }
+
+/* Stat grid with modifier display */
+.stat-grid-6 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.stat-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.stat-cell label { color: var(--mist); font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
+.stat-cell input { text-align: center; font-size: 1rem; width: 100%; }
+.stat-mod-val { color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 600; }
+
+/* Deploy modal info block */
+.deploy-info {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.deploy-info .d-name { color: var(--paper); font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
+.deploy-info .d-sub  { color: var(--mist); font-size: 0.82rem; }
+
+/* ── FLASH ── */
+.flash {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-mid);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  color: var(--paper);
+  font-size: 0.88rem;
+  opacity: 0;
+  padding: 10px 22px;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 600;
+  white-space: nowrap;
+}
+.flash.show  { opacity: 1; }
+.flash.error { border-color: var(--ember); color: #f99; }
+
+/* ── EMPTY ── */
+.empty { color: var(--mist); font-style: italic; padding: 32px; text-align: center; font-size: 0.9rem; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .toolbar { flex-direction: column; align-items: flex-start; }
+  .toolbar-right { margin-left: 0; }
+  #vaultSearch { width: 100%; }
+  .stat-grid-6 { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-brand">D&amp;D<span>Dungeon Master</span></div>
+  <a href="index.html">Hub</a>
+  <a href="campaign.html" id="campaignNavLink" style="display:none;">Campaign</a>
+  <a href="character_creator.html">Character Creator</a>
+  <a href="location_creator.html">Map Creator</a>
+  <a href="atlas.html">Atlas</a>
+  <a href="monster_manual.html">Monster Manual</a>
+  <a href="spellbook.html">Spellbook</a>
+  <a href="vault.html" class="active">Vault</a>
+</nav>
+<script>if (localStorage.getItem('dndToolsActiveCampaignId')) document.getElementById('campaignNavLink').style.display = '';</script>
+
+<div class="main">
+  <div class="vault-header">
+    <h1>The Vault</h1>
+    <p>All your characters, NPCs, and monsters — deploy them to any campaign.</p>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn-primary" onclick="openEditModal('pc',null)">+ New PC</button>
+    <button class="btn-primary" onclick="openEditModal('npc',null)">+ New NPC</button>
+    <button class="btn-primary" onclick="openEditModal('monster',null)">+ New Monster</button>
+    <div class="toolbar-right">
+      <input id="vaultSearch" type="text" placeholder="Search…" oninput="renderTable()">
+      <button class="btn-secondary" onclick="saveVaultJson()">⬇ Save JSON</button>
+      <label class="btn-secondary" style="cursor:pointer;">⬆ Load JSON
+        <input type="file" id="loadJsonInput" accept=".json" style="display:none" onchange="loadVaultJson(event)">
+      </label>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="tab active" data-filter="all"     onclick="setFilter('all')">All<span class="tab-count" id="countAll"></span></button>
+    <button class="tab"        data-filter="pc"      onclick="setFilter('pc')">PCs<span class="tab-count" id="countPc"></span></button>
+    <button class="tab"        data-filter="npc"     onclick="setFilter('npc')">NPCs<span class="tab-count" id="countNpc"></span></button>
+    <button class="tab"        data-filter="monster" onclick="setFilter('monster')">Monsters<span class="tab-count" id="countMonster"></span></button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="vault-table">
+      <thead>
+        <tr>
+          <th onclick="setSort('type')">Type<span class="sort-arrow" id="arr-type"></span></th>
+          <th onclick="setSort('name')">Name<span class="sort-arrow" id="arr-name">▲</span></th>
+          <th onclick="setSort('classRole')">Class / Role<span class="sort-arrow" id="arr-classRole"></span></th>
+          <th onclick="setSort('levelCr')">Level / CR<span class="sort-arrow" id="arr-levelCr"></span></th>
+          <th onclick="setSort('ac')">AC<span class="sort-arrow" id="arr-ac"></span></th>
+          <th onclick="setSort('hp')">HP<span class="sort-arrow" id="arr-hp"></span></th>
+          <th>Gold</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="vaultBody"></tbody>
+    </table>
+    <div id="vaultEmpty" class="empty" style="display:none;">No entities found. Create one above!</div>
+  </div>
+</div>
+
+<!-- ══ Edit Modal ══ -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="editModalTitle">Edit</h3>
+      <button class="modal-close" onclick="closeEditModal()">×</button>
+    </div>
+    <div class="modal-body" id="editModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="saveEditModal()">Save</button>
+      <button class="btn-ghost"   onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Deploy Modal ══ -->
+<div id="deployModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Deploy to Campaign</h3>
+      <button class="modal-close" onclick="closeDeployModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="deploy-info">
+        <div class="d-name" id="deployEntityName">—</div>
+        <div class="d-sub"  id="deployEntitySub">—</div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Campaign</label>
+          <select id="deployCampaignSelect" onchange="populateDeployLocations()"></select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+          <label>Location (optional)</label>
+          <select id="deployLocationSelect"><option value="">— No specific location —</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="confirmDeploy()">Deploy</button>
+      <button class="btn-ghost"   onclick="closeDeployModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="flashEl" class="flash"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  STORAGE
+// ══════════════════════════════════════════════════════════════
+const SK_VAULT     = 'dndToolsVault';           // { pcs:[], npcs:[], monsters:[] }
+const SK_CAMPAIGNS = 'dndToolsCampaigns';
+const SK_OLD_PCS   = 'dndToolsPlayerCharacters'; // backward compat
+const SK_OLD_NPCS  = 'dndToolsNpcProfiles';      // backward compat
+
+function safeRead(key) {
+  try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+}
+function safeWrite(key, v) {
+  try { localStorage.setItem(key, JSON.stringify(v)); } catch {}
+}
+
+function readVault() {
+  const v = safeRead(SK_VAULT);
+  return { pcs: [], npcs: [], monsters: [], ...( v && typeof v === 'object' ? v : {} ) };
+}
+
+function writeVault(vault) {
+  safeWrite(SK_VAULT, vault);
+  // Keep old keys in sync for backward compat with campaign.html
+  safeWrite(SK_OLD_PCS,  vault.pcs);
+  safeWrite(SK_OLD_NPCS, vault.npcs);
+}
+
+// ── Migration: pull in data from old keys on first vault load ──
+function migrateOldData() {
+  if (safeRead(SK_VAULT) !== null) return; // already initialised
+  const oldPcs  = safeRead(SK_OLD_PCS)  || [];
+  const oldNpcs = safeRead(SK_OLD_NPCS) || [];
+  // Ensure old PCs have IDs
+  oldPcs.forEach(p => { if (!p.id) p.id = uid('pc'); });
+  oldNpcs.forEach(n => { if (!n.id) n.id = uid('npc-profile'); });
+  writeVault({ pcs: oldPcs, npcs: oldNpcs, monsters: [] });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+function uid(prefix) { return `${prefix}-${Date.now()}-${Math.floor(Math.random()*100000)}`; }
+function nowIso() { return new Date().toISOString(); }
+function intOr(v, def) { const n = parseInt(v, 10); return isNaN(n) ? def : n; }
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function statMod(v) {
+  const m = Math.floor((intOr(v, 10) - 10) / 2);
+  return (m >= 0 ? '+' : '') + m;
+}
+
+let _flashTimer;
+function flash(msg, isError = false) {
+  const el = document.getElementById('flashEl');
+  el.textContent = msg;
+  el.className = 'flash show' + (isError ? ' error' : '');
+  clearTimeout(_flashTimer);
+  _flashTimer = setTimeout(() => { el.className = 'flash'; }, 3000);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let vaultFilter = 'all';
+let vaultSort   = { col: 'name', dir: 1 };
+let editTarget  = null;
+let deployTarget = null;
+
+// ══════════════════════════════════════════════════════════════
+//  TABLE
+// ══════════════════════════════════════════════════════════════
+function allEntities(vault) {
+  return [
+    ...(vault.pcs      || []).map(e => ({ ...e, _kind: 'pc' })),
+    ...(vault.npcs     || []).map(e => ({ ...e, _kind: 'npc' })),
+    ...(vault.monsters || []).map(e => ({ ...e, _kind: 'monster' })),
+  ];
+}
+
+function entitySortKey(e) {
+  switch (vaultSort.col) {
+    case 'type':      return e._kind;
+    case 'name':      return (e.name || '').toLowerCase();
+    case 'classRole': return (e.className || e.role || e.type || '').toLowerCase();
+    case 'levelCr':   return intOr(e.level ?? e.cr, 0);
+    case 'ac':        return intOr(e.ac, 0);
+    case 'hp':        return intOr(e.hp ?? e.maxHp, 0);
+    default: return '';
+  }
+}
+
+function renderTable() {
+  const vault = readVault();
+  let entities = allEntities(vault);
+
+  // Counts
+  document.getElementById('countAll').textContent     = entities.length ? ` (${entities.length})` : '';
+  document.getElementById('countPc').textContent      = vault.pcs.length     ? ` (${vault.pcs.length})`      : '';
+  document.getElementById('countNpc').textContent     = vault.npcs.length    ? ` (${vault.npcs.length})`     : '';
+  document.getElementById('countMonster').textContent = vault.monsters.length? ` (${vault.monsters.length})` : '';
+
+  // Filter
+  if (vaultFilter !== 'all') entities = entities.filter(e => e._kind === vaultFilter);
+  const q = (document.getElementById('vaultSearch')?.value || '').toLowerCase().trim();
+  if (q) entities = entities.filter(e =>
+    (e.name || '').toLowerCase().includes(q) ||
+    (e.className || '').toLowerCase().includes(q) ||
+    (e.role || '').toLowerCase().includes(q) ||
+    (e.type || '').toLowerCase().includes(q)
+  );
+
+  // Sort
+  entities.sort((a, b) => {
+    const ka = entitySortKey(a), kb = entitySortKey(b);
+    if (ka < kb) return -vaultSort.dir;
+    if (ka > kb) return vaultSort.dir;
+    return 0;
+  });
+
+  // Sort arrows
+  ['type','name','classRole','levelCr','ac','hp'].forEach(col => {
+    const el = document.getElementById(`arr-${col}`);
+    if (!el) return;
+    el.textContent = col === vaultSort.col ? (vaultSort.dir === 1 ? '▲' : '▼') : '';
+    el.closest('th').classList.toggle('sort-active', col === vaultSort.col);
+  });
+
+  const body  = document.getElementById('vaultBody');
+  const empty = document.getElementById('vaultEmpty');
+
+  if (!entities.length) { body.innerHTML = ''; empty.style.display = ''; return; }
+  empty.style.display = 'none';
+
+  body.innerHTML = entities.map(e => {
+    const k    = e._kind;
+    const name = e.name || (k === 'monster' ? 'Unnamed Monster' : 'Unnamed');
+    const classRole = k === 'pc'      ? (e.className || '—')
+                    : k === 'npc'     ? (e.role || e.className || '—')
+                    : (e.type || '—');
+    const levelCr = k === 'pc'      ? (e.level  ? 'Lv ' + e.level  : '—')
+                  : k === 'monster' ? (e.cr     ? 'CR ' + e.cr     : '—')
+                  : '—';
+    const hp   = k === 'npc' ? (e.hp ?? e.maxHp ?? '—') : (e.hp ?? '—');
+    const gold = k === 'pc'  ? (e.gold ?? 0) : '—';
+
+    return `<tr>
+      <td><span class="badge badge-${k}">${k}</span></td>
+      <td><div class="entity-name">${esc(name)}</div></td>
+      <td><span class="entity-sub">${esc(classRole)}</span></td>
+      <td>${esc(levelCr)}</td>
+      <td>${esc(e.ac ?? '—')}</td>
+      <td>${esc(hp)}</td>
+      <td>${esc(gold)}</td>
+      <td><div class="action-btns">
+        <button class="btn-sm btn-secondary" onclick="openEditModal('${k}','${esc(e.id)}')">Edit</button>
+        <button class="btn-deploy"           onclick="openDeployModal('${k}','${esc(e.id)}')">Deploy</button>
+        <button class="btn-danger"           onclick="deleteEntity('${k}','${esc(e.id)}')">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function setFilter(f) {
+  vaultFilter = f;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
+  renderTable();
+}
+
+function setSort(col) {
+  if (vaultSort.col === col) { vaultSort.dir *= -1; }
+  else { vaultSort.col = col; vaultSort.dir = ['ac','hp','levelCr'].includes(col) ? -1 : 1; }
+  renderTable();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DELETE
+// ══════════════════════════════════════════════════════════════
+function deleteEntity(kind, id) {
+  if (!confirm('Remove this entity from the Vault? This will not affect campaigns it was already deployed to.')) return;
+  const vault = readVault();
+  const key = kind === 'pc' ? 'pcs' : kind === 'npc' ? 'npcs' : 'monsters';
+  vault[key] = vault[key].filter(e => e.id !== id);
+  writeVault(vault);
+  renderTable();
+  flash('Removed from Vault.');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EDIT MODAL
+// ══════════════════════════════════════════════════════════════
+function openEditModal(kind, id) {
+  const vault = readVault();
+  const arr   = kind === 'pc' ? vault.pcs : kind === 'npc' ? vault.npcs : vault.monsters;
+  const entity = id ? (arr.find(e => e.id === id) || null) : null;
+  editTarget  = { kind, id: id || null };
+
+  document.getElementById('editModalTitle').textContent = id ? `Edit ${kind.toUpperCase()}` : `New ${kind.toUpperCase()}`;
+
+  const body = document.getElementById('editModalBody');
+  if      (kind === 'pc')      body.innerHTML = pcForm(entity || {});
+  else if (kind === 'npc')     body.innerHTML = npcForm(entity || {});
+  else                         body.innerHTML = monsterForm(entity || {});
+
+  if (kind === 'pc') updateStatMods();
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
+  editTarget = null;
+}
+
+// ── Form builders ──
+function pcForm(pc) {
+  const s = (k, d = '') => esc(pc[k] ?? d);
+  const n = (k, d = 0)  => esc(pc[k] ?? d);
+  const stats = ['STR','DEX','CON','INT','WIS','CHA'];
+  return `
+    <div class="form-section-title">Identity</div>
+    <div class="form-row">
+      <div class="form-group"><label>Name</label><input id="f-name" value="${s('name')}"></div>
+      <div class="form-group"><label>Class</label><input id="f-className" value="${s('className')}"></div>
+      <div class="form-group"><label>Race</label><input id="f-race" value="${s('race')}"></div>
+      <div class="form-group"><label>Level</label><input id="f-level" type="number" min="1" max="20" value="${n('level',1)}"></div>
+      <div class="form-group"><label>Background</label><input id="f-background" value="${s('background')}"></div>
+      <div class="form-group"><label>Alignment</label><input id="f-alignment" value="${s('alignment')}"></div>
+    </div>
+    <div class="form-section-title">Ability Scores</div>
+    <div class="stat-grid-6">
+      ${stats.map(st => `
+        <div class="stat-cell">
+          <label>${st}</label>
+          <input id="f-${st}" type="number" min="1" max="30" value="${n(st, 10)}" oninput="updateStatMods()">
+          <span class="stat-mod-val" id="mod-${st}">${statMod(pc[st] ?? 10)}</span>
+        </div>`).join('')}
+    </div>
+    <div class="form-section-title">Combat &amp; Wealth</div>
+    <div class="form-row">
+      <div class="form-group"><label>Max HP</label><input id="f-hp"    type="number" value="${n('hp',10)}"></div>
+      <div class="form-group"><label>AC</label>    <input id="f-ac"    type="number" value="${n('ac',10)}"></div>
+      <div class="form-group"><label>Speed (ft)</label><input id="f-speed" type="number" value="${n('speed',30)}"></div>
+      <div class="form-group"><label>Gold (gp)</label><input id="f-gold"  type="number" min="0" value="${n('gold',0)}"></div>
+    </div>
+    <div class="form-section-title">Notes</div>
+    <div class="form-row full">
+      <div class="form-group"><label>Notes</label><textarea id="f-notes">${s('notes')}</textarea></div>
+    </div>`;
+}
+
+function npcForm(npc) {
+  const s = (k, d = '') => esc(npc[k] ?? d);
+  const n = (k, d = 0)  => esc(npc[k] ?? d);
+  return `
+    <div class="form-section-title">Identity</div>
+    <div class="form-row">
+      <div class="form-group"><label>Name</label>          <input id="f-name"      value="${s('name')}"></div>
+      <div class="form-group"><label>Class / Role</label>  <input id="f-className" value="${s('className')}"></div>
+      <div class="form-group"><label>Ancestry</label>      <input id="f-ancestry"  value="${s('ancestry')}"></div>
+      <div class="form-group"><label>Alignment</label>     <input id="f-alignment" value="${s('alignment')}"></div>
+    </div>
+    <div class="form-section-title">Combat</div>
+    <div class="form-row">
+      <div class="form-group"><label>AC</label>         <input id="f-ac"     type="number" value="${n('ac',12)}"></div>
+      <div class="form-group"><label>HP</label>         <input id="f-hp"     type="number" value="${n('hp',10)}"></div>
+      <div class="form-group"><label>Speed (ft)</label> <input id="f-speed"  type="number" value="${n('speed',30)}"></div>
+      <div class="form-group"><label>Attack</label>     <input id="f-attack" value="${s('attack')}"></div>
+    </div>
+    <div class="form-section-title">Personality</div>
+    <div class="form-row full">
+      <div class="form-group"><label>Personality</label><textarea id="f-personality">${s('personality')}</textarea></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group"><label>Motivation</label><textarea id="f-motivation">${s('motivation')}</textarea></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-group"><label>Secret</label><textarea id="f-secret">${s('secret')}</textarea></div>
+    </div>
+    <div class="form-section-title">Notes</div>
+    <div class="form-row full">
+      <div class="form-group"><label>Notes</label><textarea id="f-notes">${s('notes')}</textarea></div>
+    </div>`;
+}
+
+function monsterForm(mon) {
+  const s = (k, d = '') => esc(mon[k] ?? d);
+  const n = (k, d = 0)  => esc(mon[k] ?? d);
+  return `
+    <div class="form-section-title">Identity</div>
+    <div class="form-row">
+      <div class="form-group"><label>Name</label>  <input id="f-name"  value="${s('name')}"></div>
+      <div class="form-group"><label>Type</label>  <input id="f-type"  value="${s('type')}"></div>
+      <div class="form-group"><label>CR</label>    <input id="f-cr"    value="${s('cr')}"></div>
+      <div class="form-group"><label>Count</label> <input id="f-count" type="number" min="1" value="${n('count',1)}"></div>
+    </div>
+    <div class="form-section-title">Stats</div>
+    <div class="form-row">
+      <div class="form-group"><label>AC</label>           <input id="f-ac"    type="number" value="${n('ac',10)}"></div>
+      <div class="form-group"><label>HP / HP Dice</label> <input id="f-hp"    value="${s('hp')}"></div>
+      <div class="form-group"><label>HP Reference</label> <input id="f-hpRef" value="${s('hpRef')}"></div>
+      <div class="form-group"><label>Speed (ft)</label>   <input id="f-speed" type="number" value="${n('speed',30)}"></div>
+    </div>
+    <div class="form-section-title">Notes</div>
+    <div class="form-row full">
+      <div class="form-group"><label>Notes</label><textarea id="f-notes">${s('notes')}</textarea></div>
+    </div>`;
+}
+
+function updateStatMods() {
+  ['STR','DEX','CON','INT','WIS','CHA'].forEach(st => {
+    const inp = document.getElementById(`f-${st}`);
+    const el  = document.getElementById(`mod-${st}`);
+    if (inp && el) el.textContent = statMod(inp.value);
+  });
+}
+
+function saveEditModal() {
+  if (!editTarget) return;
+  const { kind, id } = editTarget;
+  const vault = readVault();
+  const arr   = kind === 'pc' ? vault.pcs : kind === 'npc' ? vault.npcs : vault.monsters;
+  const get   = fid => document.getElementById(fid)?.value ?? '';
+  const getN  = (fid, d = 0) => intOr(document.getElementById(fid)?.value, d);
+
+  let entity;
+  if (kind === 'pc') {
+    entity = {
+      id: id || uid('pc'),
+      name: get('f-name'), className: get('f-className'), race: get('f-race'),
+      level: getN('f-level', 1), background: get('f-background'), alignment: get('f-alignment'),
+      STR: getN('f-STR',10), DEX: getN('f-DEX',10), CON: getN('f-CON',10),
+      INT: getN('f-INT',10), WIS: getN('f-WIS',10), CHA: getN('f-CHA',10),
+      hp: getN('f-hp',10), ac: getN('f-ac',10), speed: getN('f-speed',30),
+      gold: getN('f-gold',0), notes: get('f-notes'),
+    };
+  } else if (kind === 'npc') {
+    entity = {
+      id: id || uid('npc-profile'),
+      name: get('f-name'), className: get('f-className'), ancestry: get('f-ancestry'),
+      alignment: get('f-alignment'), ac: getN('f-ac',12), hp: getN('f-hp',10),
+      speed: getN('f-speed',30), attack: get('f-attack'),
+      personality: get('f-personality'), motivation: get('f-motivation'),
+      secret: get('f-secret'), notes: get('f-notes'),
+    };
+  } else {
+    entity = {
+      id: id || uid('mon'),
+      name: get('f-name'), type: get('f-type'), cr: get('f-cr'),
+      count: getN('f-count',1), ac: getN('f-ac',10),
+      hp: get('f-hp'), hpRef: get('f-hpRef'), speed: getN('f-speed',30),
+      notes: get('f-notes'),
+    };
+  }
+
+  if (!entity.name && kind !== 'monster') { flash('Name is required.', true); return; }
+
+  const now = nowIso();
+  if (id) {
+    const idx = arr.findIndex(e => e.id === id);
+    if (idx >= 0) arr[idx] = { ...arr[idx], ...entity, updatedAt: now };
+  } else {
+    entity.createdAt = now;
+    entity.updatedAt = now;
+    arr.unshift(entity);
+  }
+
+  writeVault(vault);
+  closeEditModal();
+  renderTable();
+  flash(id ? 'Changes saved.' : `${entity.name || 'Entity'} added to Vault.`);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  DEPLOY MODAL
+// ══════════════════════════════════════════════════════════════
+function openDeployModal(kind, id) {
+  const vault = readVault();
+  const arr   = kind === 'pc' ? vault.pcs : kind === 'npc' ? vault.npcs : vault.monsters;
+  const entity = arr.find(e => e.id === id);
+  if (!entity) return;
+
+  deployTarget = { kind, entity };
+  document.getElementById('deployEntityName').textContent = entity.name || 'Unnamed';
+  document.getElementById('deployEntitySub').textContent  =
+    kind === 'pc'      ? [entity.className, entity.race, entity.level ? 'Level '+entity.level : ''].filter(Boolean).join(' · ')
+    : kind === 'npc'   ? (entity.role || entity.className || 'NPC')
+    : [entity.type, entity.cr ? 'CR '+entity.cr : ''].filter(Boolean).join(' · ') || 'Monster';
+
+  const campaigns = safeRead(SK_CAMPAIGNS) || [];
+  const sel = document.getElementById('deployCampaignSelect');
+  sel.innerHTML = campaigns.length
+    ? campaigns.map(c => `<option value="${esc(c.id)}">${esc(c.name || 'Unnamed Campaign')}</option>`).join('')
+    : '<option value="">— No campaigns saved —</option>';
+
+  populateDeployLocations();
+  document.getElementById('deployModal').classList.add('open');
+}
+
+function populateDeployLocations() {
+  const campaigns = safeRead(SK_CAMPAIGNS) || [];
+  const cId = document.getElementById('deployCampaignSelect').value;
+  const camp = campaigns.find(c => c.id === cId);
+  const sel  = document.getElementById('deployLocationSelect');
+  sel.innerHTML = '<option value="">— No specific location —</option>'
+    + (camp?.areas || []).map(a => `<option value="${esc(a.id)}">${esc(a.name)}</option>`).join('');
+}
+
+function closeDeployModal() {
+  document.getElementById('deployModal').classList.remove('open');
+  deployTarget = null;
+}
+
+function confirmDeploy() {
+  if (!deployTarget) return;
+  const { kind, entity } = deployTarget;
+  const cId    = document.getElementById('deployCampaignSelect').value;
+  const areaId = document.getElementById('deployLocationSelect').value;
+  if (!cId) { flash('Select a campaign first.', true); return; }
+
+  const campaigns = safeRead(SK_CAMPAIGNS) || [];
+  const cIdx = campaigns.findIndex(c => c.id === cId);
+  if (cIdx < 0) { flash('Campaign not found.', true); return; }
+
+  const camp = campaigns[cIdx];
+  const now  = nowIso();
+
+  if (kind === 'pc') {
+    camp.pcs = camp.pcs || [];
+    if (camp.pcs.find(p => p.id === entity.id)) { flash('Already in this campaign.', true); return; }
+    camp.pcs.push({ ...entity, currentHp: intOr(entity.hp, 10), initiative: 0, status: '', addedAt: now });
+
+  } else if (kind === 'npc') {
+    camp.npcs = camp.npcs || [];
+    if (camp.npcs.find(n => n.id === entity.id)) { flash('Already in this campaign.', true); return; }
+    const maxHp = intOr(entity.hp, 10);
+    camp.npcs.push({ ...entity, maxHp, currentHp: maxHp, initiative: 0, status: '', areaId: areaId || '', addedAt: now });
+
+  } else {
+    camp.monsters = camp.monsters || [];
+    const hpRolled = intOr(entity.hp, 10);
+    camp.monsters.push({
+      ...entity, hpRolled, currentHp: hpRolled, initiative: 0, status: '',
+      sourceName: entity.name, customName: '', areaId: areaId || '', addedAt: now,
+    });
+  }
+
+  campaigns[cIdx] = camp;
+  safeWrite(SK_CAMPAIGNS, campaigns);
+  closeDeployModal();
+  flash(`${entity.name || 'Entity'} deployed to "${camp.name || 'campaign'}"!`);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SAVE / LOAD JSON
+// ══════════════════════════════════════════════════════════════
+async function saveVaultJson() {
+  const vault = readVault();
+  const blob  = new Blob([JSON.stringify(vault, null, 2)], { type: 'application/json' });
+  const name  = `vault-${new Date().toISOString().slice(0,10)}.json`;
+  try {
+    const h = await window.showSaveFilePicker({ suggestedName: name, types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] });
+    const w = await h.createWritable();
+    await w.write(blob);
+    await w.close();
+    flash('Vault saved.');
+  } catch {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    flash('Vault downloaded.');
+  }
+}
+
+function loadVaultJson(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || typeof data !== 'object') throw new Error();
+      const vault = {
+        pcs:      Array.isArray(data.pcs)      ? data.pcs      : [],
+        npcs:     Array.isArray(data.npcs)     ? data.npcs     : [],
+        monsters: Array.isArray(data.monsters) ? data.monsters : [],
+      };
+      writeVault(vault);
+      renderTable();
+      flash('Vault loaded.');
+    } catch { flash('Invalid JSON file.', true); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
+migrateOldData();
+renderTable();
+</script>
+</body>
+</html>
