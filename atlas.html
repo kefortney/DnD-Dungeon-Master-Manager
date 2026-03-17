@@ -746,16 +746,23 @@ function addToCampaign(campaignId) {
 // ══════════════════════════════════════════════════════════════
 //  IMPORT / EXPORT MAP JSON
 // ══════════════════════════════════════════════════════════════
-function saveMapJson() {
+async function saveMapJson() {
   const mapData = safeReadMap();
-  const json = JSON.stringify(mapData, null, 2);
-  const blob = new Blob([json], { type:'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = 'dnd-map-registry.json';
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
-  flash('mapFlash','Map exported.');
+  const blob = new Blob([JSON.stringify(mapData, null, 2)], { type: 'application/json' });
+  const name = 'dnd-map-registry.json';
+  try {
+    const h = await window.showSaveFilePicker({ suggestedName: name, types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }] });
+    const w = await h.createWritable();
+    await w.write(blob);
+    await w.close();
+    flash('mapFlash', 'Map saved.');
+  } catch {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    flash('mapFlash', 'Map downloaded.');
+  }
 }
 
 function importMapJson(file) {
